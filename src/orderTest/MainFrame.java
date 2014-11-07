@@ -4,11 +4,13 @@ import event.guievents.ContinuousSimulationEvent;
 import event.guievents.NewPassengerEvent;
 import event.guievents.PassengerGenerationInterval;
 import main.SimulatorConstants;
-import network.Client;
-import network.Server;
 import view.SimulatorEvent;
 
 import javax.swing.*;
+
+import burtis.modules.network.client.Client;
+import burtis.modules.network.server.Server;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

@@ -1,4 +1,4 @@
-package network;
+package burtis.modules.network.server;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -77,7 +77,7 @@ class SleepingSender {
     /**
      * Metoda, ktora dodaje obiekt i odbiorce do kolejki
      */
-    public void send(final Object object, final ModuleNetwork receiver) {
+    public void send(final Object object, final ServerModuleConnection receiver) {
         if (!toSend.offer(new Package(object, receiver))) {
             Logger.getLogger(Server.class.getName()).log(Level.WARNING, "Rozkazy sa wysylane za szybko!");
         }
@@ -88,9 +88,9 @@ class SleepingSender {
      */
     class Package {
         private final Object object;
-        private final ModuleNetwork receiver;
+        private final ServerModuleConnection receiver;
 
-        Package(final Object object, final ModuleNetwork receiver) {
+        Package(final Object object, final ServerModuleConnection receiver) {
             this.object = object;
             this.receiver = receiver;
         }
@@ -99,7 +99,7 @@ class SleepingSender {
             return object;
         }
 
-        ModuleNetwork getReceiver() {
+        ServerModuleConnection getReceiver() {
             return receiver;
         }
     }

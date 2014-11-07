@@ -4,13 +4,14 @@ import event.BusReleasingFrequency;
 import main.SimulatorConstants;
 import mockup.*;
 import model.*;
-import network.Client;
 import view.SimulatorEvent;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
+
+import burtis.modules.network.client.Client;
 
 /**
  * Klasa zarządzająca wypuszczaniem autobusów z pętli Symulatora aby zoptymalizować ich rozkłąd jazdy.

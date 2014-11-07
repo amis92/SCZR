@@ -4,7 +4,6 @@ import event.guievents.ContinuousSimulationEvent;
 import event.guievents.NewPassengerEvent;
 import event.guievents.PassengerGenerationInterval;
 import mockup.Mockup;
-import network.Client;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -12,6 +11,8 @@ import java.io.IOException;
 import java.util.Properties;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
+
+import burtis.modules.network.client.Client;
 
 
 public class ClientWrapper extends Thread {

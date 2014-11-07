@@ -9,10 +9,12 @@ import event.guievents.PassengerGenerationInterval;
 import main.SimulatorConstants;
 import mockup.Mockup;
 import model.*;
-import network.Client;
 import view.SimulatorEvent;
 
 import javax.swing.*;
+
+import burtis.modules.network.client.Client;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collections;
