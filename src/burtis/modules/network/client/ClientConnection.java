@@ -40,6 +40,14 @@ class ClientConnection<T> implements Connection
     private Socket socket = new Socket();
     private final Lock socketLock = new ReentrantLock();
 
+    /**
+     * Creates new unconnected client connection to server. Call
+     * {@link #connect()} to attempt connection with server.
+     * 
+     * @param receiveAction
+     *            - for every received object, accept is called on this
+     *            {@link Consumer}
+     */
     public ClientConnection(final String serverAddress, final int serverPort,
             final Consumer<T> receiveAction)
     {
@@ -135,7 +143,6 @@ class ClientConnection<T> implements Connection
             oos = new ObjectOutputStream(socket.getOutputStream());
             oos.writeObject(object);
             oos.flush();
-            oos.close();
             return true;
         }
         catch (final IOException e)
@@ -169,7 +176,6 @@ class ClientConnection<T> implements Connection
                 logger.log(Level.FINER,
                         "Dostalem: " + receivedObject.getClass());
                 receiveAction.accept((T) receivedObject);
-                ois.close();
             }
             catch (final IOException e)
             {
