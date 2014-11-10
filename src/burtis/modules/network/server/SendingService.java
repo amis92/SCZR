@@ -3,103 +3,129 @@ package burtis.modules.network.server;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.net.SocketException;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import burtis.modules.network.client.Client;
-
-class SleepingSender
+/**
+ * Sends objects using blocking queue on separate thread.
+ * 
+ * @author Amadeusz Sadowski
+ *
+ */
+class SendingService
 {
-    private final Logger logger = Logger.getLogger(Client.class.getName());
-    private Thread sendingThread;
-    private Server server;
-    private BlockingQueue<Package> toSend;
-    Runnable sending = new Runnable() {
-        @Override
-        public void run()
-        {
-            Package pack;
-            while (!Thread.interrupted())
-            {
-                try
-                {
-                    pack = toSend.take();
-                    Socket receiverSocket = pack.getReceiver().getSocket();
-                    if (server.isConnected(receiverSocket))
-                    {
-                        ObjectOutputStream oos = null;
-                        try
-                        {
-                            logger.log(Level.FINEST,
-                                    "Wysylam" + receiverSocket.getLocalPort());
-                            oos = new ObjectOutputStream(
-                                    receiverSocket.getOutputStream());
-                            oos.writeObject(pack.getObject());
-                            oos.flush();
-                            logger.log(Level.FINEST, "Wyslalem"
-                                    + receiverSocket.getLocalPort());
-                        }
-                        catch (SocketException e)
-                        {
-                            logger.log(Level.WARNING, "Błąd wysyłania");
-                        }
-                        catch (IOException e)
-                        {
-                            logger.log(Level.WARNING, "Błąd wysyłania");
-                        }
-                    }
-                }
-                catch (InterruptedException e)
-                {
-                    logger.log(Level.WARNING,
-                            "Błąd przy oczekiwaniu na rozkaz do wyslania");
-                }
-            }
-        }
-    };
+    private final Predicate<Socket> isConnected;
+    private final Logger logger = Logger.getLogger(Server.class.getName());
+    private final ExecutorService sendingExecutor = Executors
+            .newSingleThreadExecutor();
+    private final BlockingQueue<Package> toSendQueue = new LinkedBlockingQueue<Package>();
 
-    SleepingSender(final Server server)
+    /**
+     * Creates non-running service. To run, call {@link #startSending()}.
+     * 
+     * @param isConnected
+     *            - used to perform check whether socket to be used for given
+     *            object is connected.
+     */
+    public SendingService(final Predicate<Socket> isConnected)
     {
-        toSend = new LinkedBlockingQueue<Package>();
-        this.server = server;
+        this.isConnected = isConnected;
     }
 
-    public void send(final Object object, final ServerModuleConnection receiver)
+    public void stopSending()
     {
-        if (!toSend.offer(new Package(object, receiver)))
+        sendingExecutor.shutdownNow();
+    }
+
+    /**
+     * Attempts adding provided arguments to queue. Fails silently.
+     */
+    public void send(final Object object, final ServerModuleConnection recipient)
+    {
+        final Package newPack = new Package(object, recipient);
+        if (!toSendQueue.offer(newPack))
         {
-            logger.log(Level.WARNING, "Rozkazy sa wysylane za szybko!");
+            logger.log(Level.WARNING, "Kolejka do wysłania przepełniona");
         }
     }
 
     public void startSending()
     {
-        sendingThread = new Thread(sending);
-        sendingThread.start();
+        sendingExecutor.execute(this::sendFromQueue);
     }
 
+    private void sendFromQueue()
+    {
+        Package pack;
+        while (!Thread.interrupted())
+        {
+            try
+            {
+                pack = toSendQueue.take();
+                sendPack(pack);
+            }
+            catch (final InterruptedException e)
+            {
+                logger.log(Level.WARNING,
+                        "Błąd oczekiwania na kolejkę wysyłania");
+            }
+        }
+    }
+
+    private void sendPack(final Package pack)
+    {
+        ObjectOutputStream oos = null;
+        final Socket recipientSocket = pack.getRecipient().getSocket();
+        final int recipientPort = recipientSocket.getLocalPort();
+        if (!isConnected.test(recipientSocket))
+        {
+            logger.log(Level.WARNING, "Nie ma połączenia - nie można wysłać");
+            return;
+        }
+        try
+        {
+            logger.log(Level.FINEST, "Wysyłam do " + recipientPort);
+            oos = new ObjectOutputStream(recipientSocket.getOutputStream());
+            oos.writeObject(pack.getObject());
+            oos.flush();
+            logger.log(Level.FINEST, "Wysłałem do " + recipientPort);
+        }
+        catch (final IOException e)
+        {
+            logger.log(Level.WARNING, "Błąd wysyłania", e);
+        }
+    }
+
+    /**
+     * Represents pair of object to be sent and destination module connection.
+     * 
+     * @author Amadeusz Sadowski
+     */
     class Package
     {
         private final Object object;
-        private final ServerModuleConnection receiver;
+        private final ServerModuleConnection recipient;
 
-        Package(final Object object, final ServerModuleConnection receiver)
+        public Package(final Object object,
+                final ServerModuleConnection recipient)
         {
             this.object = object;
-            this.receiver = receiver;
+            this.recipient = recipient;
         }
 
-        Object getObject()
+        public Object getObject()
         {
             return object;
         }
 
-        ServerModuleConnection getReceiver()
+        public ServerModuleConnection getRecipient()
         {
-            return receiver;
+            return recipient;
         }
     }
 }
