@@ -9,8 +9,11 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import burtis.modules.network.client.Client;
+
 class SleepingSender
 {
+    private final Logger logger = Logger.getLogger(Client.class.getName());
     private Thread sendingThread;
     private Server server;
     private BlockingQueue<Package> toSend;
@@ -30,31 +33,28 @@ class SleepingSender
                         ObjectOutputStream oos = null;
                         try
                         {
-                            System.out.println("Wysylam"
-                                    + receiverSocket.getLocalPort());
+                            logger.log(Level.FINEST,
+                                    "Wysylam" + receiverSocket.getLocalPort());
                             oos = new ObjectOutputStream(
                                     receiverSocket.getOutputStream());
                             oos.writeObject(pack.getObject());
                             oos.flush();
-                            System.out.println("Wyslalem"
+                            logger.log(Level.FINEST, "Wyslalem"
                                     + receiverSocket.getLocalPort());
                         }
                         catch (SocketException e)
                         {
-                            Logger.getLogger(Server.class.getName()).log(
-                                    Level.WARNING, "Błąd wysyłania");
-                            pack.getReceiver().reportConnectionProblem();
+                            logger.log(Level.WARNING, "Błąd wysyłania");
                         }
                         catch (IOException e)
                         {
-                            Logger.getLogger(Server.class.getName()).log(
-                                    Level.WARNING, "Błąd wysyłania");
+                            logger.log(Level.WARNING, "Błąd wysyłania");
                         }
                     }
                 }
                 catch (InterruptedException e)
                 {
-                    Logger.getLogger(Server.class.getName()).log(Level.WARNING,
+                    logger.log(Level.WARNING,
                             "Błąd przy oczekiwaniu na rozkaz do wyslania");
                 }
             }
@@ -71,8 +71,7 @@ class SleepingSender
     {
         if (!toSend.offer(new Package(object, receiver)))
         {
-            Logger.getLogger(Server.class.getName()).log(Level.WARNING,
-                    "Rozkazy sa wysylane za szybko!");
+            logger.log(Level.WARNING, "Rozkazy sa wysylane za szybko!");
         }
     }
 
