@@ -5,6 +5,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketAddress;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.locks.Lock;
@@ -13,14 +14,14 @@ import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import burtis.modules.network.Connection;
 import main.SimulatorConstants;
+import burtis.modules.network.Connection;
 
 /**
  * Manages connection to specified address/port pair.
  * 
- * Allows for opening, closing and restarting connection. Connection status can
- * be retrieved.
+ * Allows for opening, closing and reopening connection. Connection status can
+ * be retrieved. Thread-safety: each action on Socket is done in Locked block.
  * 
  * @author Amadeusz Sadowski
  *
@@ -37,16 +38,19 @@ class ClientConnection<T> implements Connection
     private final String serverAddress;
     private final int serverPort;
     private Socket socket = new Socket();
-    private volatile Lock socketLock = new ReentrantLock();
+    private final Lock socketLock = new ReentrantLock();
 
     public ClientConnection(final String serverAddress, final int serverPort,
-            Consumer<T> receiveAction)
+            final Consumer<T> receiveAction)
     {
         this.serverAddress = serverAddress;
         this.serverPort = serverPort;
         this.receiveAction = receiveAction;
     }
 
+    /**
+     * Attempts to close connection and create new empty Socket.
+     */
     public void closeConnection()
     {
         socketLock.lock();
@@ -59,6 +63,7 @@ class ClientConnection<T> implements Connection
         }
         catch (final IOException e)
         {
+            logger.log(Level.WARNING, "Błąd zamykania połączenia", e);
             receiveLoopExecutorService.shutdownNow();
         }
         finally
@@ -68,24 +73,29 @@ class ClientConnection<T> implements Connection
         }
     }
 
+    /**
+     * Attempts to connect with server. Blocking method. On success listener is
+     * subscribed to open connection.
+     */
     public boolean connect()
     {
         socketLock.lock();
         try
         {
-            if (!isConnected())
+            if (isConnected())
             {
-                return false; // only one call should be running at a time
+                return true; // might've connected while thread awaited for lock
             }
             closeConnection();
-            socket.connect(new InetSocketAddress(serverAddress, serverPort),
-                    SimulatorConstants.connectingTimeout);
-            receiveLoopExecutorService.execute(() -> listenOnSocket());
+            SocketAddress address = new InetSocketAddress(serverAddress,
+                    serverPort);
+            socket.connect(address, SimulatorConstants.connectingTimeout);
+            receiveLoopExecutorService.execute(this::listenOnSocket);
             return true;
         }
         catch (final Exception e)
         {
-            logger.log(Level.FINE, "Błąd łączenia z serwerem");
+            logger.log(Level.WARNING, "Błąd łączenia z serwerem", e);
             closeConnection();
             return false;
         }
@@ -109,6 +119,9 @@ class ClientConnection<T> implements Connection
         }
     }
 
+    /**
+     * Sends parameter to Socket. Closes connection on failure.
+     */
     public boolean send(final Object object)
     {
         if (!isConnected())
@@ -122,6 +135,8 @@ class ClientConnection<T> implements Connection
             oos = new ObjectOutputStream(socket.getOutputStream());
             oos.writeObject(object);
             oos.flush();
+            oos.close();
+            return true;
         }
         catch (final IOException e)
         {
@@ -133,24 +148,28 @@ class ClientConnection<T> implements Connection
         {
             socketLock.unlock();
         }
-        return true;
     }
 
+    /**
+     * Awaits for incoming objects, and calls receive action for them.
+     */
     @SuppressWarnings("unchecked")
     private void listenOnSocket()
     {
         logger.log(Level.INFO, "Rozpoczynam nasłuchiwanie w kliencie");
         ObjectInputStream ois = null;
-        while (!socket.isConnected())
+        while (isConnected() && !Thread.interrupted())
         {
             socketLock.lock();
             try
             {
-                logger.log(Level.INFO, "Czekam " + socket.getLocalPort());
+                logger.log(Level.FINER, "Czekam " + socket.getLocalPort());
                 ois = new ObjectInputStream(socket.getInputStream());
                 final Object receivedObject = ois.readObject();
-                logger.log(Level.INFO, "Dostalem: " + receivedObject.getClass());
+                logger.log(Level.FINER,
+                        "Dostalem: " + receivedObject.getClass());
                 receiveAction.accept((T) receivedObject);
+                ois.close();
             }
             catch (final IOException e)
             {
