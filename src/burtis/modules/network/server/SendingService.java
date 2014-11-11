@@ -1,13 +1,10 @@
 package burtis.modules.network.server;
 
-import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.net.Socket;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -17,9 +14,8 @@ import java.util.logging.Logger;
  * @author Amadeusz Sadowski
  *
  */
-class SendingService
+class SendingService implements Sender
 {
-    private final Predicate<Socket> isConnected;
     private final Logger logger = Logger.getLogger(Server.class.getName());
     private final ExecutorService sendingExecutor = Executors
             .newSingleThreadExecutor();
@@ -27,25 +23,16 @@ class SendingService
 
     /**
      * Creates non-running service. To run, call {@link #startSending()}.
-     * 
-     * @param isConnected
-     *            - used to perform check whether socket to be used for given
-     *            object is connected.
      */
-    public SendingService(final Predicate<Socket> isConnected)
+    public SendingService()
     {
-        this.isConnected = isConnected;
-    }
-
-    public void stopSending()
-    {
-        sendingExecutor.shutdownNow();
     }
 
     /**
      * Attempts adding provided arguments to queue. Fails silently.
      */
-    public void send(final Object object, final ServerModuleConnection recipient)
+    @Override
+    public void send(final Object object, final ModuleConnection recipient)
     {
         final Package newPack = new Package(object, recipient);
         if (!toSendQueue.offer(newPack))
@@ -54,9 +41,17 @@ class SendingService
         }
     }
 
+    /**
+     * Starts sending in a separate thread.
+     */
     public void startSending()
     {
         sendingExecutor.execute(this::sendFromQueue);
+    }
+
+    public void stopSending()
+    {
+        sendingExecutor.shutdownNow();
     }
 
     private void sendFromQueue()
@@ -79,26 +74,30 @@ class SendingService
 
     private void sendPack(final Package pack)
     {
-        ObjectOutputStream oos = null;
-        final Socket recipientSocket = pack.getRecipient().getSocket();
-        final int recipientPort = recipientSocket.getLocalPort();
-        if (!isConnected.test(recipientSocket))
+        final SocketService recipientSocketService = pack.getRecipient()
+                .getSocketService();
+        final int recipientPort = recipientSocketService.getPort();
+        if (!recipientSocketService.isConnected())
         {
-            logger.log(Level.WARNING, "Nie ma połączenia - nie można wysłać");
+            logger.log(Level.WARNING, "Nie ma połączenia - utracono paczkę");
             return;
         }
-        try
+        logger.log(Level.FINEST, "Wysyłam do " + recipientPort);
+        recipientSocketService.useSocket((socket) ->
         {
-            logger.log(Level.FINEST, "Wysyłam do " + recipientPort);
-            oos = new ObjectOutputStream(recipientSocket.getOutputStream());
-            oos.writeObject(pack.getObject());
-            oos.flush();
-            logger.log(Level.FINEST, "Wysłałem do " + recipientPort);
-        }
-        catch (final IOException e)
-        {
-            logger.log(Level.WARNING, "Błąd wysyłania", e);
-        }
+            ObjectOutputStream oos = null;
+            try
+            {
+                oos = new ObjectOutputStream(socket.getOutputStream());
+                oos.writeObject(pack.getObject());
+                oos.flush();
+                logger.log(Level.FINEST, "Wysłałem do " + recipientPort);
+            }
+            catch (Exception e)
+            {
+                logger.log(Level.WARNING, "Błąd wysyłania", e);
+            }
+        });
     }
 
     /**
@@ -106,13 +105,12 @@ class SendingService
      * 
      * @author Amadeusz Sadowski
      */
-    class Package
+    private class Package
     {
         private final Object object;
-        private final ServerModuleConnection recipient;
+        private final ModuleConnection recipient;
 
-        public Package(final Object object,
-                final ServerModuleConnection recipient)
+        public Package(final Object object, final ModuleConnection recipient)
         {
             this.object = object;
             this.recipient = recipient;
@@ -123,7 +121,7 @@ class SendingService
             return object;
         }
 
-        public ServerModuleConnection getRecipient()
+        public ModuleConnection getRecipient()
         {
             return recipient;
         }
