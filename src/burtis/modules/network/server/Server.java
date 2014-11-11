@@ -1,128 +1,82 @@
 package burtis.modules.network.server;
 
-import java.io.IOException;
-import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import order.FunctionalityServer;
-import order.Order;
-import order.OrderRecipient;
+import order.ServerOrder;
+import burtis.modules.network.ModuleConfig;
+import burtis.modules.network.NetworkConfig;
 
-public class Server implements FunctionalityServer,
-        OrderRecipient<FunctionalityServer>
+/**
+ * Performs traffic forwarding according to configuration provided. All traffic
+ * from given module is forwarded to all recipients of that module, except of
+ * {@link ServerOrder}s which are executed and not forwarded.
+ * 
+ * Each connection listens on separate thread for incoming traffic. All outgoing
+ * traffic is sent through another thread with blocking queue.
+ * 
+ * @author Amadeusz Sadowski
+ *
+ */
+public class Server
 {
-    /**
-     * Obiekt reprezentujacy modul GUI
-     */
-    private ServerModuleConnection gui;
-    /**
-     * Obiekt reprezentujacy modul obslugi pasazerow
-     */
-    private ServerModuleConnection passengers;
-    /**
-     * Obiekt reprezentujacy modul zarzadzania komunikacja miejska
-     */
-    private ServerModuleConnection management;
-    private SleepingSender sleepingSender;
-    private int guiPort;
-    private int passengersPort;
-    private int managementPort;
+    private final Logger logger = Logger.getLogger(Server.class.getName());
+    private final SendingService sendingService = new SendingService();
+    private final Collection<ModuleConnection> moduleConnections;
 
-
-    public Server(int guiPort, int passengersPort, int managementPort)
+    public Server(final NetworkConfig netConfig)
     {
-        this.guiPort = guiPort;
-        this.passengersPort = passengersPort;
-        this.managementPort = managementPort;
-    }
-
-    public void runServer() throws IOException
-    {
-        try
+        final Collection<ModuleConfig> configs = netConfig.getModuleConfigs();
+        this.moduleConnections = new ArrayList<>(configs.size());
+        final Map<String, ModuleConnection> moduleMap = new HashMap<>();
+        final ModuleConnectionFactory factory = new ModuleConnectionFactory(
+                sendingService, this::executeOrder);
+        for (ModuleConfig config : configs)
         {
-            gui = new ServerModuleConnection(guiPort, this);
-            passengers = new ServerModuleConnection(passengersPort, this);
-            management = new ServerModuleConnection(managementPort, this);
-            sleepingSender = new SleepingSender(this);
+            ModuleConnection connection = factory.createFromConfig(config);
+            moduleConnections.add(connection);
+            moduleMap.put(connection.getModuleName(), connection);
         }
-        catch (IOException e)
+        for (ModuleConfig config : configs)
         {
-            Logger.getLogger(Server.class.getName()).log(Level.SEVERE,
-                    "Błąd tworzenia Serwera");
-            throw e;
-        }
-        sleepingSender.startSending();
-        gui.connect();
-        passengers.connect();
-        management.connect();
-        gui.addReceiver(passengers);
-        passengers.addReceiver(gui);
-        passengers.addReceiver(management);
-        management.addReceiver(passengers);
-    }
-
-    @Override
-    public void crippleGUI(boolean cripple)
-    {
-        Logger.getLogger(Server.class.getName()).log(Level.FINEST,
-                "Odłączenie GUI");
-        gui.clog(cripple);
-    }
-
-    @Override
-    public void crippleZKM(boolean cripple)
-    {
-        Logger.getLogger(Server.class.getName()).log(Level.FINEST,
-                "Odłączenie ZKM");
-        management.clog(cripple);
-    }
-
-    @Override
-    public void executeOrder(Order<FunctionalityServer> toExec)
-    {
-        Logger.getLogger(Server.class.getName()).log(Level.FINEST,
-                "Wykonywanie rozkazu");
-        toExec.execute(this);
-    }
-
-    void send(final Object object, ServerModuleConnection receiver)
-    {
-        sleepingSender.send(object, receiver);
-    }
-
-    boolean isConnected(final Socket socket)
-    {
-        if (socket == null)
-        {
-            return false;
-        }
-        else
-        {
-            return !socket.isClosed();
-        }
-    }
-
-    void closeConnection(Socket socket)
-    {
-        if (isConnected(socket))
-        {
-            try
+            String moduleName = config.getModuleName();
+            ModuleConnection connection = moduleMap.get(moduleName);
+            for (String name : config.getConnectedModuleNames())
             {
-                socket.close();
-            }
-            catch (IOException e)
-            {
-                Logger.getLogger(Server.class.getName()).log(Level.WARNING,
-                        "Błąd przy zamykaniu połączenia", e);
-                throw new RuntimeException();
+                connection.addRecipient(moduleMap.get(name));
             }
         }
     }
 
-    public static void main(String[] args) throws IOException
+    public void runServer()
     {
-        Server server = new Server(8123, 8124, 8125);
-        server.runServer();
+        logger.log(Level.INFO, "Server preparing to run");
+        sendingService.startSending();
+        for (ModuleConnection moduleConnection : moduleConnections)
+        {
+            moduleConnection.connect();
+        }
+        logger.log(Level.INFO, "Server running");
+    }
+
+    public void stopServer()
+    {
+        logger.log(Level.INFO, "Server stopping...");
+        for (ModuleConnection moduleConnection : moduleConnections)
+        {
+            moduleConnection.close();
+        }
+        sendingService.stopSending();
+        logger.log(Level.INFO, "Server stopped");
+    }
+
+    @SuppressWarnings("rawtypes")
+    private void executeOrder(ServerOrder order)
+    {
+        // TODO implement after refreshing orders
     }
 }

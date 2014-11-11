@@ -87,13 +87,12 @@ class ClientConnection<T> implements Connection
      */
     public boolean connect()
     {
-        socketLock.lock();
+        if (isConnected() || !socketLock.tryLock())
+        {
+            return true;
+        }
         try
         {
-            if (isConnected())
-            {
-                return true; // might've connected while thread awaited for lock
-            }
             closeConnection();
             SocketAddress address = new InetSocketAddress(serverAddress,
                     serverPort);

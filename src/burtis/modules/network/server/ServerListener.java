@@ -2,89 +2,63 @@ package burtis.modules.network.server;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.net.Socket;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import order.Order;
-import order.ServerOrder;
-
 /**
- * Klasa reprezentujaca watek odbierajacy pakiety i przekazujacy je do
- * odpowiednich modulow.
+ * Listens for incoming traffic and forwards it to provided Consumer.
+ * 
+ * @author Amadeusz Sadowski
+ *
  */
-class ServerListener implements Runnable
+class ServerListener
 {
-    private ServerModuleConnection module;
-    private Server server;
-    /**
-     * Flaga symulowanej awarii
-     */
-    private boolean clogged = false;
+    private final Logger logger = Logger.getLogger(Server.class.getName());
+    private final Consumer<Object> receiver;
+    private final Action reconnect;
+    private final SocketService socketService;
 
-    public ServerListener(final ServerModuleConnection module,
-            final Server server)
+    public ServerListener(final SocketService socketService,
+            final Consumer<Object> receiver, final Action reconnect)
     {
-        this.module = module;
-        this.server = server;
+        this.socketService = socketService;
+        this.receiver = receiver;
+        this.reconnect = reconnect;
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    @Override
-    public void run()
+    public void listenOnSocket()
     {
-        ObjectInputStream ois = null;
-        while (server.isConnected(module.getSocket()))
+        final int port = socketService.getPort();
+        logger.log(Level.INFO, "Rozpoczęcie nasłuchiwania na porcie: " + port);
+        while (!Thread.interrupted() && socketService.isConnected())
         {
-            try
-            {
-                ois = new ObjectInputStream(module.getSocket().getInputStream());
-                System.out.println("Czekam na obiekt");
-                Object object = ois.readObject();
-                System.out.println("Dostalem obiekt: " + object.getClass());
-                // Logger.getLogger(Server.class.getName()).log(Level.FINEST,
-                // "Serwer: " + object.getClass().getName());
-                // Rozsyla obiekt do wszystkich odbiorcow danego modulu.
-                if (!clogged)// Jak nie ma symulowanej awarii. ~maciej168
-                {
-                    for (ServerModuleConnection receiver : module
-                            .getReceivers())
-                    {
-                        if (object instanceof ServerOrder)
-                        {// dodana filtracja rozkazów
-                            server.executeOrder((Order) object);
-                        }
-                        else
-                        {
-                            server.send(object, receiver);
-                        }
-                    }
-                }
-            }
-            catch (IOException e)
-            {
-                Logger.getLogger(ServerListener.class.getName()).log(
-                        Level.FINER, "Ponownie łączenie", e);
-                module.connect();
-                break;
-            }
-            catch (ClassNotFoundException e)
-            {
-                // Nierozpoznane klasy sa ignorowane
-                Logger.getLogger(Server.class.getName()).log(Level.WARNING,
-                        "Ignorowanie nieznanej klasy", e);
-            }
-            finally
-            {
-                clogged = false;
-            }
+            socketService.useSocket(this::awaitAndAccept);
         }
+        logger.log(Level.INFO, "Koniec nasłuchiwania na porcie: " + port);
     }
 
-    /**
-     * Symuluje awarię (nie przesyła rozkazów/wiadomości do odbiorców)
-     */
-    public void clog(boolean makeClogged)
+    private void awaitAndAccept(Socket socket)
     {
-        clogged = makeClogged;
+        try
+        {
+            ObjectInputStream ois = new ObjectInputStream(
+                    socket.getInputStream());
+            logger.log(Level.FINEST, "Czekam na obiekt");
+            Object object = ois.readObject();
+            logger.log(Level.FINEST, "Dostalem obiekt: "
+                    + object.getClass().getName());
+            receiver.accept(object);
+        }
+        catch (ClassNotFoundException e)
+        {
+            logger.log(Level.WARNING, "Ignorowanie nieznanej klasy", e);
+        }
+        catch (IOException e)
+        {
+            logger.log(Level.WARNING, "Błąd. Ponownie łączenie", e);
+            reconnect.perform();
+        }
     }
 }
