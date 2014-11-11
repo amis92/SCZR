@@ -17,7 +17,7 @@ import java.util.logging.Logger;
 class SendingService implements Sender
 {
     private final Logger logger = Logger.getLogger(Server.class.getName());
-    private final ExecutorService sendingExecutor = Executors
+    private ExecutorService sendingExecutor = Executors
             .newSingleThreadExecutor();
     private final BlockingQueue<Package> toSendQueue = new LinkedBlockingQueue<Package>();
 
@@ -52,6 +52,7 @@ class SendingService implements Sender
     public void stopSending()
     {
         sendingExecutor.shutdownNow();
+        sendingExecutor = Executors.newSingleThreadExecutor();
     }
 
     private void sendFromQueue()

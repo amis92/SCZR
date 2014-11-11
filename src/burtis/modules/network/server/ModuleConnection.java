@@ -25,7 +25,7 @@ class ModuleConnection
 {
     private final ExecutorService connectingExecutor = Executors
             .newSingleThreadExecutor();
-    private final ExecutorService listenerExecutor = Executors
+    private ExecutorService listenerExecutor = Executors
             .newSingleThreadExecutor();
     private final ServerListener listener;
     private final Logger logger = Logger.getLogger(Server.class.getName());
@@ -100,6 +100,7 @@ class ModuleConnection
                     "Oczekuję na połączenie z modułem %1$s na porcie %2$d",
                     moduleName, socketService.getPort()));
             listenerExecutor.shutdownNow();
+            listenerExecutor = Executors.newSingleThreadExecutor();
             socketService.connect();
             listenerExecutor.execute(listener::listenOnSocket);
             logger.log(Level.INFO, String.format(
