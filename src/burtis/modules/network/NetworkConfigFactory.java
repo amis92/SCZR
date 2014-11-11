@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import burtis.modules.network.NetworkConfig.ModuleConfig;
-
 /**
  * Saves and reads {@link NetworkConfig} into and from {@link Properties}.
  * 
