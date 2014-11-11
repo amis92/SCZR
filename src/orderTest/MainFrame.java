@@ -8,6 +8,7 @@ import view.SimulatorEvent;
 
 import javax.swing.*;
 
+import burtis.modules.network.NetworkConfig;
 import burtis.modules.network.client.Client;
 import burtis.modules.network.server.Server;
 
@@ -61,12 +62,8 @@ public class MainFrame extends JFrame {
 
     public MainFrame(String title) throws HeadlessException {
         super(title);
-        Server myServer = new Server(testGuiServerSocket, testSimulatorSocket, 8125);
-        try {
-            myServer.runServer();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Server myServer = new Server(NetworkConfig.defaultConfig());
+        myServer.run();
         setSize(360, 320);
         addContentPanel();
         addButtonPanel();

@@ -1,25 +1,28 @@
 package order;
 
 /**
- * Szablon interfejsu dla rozkazów.
- * który zawiera funkcjonalność do udostępnienia.
- * Implementacja powinna być serializowalna.
- * Małe przypomnienie: w Javie szablony działają inaczej niż w C++
- * Rozszerza Comparable po to, by Pan Daniel mógł sobie szeregować rozkazy
- * (wystarczy je będzie wrzucić w PriorityQueue)
+ * Provides method to be executed on some object. Functional method is
+ * {@link #execute(Object)}. Recipient of the order should execute it on itself
+ * in most cases.
+ * 
+ * Implementation of order for object of class SomeClass to execute method
+ * someMethod would look like so:
+ * 
+ * <pre>
+ * <code>
+ * public void execute(SomeClass subject) {
+ *      subject.someMethod();
+ * }
+ * </code>
+ * </pre>
+ * 
+ * @author Amadeusz Sadowski
  *
- * @param <T> powinien być konkretyzowany interfejsem opisującym
- *            udostępnianą przez przyjmującego_rozkaz funkcjonalność.
- * @author Maciej Majewski
+ * @param <T>
+ *            Type of object being target of order (argument of function).
  */
-public interface Order<T> {
-
-    /**
-     * Wykonuje dany rozkaz. Implementacja to zwykle
-     * `subject.functionality()`
-     *
-     * @param subject
-     */
+@FunctionalInterface
+public interface Order<T>
+{
     public void execute(T subject);
-
 }
