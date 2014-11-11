@@ -1,5 +1,6 @@
 package burtis.modules.network;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ModuleConfig
@@ -7,6 +8,18 @@ public class ModuleConfig
     private final List<String> connectedModuleNames;
     private final String moduleName;
     private final int port;
+
+    public ModuleConfig(final String moduleName, int port,
+            String[] connectedModuleNames)
+    {
+        this.connectedModuleNames = new ArrayList<String>(connectedModuleNames.length);
+        for (String name : connectedModuleNames)
+        {
+            this.connectedModuleNames.add(name);
+        }
+        this.moduleName = moduleName;
+        this.port = port;
+    } 
 
     public ModuleConfig(final String moduleName, int port,
             List<String> connectedModuleNames)

@@ -8,6 +8,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import order.ServerOrder;
+import order.ServerOrderExecutor;
 import burtis.modules.network.ModuleConfig;
 import burtis.modules.network.NetworkConfig;
 
@@ -22,7 +23,7 @@ import burtis.modules.network.NetworkConfig;
  * @author Amadeusz Sadowski
  *
  */
-public class Server
+public class Server implements ServerOrderExecutor
 {
     private final Logger logger = Logger.getLogger(Server.class.getName());
     private final SendingService sendingService = new SendingService();
@@ -52,7 +53,7 @@ public class Server
         }
     }
 
-    public void runServer()
+    public void run()
     {
         logger.log(Level.INFO, "Server preparing to run");
         sendingService.startSending();
@@ -63,7 +64,8 @@ public class Server
         logger.log(Level.INFO, "Server running");
     }
 
-    public void stopServer()
+    @Override
+    public void stop()
     {
         logger.log(Level.INFO, "Server stopping...");
         for (ModuleConnection moduleConnection : moduleConnections)
@@ -74,9 +76,8 @@ public class Server
         logger.log(Level.INFO, "Server stopped");
     }
 
-    @SuppressWarnings("rawtypes")
     private void executeOrder(ServerOrder order)
     {
-        // TODO implement after refreshing orders
+        order.execute(this);
     }
 }

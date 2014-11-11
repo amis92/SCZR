@@ -15,12 +15,10 @@ import burtis.modules.network.ModuleConfig;
 public class ModuleConnectionFactory
 {
     private final Sender sender;
-    @SuppressWarnings("rawtypes")
     private final Consumer<ServerOrder> serverOrderExecutor;
 
-    public ModuleConnectionFactory(
-            final Sender sender,
-            @SuppressWarnings("rawtypes") final Consumer<ServerOrder> serverOrderExecutor)
+    public ModuleConnectionFactory(final Sender sender,
+            final Consumer<ServerOrder> serverOrderExecutor)
     {
         this.sender = sender;
         this.serverOrderExecutor = serverOrderExecutor;

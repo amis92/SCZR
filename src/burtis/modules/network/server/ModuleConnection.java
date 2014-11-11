@@ -21,7 +21,6 @@ import order.ServerOrder;
  * @author Amadeusz Sadowski
  *
  */
-@SuppressWarnings("rawtypes")
 class ModuleConnection
 {
     private final ExecutorService connectingExecutor = Executors
