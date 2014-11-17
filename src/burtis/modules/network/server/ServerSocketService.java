@@ -95,7 +95,7 @@ class ServerSocketService implements SocketService
     @Override
     public boolean isConnected()
     {
-        if (!socketInUseLock.tryLock())
+        if (!socketChangingLock.tryLock())
         {
             return false;
         }
@@ -107,7 +107,7 @@ class ServerSocketService implements SocketService
         }
         finally
         {
-            socketInUseLock.unlock();
+            socketChangingLock.unlock();
         }
     }
 
