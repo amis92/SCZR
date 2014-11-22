@@ -78,7 +78,6 @@ class SendingService implements Sender
         final SocketService recipientSocketService = pack.getRecipient()
                 .getSocketService();
         final int recipientPort = recipientSocketService.getPort();
-        
         if (!recipientSocketService.isConnected())
         {
             logger.log(Level.WARNING, "Nie ma połączenia - utracono paczkę");

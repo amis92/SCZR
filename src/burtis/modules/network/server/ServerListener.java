@@ -58,6 +58,7 @@ class ServerListener
         catch (IOException e)
         {
             logger.log(Level.WARNING, "Błąd. Ponownie łączenie", e);
+            socketService.close();
             reconnect.perform();
         }
     }

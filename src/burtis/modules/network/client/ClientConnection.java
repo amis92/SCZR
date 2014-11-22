@@ -33,7 +33,7 @@ class ClientConnection<T> implements Connection
 {
     private final Logger logger = Logger.getLogger(Client.class.getName());
     private final Consumer<T> receiveAction;
-    private final ExecutorService receiveLoopExecutorService = Executors
+    private ExecutorService receiveLoopExecutorService = Executors
             .newSingleThreadExecutor();
     private final String serverAddress;
     private final int serverPort;
@@ -68,11 +68,11 @@ class ClientConnection<T> implements Connection
             {
                 socket.close();
             }
+            receiveLoopExecutorService.shutdownNow();
         }
         catch (final IOException e)
         {
             logger.log(Level.WARNING, "Błąd zamykania połączenia", e);
-            receiveLoopExecutorService.shutdownNow();
         }
         finally
         {
@@ -97,6 +97,7 @@ class ClientConnection<T> implements Connection
             SocketAddress address = new InetSocketAddress(serverAddress,
                     serverPort);
             socket.connect(address, SimulatorConstants.connectingTimeout);
+            receiveLoopExecutorService = Executors.newSingleThreadExecutor();
             receiveLoopExecutorService.execute(this::listenOnSocket);
             return true;
         }
@@ -179,6 +180,7 @@ class ClientConnection<T> implements Connection
             catch (final IOException e)
             {
                 logger.log(Level.SEVERE, "Błąd odbierania z serwera", e);
+                closeConnection();
             }
             catch (final ClassNotFoundException e)
             {
