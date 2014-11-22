@@ -117,6 +117,7 @@ class ServerSocketService implements SocketService
         socketInUseLock.lock();
         try
         {
+            
             if (socket == null)
             {
                 return;
