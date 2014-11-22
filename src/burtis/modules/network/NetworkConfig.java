@@ -34,11 +34,11 @@ public class NetworkConfig
         String busName  = "Bus Scheduling Module";
         String psgrName = "Passengers Module";
         String simName  = "Simulation Module";
-        configs.add(new ModuleConfig(guiName,   serverAddress, 8121));
-        configs.add(new ModuleConfig(syncName,  serverAddress, 8122));
-        configs.add(new ModuleConfig(busName,   serverAddress, 8123));
-        configs.add(new ModuleConfig(psgrName,  serverAddress, 8124));
-        configs.add(new ModuleConfig(simName,   serverAddress, 8125));
+        configs.add(new ModuleConfig(guiName,   serverAddress, 8121, false));
+        configs.add(new ModuleConfig(syncName,  serverAddress, 8122, true));
+        configs.add(new ModuleConfig(busName,   serverAddress, 8123, false));
+        configs.add(new ModuleConfig(psgrName,  serverAddress, 8124, false));
+        configs.add(new ModuleConfig(simName,   serverAddress, 8125, true));
         return new NetworkConfig(serverAddress, configs);
     }
 }

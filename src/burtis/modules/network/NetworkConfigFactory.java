@@ -16,11 +16,15 @@ public class NetworkConfigFactory
 {
     private static final String CONFIG_KEY = "burtis-network-config";
     private static final String MODULE_KEY = CONFIG_KEY + ".module%1$d";
+    private static final String MODULE_CRITICAL_KEY = MODULE_KEY
+            + ".isCritical";
     private static final String MODULE_NAME_KEY = MODULE_KEY + ".name";
     private static final String MODULE_PORT_KEY = MODULE_KEY + ".port";
     private static final String MODULES_COUNT_KEY = CONFIG_KEY + ".moduleCount";
     private static final String SERVER_ADDRESS_KEY = CONFIG_KEY
             + ".serverAddress";
+    private static final String TRUE_VALUE = "true";
+    private static final String FALSE_VALUE = "false";
 
     /**
      * Reads and returns full configuration.
@@ -62,12 +66,19 @@ public class NetworkConfigFactory
     private static ModuleConfig ReadModuleConfig(final Properties properties,
             final String serverAddress, final int moduleIndex)
     {
-        final String namePropertyKey = String.format(MODULE_NAME_KEY, moduleIndex);
-        final String portPropertyKey = String.format(MODULE_PORT_KEY, moduleIndex);
+        final String criticalPropertyKey = String.format(MODULE_CRITICAL_KEY,
+                moduleIndex);
+        final String namePropertyKey = String.format(MODULE_NAME_KEY,
+                moduleIndex);
+        final String portPropertyKey = String.format(MODULE_PORT_KEY,
+                moduleIndex);
+        final String criticalString = properties
+                .getProperty(criticalPropertyKey);
         final String name = properties.getProperty(namePropertyKey);
         final String portString = properties.getProperty(portPropertyKey);
+        final boolean isCritical = criticalString == TRUE_VALUE ? true : false;
         final int port = Integer.parseInt(portString);
-        return new ModuleConfig(name, serverAddress, port);
+        return new ModuleConfig(name, serverAddress, port, isCritical);
     }
 
     /**
@@ -76,11 +87,16 @@ public class NetworkConfigFactory
     private static void SaveModuleToProperties(final Properties properties,
             final ModuleConfig moduleConfig, final int index)
     {
+        final String isCritical = moduleConfig.isCritical() ? TRUE_VALUE
+                : FALSE_VALUE;
+        final String criticalPropertyKey = String.format(MODULE_CRITICAL_KEY,
+                index);
         final String name = moduleConfig.getModuleName();
         final String namePropertyKey = String.format(MODULE_NAME_KEY, index);
         final int port = moduleConfig.getServerPort();
         final String portString = Integer.toString(port);
-        final String portPropertyKey = String.format(MODULE_PORT_KEY, port);
+        final String portPropertyKey = String.format(MODULE_PORT_KEY, index);
+        properties.setProperty(criticalPropertyKey, isCritical);
         properties.setProperty(namePropertyKey, name);
         properties.setProperty(portPropertyKey, portString);
     }
