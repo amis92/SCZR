@@ -6,7 +6,7 @@
 package burtis.tests.modules.network;
 
 import burtis.common.events.SimulationEvent;
-import burtis.modules.network.client.Client;
+import burtis.modules.network.client.ClientConnection;
 
 import java.io.IOException;
 import java.util.logging.ConsoleHandler;
@@ -29,10 +29,10 @@ public class TestClient
     {
         Handler consoleHandler = new ConsoleHandler();
         consoleHandler.setLevel(Level.ALL);
-        final Logger logger = Logger.getLogger(Client.class.getName());
+        final Logger logger = Logger.getLogger(ClientConnection.class.getName());
         logger.setLevel(Level.ALL);
         logger.addHandler(consoleHandler);
-        Client<SimulationEvent> client = new Client<>("127.0.0.1",
+        ClientConnection<SimulationEvent> client = new ClientConnection<>("127.0.0.1",
                 Integer.parseInt(args[0]));
         System.out.print("Connecting, port " + args[0]);
         client.connect();
@@ -51,7 +51,7 @@ public class TestClient
             System.out.println("\nTaking...");
             try
             {
-                System.out.println(client.getEventsBlockingQueue().take()
+                System.out.println(client.getIncomingQueue().take()
                         .sender());
             }
             catch (InterruptedException ex)

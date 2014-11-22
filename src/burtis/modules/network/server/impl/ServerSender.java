@@ -8,10 +8,10 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import burtis.modules.network.SocketService;
 import burtis.modules.network.server.ModuleConnection;
 import burtis.modules.network.server.Sender;
 import burtis.modules.network.server.Server;
-import burtis.modules.network.server.SocketService;
 
 /**
  * Sends objects using blocking queue on separate thread.
