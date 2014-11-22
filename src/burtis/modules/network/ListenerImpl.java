@@ -1,4 +1,4 @@
-package burtis.modules.network.server.impl;
+package burtis.modules.network;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -7,10 +7,7 @@ import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import burtis.modules.network.SocketService;
 import burtis.modules.network.server.Action;
-import burtis.modules.network.server.Listener;
-import burtis.modules.network.server.Server;
 
 /**
  * Listens for incoming traffic and forwards it to provided Consumer.
@@ -18,19 +15,21 @@ import burtis.modules.network.server.Server;
  * @author Amadeusz Sadowski
  *
  */
-public class ServerListener implements Listener
+public class ListenerImpl implements Listener
 {
-    private final Logger logger = Logger.getLogger(Server.class.getName());
+    private final Logger logger;
     private final Consumer<Object> receiver;
     private final Action reconnect;
     private final SocketService socketService;
 
-    public ServerListener(final SocketService socketService,
-            final Consumer<Object> receiver, final Action reconnect)
+    public ListenerImpl(final SocketService socketService,
+            final Consumer<Object> receiver, final Action reconnect,
+            final Logger logger)
     {
         this.socketService = socketService;
         this.receiver = receiver;
         this.reconnect = reconnect;
+        this.logger = logger;
     }
 
     @Override

@@ -61,6 +61,6 @@ public class TestClient
             }
         }
         System.in.read();
-        client.closeConnection();
+        client.close();
     }
 }
