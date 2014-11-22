@@ -8,6 +8,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import burtis.modules.network.server.Action;
+import burtis.modules.network.server.Listener;
 import burtis.modules.network.server.Server;
 import burtis.modules.network.server.SocketService;
 
@@ -17,7 +18,7 @@ import burtis.modules.network.server.SocketService;
  * @author Amadeusz Sadowski
  *
  */
-public class ServerListener
+public class ServerListener implements Listener
 {
     private final Logger logger = Logger.getLogger(Server.class.getName());
     private final Consumer<Object> receiver;
@@ -32,7 +33,8 @@ public class ServerListener
         this.reconnect = reconnect;
     }
 
-    public void listenOnSocket()
+    @Override
+    public void listen()
     {
         final int port = socketService.getPort();
         logger.log(Level.INFO, "Rozpoczęcie nasłuchiwania na porcie: " + port);

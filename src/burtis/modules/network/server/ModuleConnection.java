@@ -28,7 +28,7 @@ public class ModuleConnection
             .newSingleThreadExecutor();
     private ExecutorService listenerExecutor = Executors
             .newSingleThreadExecutor();
-    private final ServerListener listener;
+    private final Listener listener;
     private final Logger logger = Logger.getLogger(Server.class.getName());
     private final String moduleName;
     private final List<ModuleConnection> recipients = new ArrayList<ModuleConnection>();
@@ -106,7 +106,7 @@ public class ModuleConnection
             listenerExecutor.shutdownNow();
             listenerExecutor = Executors.newSingleThreadExecutor();
             socketService.connect();
-            listenerExecutor.execute(listener::listenOnSocket);
+            listenerExecutor.execute(listener::listen);
             logger.log(Level.INFO, String.format(
                     "Podłączył się klient '%1$s' na porcie %2$d", moduleName,
                     socketService.getPort()));
