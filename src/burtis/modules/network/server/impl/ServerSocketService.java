@@ -1,8 +1,9 @@
 package burtis.modules.network.server.impl;
 
 import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.net.InetSocketAddress;
+import java.nio.channels.ServerSocketChannel;
+import java.nio.channels.SocketChannel;
 import java.util.logging.Logger;
 
 import burtis.modules.network.AbstractSocketService;
@@ -31,10 +32,12 @@ public class ServerSocketService extends AbstractSocketService
     }
 
     @Override
-    protected Socket socketFactory() throws IOException
+    protected SocketChannel socketChannelFactory() throws IOException
     {
-        final ServerSocket serverSocket = new ServerSocket(getPort());
-        final Socket socket = serverSocket.accept();
+        final ServerSocketChannel serverSocket = ServerSocketChannel.open();
+        serverSocket.bind(new InetSocketAddress(getPort()));
+        final SocketChannel socket = serverSocket.accept();
+        socket.configureBlocking(true);
         serverSocket.close();
         return socket;
     }

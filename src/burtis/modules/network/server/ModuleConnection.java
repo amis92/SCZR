@@ -1,8 +1,7 @@
 package burtis.modules.network.server;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.nio.channels.ClosedByInterruptException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
@@ -25,7 +24,7 @@ import burtis.modules.network.SocketService;
  */
 public class ModuleConnection
 {
-    private final ExecutorService connectingExecutor = Executors
+    private ExecutorService connectingExecutor = Executors
             .newSingleThreadExecutor();
     private ExecutorService listenerExecutor = Executors
             .newSingleThreadExecutor();
@@ -33,7 +32,6 @@ public class ModuleConnection
     private final static Logger logger = Logger.getLogger(Server.class
             .getName());
     private final String moduleName;
-    private final List<ModuleConnection> recipients = new ArrayList<ModuleConnection>();
     private final SocketService socketService;
 
     public ModuleConnection(final String moduleName,
@@ -45,14 +43,10 @@ public class ModuleConnection
                 logger);
     }
 
-    public void addRecipient(final ModuleConnection module)
-    {
-        recipients.add(module);
-    }
-
     public void close()
     {
         listenerExecutor.shutdownNow();
+        connectingExecutor.shutdownNow();
         socketService.close();
     }
 
@@ -62,6 +56,8 @@ public class ModuleConnection
      */
     public void connect()
     {
+        connectingExecutor.shutdownNow();
+        connectingExecutor = Executors.newSingleThreadExecutor();
         connectingExecutor.execute(this::tryConnect);
     }
 
@@ -90,9 +86,13 @@ public class ModuleConnection
                     "Podłączył się klient '%1$s' na porcie %2$d", moduleName,
                     socketService.getPort()));
         }
+        catch (final ClosedByInterruptException e)
+        {
+            logger.info("Przerywam łączenie z modułem " + moduleName);
+        }
         catch (final IOException e)
         {
-            logger.log(Level.SEVERE, "Błąd tworzenia Listener'a", e);
+            logger.log(Level.SEVERE, "Błąd łączenia z modułem " + moduleName, e);
             throw new RuntimeException(e);
         }
     }

@@ -1,12 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates and open the template
- * in the editor.
- */
 package burtis.tests.modules.network;
-
-import burtis.common.events.SimulationEvent;
-import burtis.modules.network.client.ClientConnection;
 
 import java.io.IOException;
 import java.util.logging.ConsoleHandler;
@@ -14,53 +6,60 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import burtis.common.events.SimulationEvent;
+import burtis.modules.network.ModuleConfig;
+import burtis.modules.network.NetworkConfig;
+import burtis.modules.network.client.ClientConnection;
+import burtis.modules.network.client.ClientModule;
+
 /**
  *
  * @author Mikołaj Sowiński <mikolaj.sowinski@gmail.com>
+ * @author Amadeusz Sadowski
  */
 public class TestClient
 {
     /**
      * @param args
      *            the command line arguments
-     * @throws IOException 
+     * @throws IOException
      */
     public static void main(String[] args) throws IOException
     {
-        Handler consoleHandler = new ConsoleHandler();
-        consoleHandler.setLevel(Level.ALL);
-        final Logger logger = Logger.getLogger(ClientConnection.class.getName());
-        logger.setLevel(Level.ALL);
-        logger.addHandler(consoleHandler);
-        ClientConnection<SimulationEvent> client = new ClientConnection<>("127.0.0.1",
-                Integer.parseInt(args[0]));
-        System.out.print("Connecting, port " + args[0]);
+        logAll();
+        final ModuleConfig config = NetworkConfig.defaultConfig()
+                .getModuleConfigs().get(0);
+        final ClientModule client = new ClientModule(config);
+        System.out.println("Connecting, port " + config.getServerPort());
         client.connect();
-        while (!client.isConnected())
+        // sending
+        System.out.println("Sending...");
+        client.send(new SimulationEvent("TEST MESSAGE", new String[] { config
+                .getModuleName() }));
+        System.out.println("send executed");
+        // receiving
+        System.out.println("Taking...");
+        try
         {
-            System.out.print(".");
+            System.out.println(client.getIncomingQueue().take().sender());
         }
-        if (args[1].equals("s"))
+        catch (InterruptedException ex)
         {
-            System.out.println("\nSending...");
-            client.send(new SimulationEvent("TEST MESSAGE"));
-            System.out.println("send executed");
+            Logger.getLogger(TestClient.class.getName()).log(Level.SEVERE,
+                    null, ex);
         }
-        else
-        {
-            System.out.println("\nTaking...");
-            try
-            {
-                System.out.println(client.getIncomingQueue().take()
-                        .sender());
-            }
-            catch (InterruptedException ex)
-            {
-                Logger.getLogger(TestClient.class.getName()).log(Level.SEVERE,
-                        null, ex);
-            }
-        }
+        System.out.println("Naciśnij enter any zakończyć.");
         System.in.read();
         client.close();
+    }
+
+    private static void logAll()
+    {
+        Handler consoleHandler = new ConsoleHandler();
+        consoleHandler.setLevel(Level.ALL);
+        final Logger logger = Logger
+                .getLogger(ClientConnection.class.getName());
+        logger.setLevel(Level.ALL);
+        logger.addHandler(consoleHandler);
     }
 }

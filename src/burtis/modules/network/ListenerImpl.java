@@ -1,8 +1,7 @@
 package burtis.modules.network;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.net.Socket;
+import java.nio.channels.AsynchronousCloseException;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -21,6 +20,7 @@ public class ListenerImpl implements Listener
     private final Consumer<Object> receiver;
     private final Action reconnect;
     private final SocketService socketService;
+    private volatile boolean isInterrupted = false;
 
     public ListenerImpl(final SocketService socketService,
             final Consumer<Object> receiver, final Action reconnect,
@@ -37,28 +37,23 @@ public class ListenerImpl implements Listener
     {
         final int port = socketService.getPort();
         logger.log(Level.INFO, "Rozpoczęcie nasłuchiwania na porcie: " + port);
-        while (!Thread.interrupted() && socketService.isConnected())
+        while (!isInterrupted && socketService.isConnected())
         {
-            socketService.readFromSocket(this::awaitAndAccept);
+            awaitAndAccept();
         }
         logger.log(Level.INFO, "Koniec nasłuchiwania na porcie: " + port);
     }
 
-    private void awaitAndAccept(Socket socket)
+    private void awaitAndAccept()
     {
         try
         {
-            ObjectInputStream ois = new ObjectInputStream(
-                    socket.getInputStream());
-            logger.log(Level.FINEST, "Czekam na obiekt");
-            Object object = ois.readObject();
-            logger.log(Level.FINEST, "Dostalem obiekt: "
-                    + object.getClass().getName());
-            receiver.accept(object);
+            socketService.readFromSocket(receiver);
         }
-        catch (ClassNotFoundException e)
+        catch (final AsynchronousCloseException e)
         {
-            logger.log(Level.WARNING, "Ignorowanie nieznanej klasy", e);
+            isInterrupted = true;
+            logger.info("Interrupt - Przerywam nasłuchiwanie.");
         }
         catch (IOException e)
         {

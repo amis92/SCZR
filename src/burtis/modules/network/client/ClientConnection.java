@@ -1,7 +1,7 @@
 package burtis.modules.network.client;
 
 import java.io.IOException;
-import java.io.ObjectOutputStream;
+import java.nio.channels.ClosedByInterruptException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -10,7 +10,6 @@ import java.util.logging.Logger;
 
 import burtis.modules.network.Listener;
 import burtis.modules.network.ListenerImpl;
-import burtis.modules.network.server.Server;
 
 /**
  * Sends and receives objects to/from server.
@@ -22,12 +21,12 @@ import burtis.modules.network.server.Server;
  */
 public class ClientConnection<T>
 {
-    private final static Logger logger = Logger.getLogger(Server.class
-            .getName());
+    private final static Logger logger = Logger
+            .getLogger(ClientConnection.class.getName());
     /**
      * Queue of events received from server.
      */
-    private LinkedBlockingQueue<T> incomingQueue = new LinkedBlockingQueue<T>();
+    protected final LinkedBlockingQueue<T> incomingQueue = new LinkedBlockingQueue<T>();
     private final Listener listener;
     private ExecutorService listenerExecutor = Executors
             .newSingleThreadExecutor();
@@ -42,6 +41,8 @@ public class ClientConnection<T>
 
     public void close()
     {
+        listenerExecutor.shutdownNow();
+        listenerExecutor = Executors.newSingleThreadExecutor();
         socketService.close();
     }
 
@@ -52,12 +53,15 @@ public class ClientConnection<T>
             logger.info(String.format(
                     "Oczekuję na połączenie z serwerem na porcie %d",
                     socketService.getPort()));
-            listenerExecutor.shutdownNow();
-            listenerExecutor = Executors.newSingleThreadExecutor();
+            close();
             socketService.connect();
             listenerExecutor.execute(listener::listen);
             logger.info(String.format("Podłączono do serwera na porcie %d",
                     socketService.getPort()));
+        }
+        catch (final ClosedByInterruptException e)
+        {
+            logger.info("Przerywam łączenie z serwerem.");
         }
         catch (final IOException e)
         {
@@ -66,9 +70,9 @@ public class ClientConnection<T>
         }
     }
 
-    public LinkedBlockingQueue<T> getIncomingQueue()
+    public T takeFromQueue() throws InterruptedException
     {
-        return incomingQueue;
+        return incomingQueue.take();
     }
 
     public boolean isConnected()
@@ -97,20 +101,14 @@ public class ClientConnection<T>
 
     public void send(Object objectToSend)
     {
-        socketService.writeToSocket((socket) ->
+        logger.entering("write to socket", null);
+        try
         {
-            ObjectOutputStream oos = null;
-            try
-            {
-                oos = new ObjectOutputStream(socket.getOutputStream());
-                oos.writeObject(objectToSend);
-                oos.flush();
-                logger.log(Level.FINEST, "Wysłałem");
-            }
-            catch (Exception e)
-            {
-                logger.log(Level.WARNING, "Błąd wysyłania", e);
-            }
-        });
+            socketService.writeToSocket(objectToSend);
+        }
+        catch (Exception e)
+        {
+            logger.log(Level.WARNING, "Błąd wysyłania", e);
+        }
     }
 }

@@ -2,12 +2,11 @@ package burtis.modules.network.client;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.net.Socket;
 import java.net.SocketAddress;
+import java.nio.channels.SocketChannel;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 
-import main.SimulatorConstants;
 import burtis.modules.network.AbstractSocketService;
 
 /**
@@ -24,8 +23,8 @@ import burtis.modules.network.AbstractSocketService;
  */
 class ClientSocketService extends AbstractSocketService
 {
-    private static final Logger logger = Logger.getLogger(ClientConnection.class
-            .getName());
+    private static final Logger logger = Logger
+            .getLogger(ClientConnection.class.getName());
     private final String serverAddress;
 
     /**
@@ -43,12 +42,14 @@ class ClientSocketService extends AbstractSocketService
     }
 
     @Override
-    protected Socket socketFactory() throws IOException
+    protected SocketChannel socketChannelFactory() throws IOException
     {
         final SocketAddress address = new InetSocketAddress(serverAddress,
                 getPort());
-        final Socket socket = new Socket();
-        socket.connect(address, SimulatorConstants.connectingTimeout);
-        return socket;
+        final SocketChannel socketChannel = SocketChannel.open();
+        socketChannel.configureBlocking(true);
+        socketChannel.connect(address);
+        socketChannel.finishConnect();
+        return socketChannel;
     }
 }

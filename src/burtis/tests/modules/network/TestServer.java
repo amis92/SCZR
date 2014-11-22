@@ -11,7 +11,7 @@ import burtis.modules.network.server.Server;
 
 public class TestServer
 {
-    public static void main(String[] args) throws InterruptedException
+    public static void main(String[] args) throws InterruptedException, IOException
     {
         Handler consoleHandler = new ConsoleHandler();
         consoleHandler.setLevel(Level.ALL);
@@ -20,15 +20,8 @@ public class TestServer
         logger.addHandler(consoleHandler);
         Server server = new Server(NetworkConfig.defaultConfig());
         server.run();
-        try
-        {
-            System.in.read();
-        }
-        catch (IOException ex)
-        {
-            Logger.getLogger(TestServer.class.getName()).log(Level.SEVERE,
-                    null, ex);
-        }
+        System.out.println("Naciśnij enter any zakończyć.");
+        System.in.read();
         server.stop();
     }
 }
