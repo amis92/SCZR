@@ -1,4 +1,4 @@
-package burtis.modules.network.server;
+package burtis.modules.network.server.impl;
 
 import java.io.ObjectOutputStream;
 import java.util.concurrent.BlockingQueue;
@@ -8,13 +8,18 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import burtis.modules.network.server.ModuleConnection;
+import burtis.modules.network.server.Sender;
+import burtis.modules.network.server.Server;
+import burtis.modules.network.server.SocketService;
+
 /**
  * Sends objects using blocking queue on separate thread.
  * 
  * @author Amadeusz Sadowski
  *
  */
-class SendingService implements Sender
+public class SendingService implements Sender
 {
     private final Logger logger = Logger.getLogger(Server.class.getName());
     private ExecutorService sendingExecutor = Executors

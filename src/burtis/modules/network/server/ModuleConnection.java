@@ -9,6 +9,7 @@ import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import burtis.modules.network.server.impl.ServerListener;
 import order.ServerOrder;
 
 /**
@@ -21,7 +22,7 @@ import order.ServerOrder;
  * @author Amadeusz Sadowski
  *
  */
-class ModuleConnection
+public class ModuleConnection
 {
     private final ExecutorService connectingExecutor = Executors
             .newSingleThreadExecutor();
@@ -87,9 +88,8 @@ class ModuleConnection
         {
             for (ModuleConnection recipient : recipients)
             {
-                logger.finest(String.format(
-                        "Moduł %s przekazuje %s do %s", moduleName,
-                        receivedObject.getClass().getName(),
+                logger.finest(String.format("Moduł %s przekazuje %s do %s",
+                        moduleName, receivedObject.getClass().getName(),
                         recipient.moduleName));
                 sender.send(receivedObject, recipient);
             }

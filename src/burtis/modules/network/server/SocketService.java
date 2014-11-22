@@ -10,7 +10,7 @@ import java.util.function.Consumer;
  * @author Amadeusz Sadowski
  *
  */
-interface SocketService
+public interface SocketService
 {
     /**
      * Attempts to close socket. Fails silently.

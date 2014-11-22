@@ -11,6 +11,7 @@ import order.ServerOrder;
 import order.ServerOrderExecutor;
 import burtis.modules.network.ModuleConfig;
 import burtis.modules.network.NetworkConfig;
+import burtis.modules.network.server.impl.SendingService;
 
 /**
  * Performs traffic forwarding according to configuration provided. All traffic

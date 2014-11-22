@@ -4,6 +4,7 @@ import java.util.function.Consumer;
 
 import order.ServerOrder;
 import burtis.modules.network.ModuleConfig;
+import burtis.modules.network.server.impl.ServerSocketService;
 
 /**
  * Allows creation of module connection objects from provided configuration

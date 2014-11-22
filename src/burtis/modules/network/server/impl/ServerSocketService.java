@@ -1,4 +1,4 @@
-package burtis.modules.network.server;
+package burtis.modules.network.server.impl;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -8,6 +8,9 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import burtis.modules.network.server.Server;
+import burtis.modules.network.server.SocketService;
 
 /**
  * Methods in this implementation are thread-safe. Each call tries to acquire
@@ -20,7 +23,7 @@ import java.util.logging.Logger;
  * @author Amadeusz Sadowski
  *
  */
-class ServerSocketService implements SocketService
+public class ServerSocketService implements SocketService
 {
     private final Logger logger = Logger.getLogger(Server.class.getName());
     private final int port;
