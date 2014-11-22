@@ -10,7 +10,6 @@ import java.util.logging.Logger;
 
 import burtis.modules.network.Listener;
 import burtis.modules.network.ListenerImpl;
-import burtis.modules.network.server.Action;
 import burtis.modules.network.server.Server;
 
 /**
@@ -37,20 +36,8 @@ public class ClientConnection<T>
     public ClientConnection(final String serverAddress, final int serverPort)
     {
         this.socketService = new ClientSocketService(serverAddress, serverPort);
-        Action reconnect = () ->
-        {
-            try
-            {
-                connect();
-            }
-            catch (IOException e)
-            {
-                logger.severe("Klient nie mógł połączyć się ponownie.");
-                throw new RuntimeException(e);
-            }
-        };
         this.listener = new ListenerImpl(socketService, this::receive,
-                reconnect, logger);
+                this::reconnect, logger);
     }
 
     public void close()
@@ -93,6 +80,19 @@ public class ClientConnection<T>
     private void receive(Object receivedObject)
     {
         incomingQueue.add((T) receivedObject);
+    }
+
+    private void reconnect()
+    {
+        try
+        {
+            connect();
+        }
+        catch (IOException e)
+        {
+            logger.severe("Klient nie mógł połączyć się ponownie.");
+            throw new RuntimeException(e);
+        }
     }
 
     public void send(Object objectToSend)

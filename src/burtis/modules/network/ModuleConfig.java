@@ -1,37 +1,17 @@
 package burtis.modules.network;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class ModuleConfig
 {
-    private final List<String> connectedModuleNames;
     private final String moduleName;
-    private final int port;
+    private final String serverAddress;
+    private final int serverPort;
 
-    public ModuleConfig(final String moduleName, int port,
-            String[] connectedModuleNames)
+    public ModuleConfig(final String moduleName, final String serverAddress,
+            int serverPort)
     {
-        this.connectedModuleNames = new ArrayList<String>(connectedModuleNames.length);
-        for (String name : connectedModuleNames)
-        {
-            this.connectedModuleNames.add(name);
-        }
         this.moduleName = moduleName;
-        this.port = port;
-    } 
-
-    public ModuleConfig(final String moduleName, int port,
-            List<String> connectedModuleNames)
-    {
-        this.connectedModuleNames = connectedModuleNames;
-        this.moduleName = moduleName;
-        this.port = port;
-    }
-
-    public List<String> getConnectedModuleNames()
-    {
-        return connectedModuleNames;
+        this.serverPort = serverPort;
+        this.serverAddress = serverAddress;
     }
 
     public String getModuleName()
@@ -39,8 +19,13 @@ public class ModuleConfig
         return moduleName;
     }
 
-    public int getPort()
+    public int getServerPort()
     {
-        return port;
+        return serverPort;
+    }
+
+    public String getServerAddress()
+    {
+        return serverAddress;
     }
 }

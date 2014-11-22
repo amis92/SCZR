@@ -29,7 +29,7 @@ public class ModuleConnectionFactory
     public ModuleConnection createFromConfig(ModuleConfig moduleConfig)
     {
         final String moduleName = moduleConfig.getModuleName();
-        final int port = moduleConfig.getPort();
+        final int port = moduleConfig.getServerPort();
         final SocketService socketService = new ServerSocketService(port);
         final ModuleConnection connection = new ModuleConnection(moduleName,
                 socketService, sender, serverOrderExecutor);

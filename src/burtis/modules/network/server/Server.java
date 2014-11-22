@@ -26,31 +26,23 @@ import burtis.modules.network.server.impl.ServerSender;
  */
 public class Server implements ServerOrderExecutor
 {
-    private final Logger logger = Logger.getLogger(Server.class.getName());
+    private final static Logger logger = Logger.getLogger(Server.class
+            .getName());
     private final ServerSender sendingService = new ServerSender();
     private final Collection<ModuleConnection> moduleConnections;
+    private final Map<String, ModuleConnection> moduleMap = new HashMap<>();
 
     public Server(final NetworkConfig netConfig)
     {
         final Collection<ModuleConfig> configs = netConfig.getModuleConfigs();
         this.moduleConnections = new ArrayList<>(configs.size());
-        final Map<String, ModuleConnection> moduleMap = new HashMap<>();
         final ModuleConnectionFactory factory = new ModuleConnectionFactory(
-                sendingService, this::executeOrder);
+                sendingService, this::forward);
         for (ModuleConfig config : configs)
         {
             ModuleConnection connection = factory.createFromConfig(config);
             moduleConnections.add(connection);
             moduleMap.put(connection.getModuleName(), connection);
-        }
-        for (ModuleConfig config : configs)
-        {
-            String moduleName = config.getModuleName();
-            ModuleConnection connection = moduleMap.get(moduleName);
-            for (String name : config.getConnectedModuleNames())
-            {
-                connection.addRecipient(moduleMap.get(name));
-            }
         }
     }
 
@@ -77,8 +69,7 @@ public class Server implements ServerOrderExecutor
         logger.log(Level.INFO, "Server stopped");
     }
 
-    private void executeOrder(ServerOrder order)
+    private void forward(Object receivedObject)
     {
-        order.execute(this);
     }
 }

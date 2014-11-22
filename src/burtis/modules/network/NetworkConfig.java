@@ -17,7 +17,7 @@ public class NetworkConfig
 
     public List<ModuleConfig> getModuleConfigs()
     {
-        return moduleConfigs;
+        return new ArrayList<ModuleConfig>(moduleConfigs);
     }
 
     public String getServerAddress()
@@ -28,13 +28,17 @@ public class NetworkConfig
     public static NetworkConfig defaultConfig()
     {
         String serverAddress = "127.0.0.1";
-        List<ModuleConfig> configs = new ArrayList<ModuleConfig>(3);
-        String guiName = "GUI Module";
-        String simName = "Simulation Module";
-        String psngrName = "Passengers Module";
-        configs.add(new ModuleConfig(guiName, 8123, new String[]{psngrName}));
-        configs.add(new ModuleConfig(psngrName, 8124, new String[]{simName, guiName}));
-        configs.add(new ModuleConfig(simName, 8125, new String[]{psngrName}));
+        List<ModuleConfig> configs = new ArrayList<ModuleConfig>(5);
+        String guiName  = "GUI Module";
+        String syncName = "Synchronization Module";
+        String busName  = "Bus Scheduling Module";
+        String psgrName = "Passengers Module";
+        String simName  = "Simulation Module";
+        configs.add(new ModuleConfig(guiName,   serverAddress, 8121));
+        configs.add(new ModuleConfig(syncName,  serverAddress, 8122));
+        configs.add(new ModuleConfig(busName,   serverAddress, 8123));
+        configs.add(new ModuleConfig(psgrName,  serverAddress, 8124));
+        configs.add(new ModuleConfig(simName,   serverAddress, 8125));
         return new NetworkConfig(serverAddress, configs);
     }
 }
