@@ -19,7 +19,7 @@ import burtis.modules.network.server.SocketService;
  * @author Amadeusz Sadowski
  *
  */
-public class SendingService implements Sender
+public class ServerSender implements Sender
 {
     private final Logger logger = Logger.getLogger(Server.class.getName());
     private ExecutorService sendingExecutor = Executors
@@ -29,7 +29,7 @@ public class SendingService implements Sender
     /**
      * Creates non-running service. To run, call {@link #startSending()}.
      */
-    public SendingService()
+    public ServerSender()
     {
     }
 

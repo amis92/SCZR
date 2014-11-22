@@ -11,7 +11,7 @@ import order.ServerOrder;
 import order.ServerOrderExecutor;
 import burtis.modules.network.ModuleConfig;
 import burtis.modules.network.NetworkConfig;
-import burtis.modules.network.server.impl.SendingService;
+import burtis.modules.network.server.impl.ServerSender;
 
 /**
  * Performs traffic forwarding according to configuration provided. All traffic
@@ -27,7 +27,7 @@ import burtis.modules.network.server.impl.SendingService;
 public class Server implements ServerOrderExecutor
 {
     private final Logger logger = Logger.getLogger(Server.class.getName());
-    private final SendingService sendingService = new SendingService();
+    private final ServerSender sendingService = new ServerSender();
     private final Collection<ModuleConnection> moduleConnections;
 
     public Server(final NetworkConfig netConfig)
