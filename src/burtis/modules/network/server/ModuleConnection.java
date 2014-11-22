@@ -87,6 +87,10 @@ class ModuleConnection
         {
             for (ModuleConnection recipient : recipients)
             {
+                logger.finest(String.format(
+                        "Moduł %s przekazuje %s do %s", moduleName,
+                        receivedObject.getClass().getName(),
+                        recipient.moduleName));
                 sender.send(receivedObject, recipient);
             }
         }

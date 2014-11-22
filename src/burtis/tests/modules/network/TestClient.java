@@ -8,6 +8,7 @@ package burtis.tests.modules.network;
 import burtis.common.events.SimulationEvent;
 import burtis.modules.network.client.Client;
 
+import java.io.IOException;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -22,8 +23,9 @@ public class TestClient
     /**
      * @param args
      *            the command line arguments
+     * @throws IOException 
      */
-    public static void main(String[] args)
+    public static void main(String[] args) throws IOException
     {
         Handler consoleHandler = new ConsoleHandler();
         consoleHandler.setLevel(Level.ALL);
@@ -58,6 +60,7 @@ public class TestClient
                         null, ex);
             }
         }
+        System.in.read();
         client.closeConnection();
     }
 }
