@@ -12,7 +12,6 @@ import java.util.logging.Logger;
 import burtis.modules.network.Listener;
 import burtis.modules.network.ListenerImpl;
 import burtis.modules.network.SocketService;
-import order.ServerOrder;
 
 /**
  * Manages connection on given port. Awaits for incoming connection. After it's
@@ -35,20 +34,15 @@ public class ModuleConnection
             .getName());
     private final String moduleName;
     private final List<ModuleConnection> recipients = new ArrayList<ModuleConnection>();
-    private final Sender sender;
-    private final Consumer<ServerOrder> serverOrderExecutor;
     private final SocketService socketService;
 
     public ModuleConnection(final String moduleName,
-            final SocketService socketService, final Sender sender,
-            final Consumer<ServerOrder> serverOrderExecutor)
+            final SocketService socketService, final Consumer<Object> receive)
     {
         this.moduleName = moduleName;
-        this.sender = sender;
-        this.serverOrderExecutor = serverOrderExecutor;
         this.socketService = socketService;
-        this.listener = new ListenerImpl(socketService, this::receive,
-                this::connect, logger);
+        this.listener = new ListenerImpl(socketService, receive, this::connect,
+                logger);
     }
 
     public void addRecipient(final ModuleConnection module)
@@ -79,24 +73,6 @@ public class ModuleConnection
     public SocketService getSocketService()
     {
         return socketService;
-    }
-
-    private void receive(final Object receivedObject)
-    {
-        if (receivedObject instanceof ServerOrder)
-        {
-            serverOrderExecutor.accept((ServerOrder) receivedObject);
-        }
-        else
-        {
-            for (ModuleConnection recipient : recipients)
-            {
-                logger.finest(String.format("Moduł %s przekazuje %s do %s",
-                        moduleName, receivedObject.getClass().getName(),
-                        recipient.moduleName));
-                sender.send(receivedObject, recipient);
-            }
-        }
     }
 
     private void tryConnect()

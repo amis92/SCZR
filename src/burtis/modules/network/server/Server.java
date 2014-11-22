@@ -8,7 +8,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import order.ServerOrder;
-import order.ServerOrderExecutor;
+import burtis.common.events.SimulationEvent;
 import burtis.modules.network.ModuleConfig;
 import burtis.modules.network.NetworkConfig;
 import burtis.modules.network.server.impl.ServerSender;
@@ -24,11 +24,11 @@ import burtis.modules.network.server.impl.ServerSender;
  * @author Amadeusz Sadowski
  *
  */
-public class Server implements ServerOrderExecutor
+public class Server
 {
     private final static Logger logger = Logger.getLogger(Server.class
             .getName());
-    private final ServerSender sendingService = new ServerSender();
+    private final ServerSender sender = new ServerSender();
     private final Collection<ModuleConnection> moduleConnections;
     private final Map<String, ModuleConnection> moduleMap = new HashMap<>();
 
@@ -37,19 +37,14 @@ public class Server implements ServerOrderExecutor
         final Collection<ModuleConfig> configs = netConfig.getModuleConfigs();
         this.moduleConnections = new ArrayList<>(configs.size());
         final ModuleConnectionFactory factory = new ModuleConnectionFactory(
-                sendingService, this::forward);
-        for (ModuleConfig config : configs)
-        {
-            ModuleConnection connection = factory.createFromConfig(config);
-            moduleConnections.add(connection);
-            moduleMap.put(connection.getModuleName(), connection);
-        }
+                moduleConnections, moduleMap, this::receive);
+        factory.readConfig(netConfig);
     }
 
     public void run()
     {
         logger.log(Level.INFO, "Server preparing to run");
-        sendingService.startSending();
+        sender.startSending();
         for (ModuleConnection moduleConnection : moduleConnections)
         {
             moduleConnection.connect();
@@ -57,7 +52,6 @@ public class Server implements ServerOrderExecutor
         logger.log(Level.INFO, "Server running");
     }
 
-    @Override
     public void stop()
     {
         logger.log(Level.INFO, "Server stopping...");
@@ -65,11 +59,38 @@ public class Server implements ServerOrderExecutor
         {
             moduleConnection.close();
         }
-        sendingService.stopSending();
+        sender.stopSending();
         logger.log(Level.INFO, "Server stopped");
     }
 
-    private void forward(Object receivedObject)
+    private void receive(Object receivedObject)
     {
+        if (receivedObject instanceof SimulationEvent)
+        {
+            SimulationEvent event = (SimulationEvent) receivedObject;
+            logger.finer("Przesyłam dalej obiekt " + event.getClass().getName());
+            processEvent(event);
+        }
+        else
+        {
+            logger.warning("Odebrałem nieprawidłowy obiekt: "
+                    + receivedObject.getClass().getName());
+        }
+    }
+
+    private void processEvent(SimulationEvent event)
+    {
+        for (String recipientName : event.getRecipients())
+        {
+            if (moduleMap.containsKey(recipientName))
+            {
+                sender.send(event, moduleMap.get(recipientName));
+            }
+            else
+            {
+                logger.warning("Brak takiego modułu - nie można przesłać zdarzenia do "
+                        + recipientName);
+            }
+        }
     }
 }
