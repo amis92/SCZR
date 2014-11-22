@@ -34,7 +34,7 @@ class ServerListener
         logger.log(Level.INFO, "Rozpoczęcie nasłuchiwania na porcie: " + port);
         while (!Thread.interrupted() && socketService.isConnected())
         {
-            socketService.useSocket(this::awaitAndAccept);
+            socketService.readFromSocket(this::awaitAndAccept);
         }
         logger.log(Level.INFO, "Koniec nasłuchiwania na porcie: " + port);
     }

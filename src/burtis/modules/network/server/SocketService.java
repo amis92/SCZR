@@ -50,5 +50,16 @@ interface SocketService
      * @param action
      *            It's called with the socket of this service.
      */
-    public void useSocket(Consumer<Socket> action);
+    public void writeToSocket(Consumer<Socket> action);
+
+    /**
+     * Allows for thread-safe reading. This method acquires read-lock, but
+     * doesn't lock socket from being closed or written to in the meantime. The
+     * only assert it provides is that only one thread may call this method at
+     * once.
+     * 
+     * @param action
+     *            It's called with the socket of this service.
+     */
+    public void readFromSocket(Consumer<Socket> action);
 }

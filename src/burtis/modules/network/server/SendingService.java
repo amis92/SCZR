@@ -84,7 +84,7 @@ class SendingService implements Sender
             return;
         }
         logger.log(Level.FINEST, "Wysyłam do " + recipientPort);
-        recipientSocketService.useSocket((socket) ->
+        recipientSocketService.writeToSocket((socket) ->
         {
             ObjectOutputStream oos = null;
             try

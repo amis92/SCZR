@@ -27,6 +27,7 @@ class ServerSocketService implements SocketService
     private Socket socket;
     private final Lock socketChangingLock = new ReentrantLock();
     private final Lock socketInUseLock = new ReentrantLock();
+    private final Lock socketBeingRead = new ReentrantLock();
 
     public ServerSocketService(final int port)
     {
@@ -112,12 +113,29 @@ class ServerSocketService implements SocketService
     }
 
     @Override
-    public void useSocket(Consumer<Socket> action)
+    public void readFromSocket(Consumer<Socket> action)
+    {
+        socketBeingRead.lock();
+        try
+        {
+            if (socket == null)
+            {
+                return;
+            }
+            action.accept(socket);
+        }
+        finally
+        {
+            socketBeingRead.unlock();
+        }
+    }
+
+    @Override
+    public void writeToSocket(Consumer<Socket> action)
     {
         socketInUseLock.lock();
         try
         {
-            
             if (socket == null)
             {
                 return;
