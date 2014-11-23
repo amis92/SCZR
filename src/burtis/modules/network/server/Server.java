@@ -8,7 +8,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import order.ServerOrder;
+import burtis.common.events.EventProcessor;
 import burtis.common.events.SimulationEvent;
+import burtis.common.events.TerminateSimulationEvent;
 import burtis.modules.network.ModuleConfig;
 import burtis.modules.network.NetworkConfig;
 import burtis.modules.network.server.impl.ServerSender;
@@ -24,7 +26,7 @@ import burtis.modules.network.server.impl.ServerSender;
  * @author Amadeusz Sadowski
  *
  */
-public class Server
+public class Server extends EventProcessor
 {
     private final static Logger logger = Logger.getLogger(Server.class
             .getName());
@@ -69,7 +71,7 @@ public class Server
         {
             SimulationEvent event = (SimulationEvent) receivedObject;
             logger.finer("Przesyłam dalej obiekt " + event.getClass().getName());
-            processEvent(event);
+            process(event);
         }
         else
         {
@@ -78,19 +80,35 @@ public class Server
         }
     }
 
-    private void processEvent(SimulationEvent event)
+    @Override
+    public void process(SimulationEvent event)
     {
         for (String recipientName : event.getRecipients())
         {
-            if (moduleMap.containsKey(recipientName))
-            {
-                sender.send(event, moduleMap.get(recipientName));
-            }
-            else
-            {
-                logger.warning("Brak takiego modułu - nie można przesłać zdarzenia do "
-                        + recipientName);
-            }
+            forward(event, recipientName);
+        }
+    }
+
+    @Override
+    public void process(TerminateSimulationEvent event)
+    {
+        for (ModuleConnection moduleConnection : moduleConnections)
+        {
+            sender.send(event, moduleConnection);
+        }
+        stop();
+    }
+
+    private void forward(SimulationEvent event, String recipientName)
+    {
+        if (moduleMap.containsKey(recipientName))
+        {
+            sender.send(event, moduleMap.get(recipientName));
+        }
+        else
+        {
+            logger.warning("Brak takiego modułu - nie można przesłać zdarzenia do "
+                    + recipientName);
         }
     }
 }
