@@ -14,15 +14,7 @@ public class BusStop
     private final int position;
     private final String name;
     
-    private final Queue waitingBuses  = new LinkedList<WaitingBus>();
-    
-    private class WaitingBus 
-    {
-        private final int id;
-        
-        public WaitingBus(int id) { this.id = id; }
-        public int id() { return id; }
-    }
+    private final Queue waitingBuses  = new LinkedList<Integer>();
     
     private static class IDGenerator
     {
@@ -47,13 +39,30 @@ public class BusStop
         
     }
     
+    public int getId() {
+        return id;
+    }
+    
+    public String getName() {
+        return name;
+    }
+    
+    public int getPosition() {
+        return position;
+    }
+    
     public String getState() {
         if(waitingBuses.size()>0) {
             return "BUSSTOP: " + name + " POS: " + position + " WAITING: " 
-                + waitingBuses.size() + " ACTIVE: " + ((WaitingBus) waitingBuses.element()).id();
+                + waitingBuses.size() + " ACTIVE: " + waitingBuses.element();
         }
         else {
             return "BUSSTOP: " + name + " POS: " + position + " WAITING: 0";
         }
     }
+    
+    public void enqueueBus(int busId) {
+        this.waitingBuses.add(busId);
+    }
+
 }

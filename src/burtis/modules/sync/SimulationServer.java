@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -33,7 +34,7 @@ import java.util.logging.Logger;
  * @author Mikołaj Sowiński
  *
  */
-public class SimulationServer extends EventProcessor implements Runnable
+public class SimulationServer implements Runnable
 {
     
     private static final Logger logger = Logger.getLogger(SimulationServer.class.getName());
@@ -96,11 +97,6 @@ public class SimulationServer extends EventProcessor implements Runnable
     private AtomicBoolean stopped = new AtomicBoolean();
     
     /**
-     * Terminates main thread.
-     */
-    private AtomicBoolean stopMainThread = new AtomicBoolean();
-
-    /**
      * Ready for next tick.
      */
     private AtomicBoolean readyForTick = new AtomicBoolean();
@@ -113,26 +109,45 @@ public class SimulationServer extends EventProcessor implements Runnable
     /**
      * Tick thread.
      */
-    private final ScheduledExecutorService tickService = Executors.newSingleThreadScheduledExecutor();
+    private Thread tickService;
     
     /**
      * Dead module watchdog.
      */
-    private final ScheduledExecutorService watchdogService = Executors.newSingleThreadScheduledExecutor();
+    private Thread watchdogService;
     
     /**
      * Time of the start of iteration.     
      */
     private AtomicLong iterationStartTime = new AtomicLong();
+    
+    private AtomicBoolean executeOnce = new AtomicBoolean(false);
+    
+    private void handleEvent(SimulationEvent event) {
         
-    @Override
-    public void process(StartSimulationEvent event) 
+        if(event instanceof StartSimulationEvent) {
+            startSimulation((StartSimulationEvent)event);            
+        }
+        else if(event instanceof PauseSimulationEvent) {
+            pauseSimulation((PauseSimulationEvent)event);
+        }
+        else if(event instanceof DoStepEvent) {
+            doStep((DoStepEvent)event);
+        }
+        else if(event instanceof CycleCompletedEvent) {
+            cycleCompleted((CycleCompletedEvent)event);
+        }
+        else {
+            defaultEventHandler(event);
+        }
+    }
+        
+    private void startSimulation(StartSimulationEvent event) 
     {
-        System.out.println("START");
-        if(!stopped.get()) {
-            System.out.println("!!!! Sheduling ticks");
+        if(stopped.get()) {
+            executeOnce.set(false);
             readyForTick.set(true);
-            tickService.scheduleAtFixedRate(new TickTask(), 0, iterationTime, TimeUnit.MILLISECONDS);
+            tickService.start();
             stopped.set(false);
         }
         else {
@@ -140,8 +155,7 @@ public class SimulationServer extends EventProcessor implements Runnable
         }
     }
 
-    @Override
-    public void process(PauseSimulationEvent event) {
+    private void pauseSimulation(PauseSimulationEvent event) {
         if(!stopped.get()) {
             pauseSimulation();
         }
@@ -150,18 +164,17 @@ public class SimulationServer extends EventProcessor implements Runnable
         }
     }
 
-    @Override
-    public void process(DoStepEvent event) {
+    private void doStep(DoStepEvent event) {
         // Preparations
-        if(!tickService.isTerminated()) {
+        if(tickService.isAlive()) {
             pauseSimulation();                    
         }
         logger.log(Level.INFO, "Doing one step of simulation.");
-        tickService.schedule(new TickTask(), 0, TimeUnit.MILLISECONDS);
+        executeOnce.set(true);
+        tickService.start();
     }
 
-    @Override
-    public void process(CycleCompletedEvent event) {
+    private void cycleCompleted(CycleCompletedEvent event) {
         // Being not in sync is uncacceptable.
         if(event.iteration() != iteration.get()) {
             logger.log(Level.SEVERE, "Synchronization error. "
@@ -170,8 +183,13 @@ public class SimulationServer extends EventProcessor implements Runnable
         }
         else {
             moduleStates.put(event.sender(), true);
+            checkIgnoredModules(event);
             checkNextIterationClearance();
         }
+    }
+    
+    private void defaultEventHandler(SimulationEvent event) {
+        logger.log(Level.WARNING, "Unhandeled event type: {0}", event.getClass().getSimpleName());
     }
     
     /**
@@ -179,21 +197,43 @@ public class SimulationServer extends EventProcessor implements Runnable
      */
     private class TickTask implements Runnable
     {
+                
         @Override
         public void run() {
-            while(!readyForTick.get() && !Thread.interrupted()) {}
-        
-            if(!Thread.interrupted()) {
-                readyForTick.set(false);
-                // Set all states false
-                for(String moduleName : modules) {
-                    moduleStates.put(moduleName, false);
+            
+            while(!Thread.interrupted()) {
+                            
+                while(!readyForTick.get()) {
+                    if(Thread.interrupted()) return;
                 }
-                
-                iterationStartTime.set(System.nanoTime());
-                watchdogService.schedule(new ModuleWatchdog(), moduleResponseTimeout, TimeUnit.MILLISECONDS);
-                client.send(new TickEvent(config.getModuleName(), iteration.get()));
-                logger.log(Level.INFO, "Simulation step {0}", iteration.get());
+
+                if(!Thread.interrupted()) {
+                    
+                    readyForTick.set(false);
+  
+                    for(String moduleName : modules) {
+                        moduleStates.put(moduleName, false);
+                    }
+
+                    iteration.getAndIncrement();
+                    
+                    if(watchdogService.isAlive()) {
+                        watchdogService.interrupt();
+                        try {
+                            watchdogService.join();
+                        } catch (InterruptedException ex) {
+                            Logger.getLogger(SimulationServer.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+                            terminateServer();
+                        }
+                    }
+                    watchdogService = new Thread(new ModuleWatchdog());
+                    watchdogService.start();
+                    
+                    client.send(new TickEvent(config.getModuleName(), iteration.get()));
+                    logger.log(Level.INFO, "Simulation step {0}", iteration.get());
+                    
+                    if(executeOnce.get()) break;
+                }
             }
         }   
     }
@@ -209,29 +249,33 @@ public class SimulationServer extends EventProcessor implements Runnable
 
         @Override
         public void run() {
+           
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException ex) {
+                System.out.println("Killed");
+                return;
+            }
             
-            if(!Thread.interrupted()) {
-                for(String moduleName : modules) {
-                    if(!moduleStates.get(moduleName)) {
-                        if(moduleCriticalness.get(moduleName)) {
-                            logger.log(Level.SEVERE, "Critical module {0} is "
-                                    + "not responding. Terminating simulation", moduleName);
-                            terminateServer();
-                            return; // Just for you, reader, to understand that it is the end.
-                        }
-                        else {
-                            moduleIgnored.put(moduleName, true);
-                        }
+            for(String moduleName : modules) {
+                if(!moduleStates.get(moduleName)) {
+                    if(moduleCriticalness.get(moduleName)) {
+                        logger.log(Level.SEVERE, "Critical module {0} is "
+                                + "not responding. Terminating simulation", moduleName);
+                        terminateServer();
+                        return; // Just for you, reader, to understand that it is the end.
                     }
-                } 
-                readyForTick.set(true);
+                    else {
+                        moduleIgnored.put(moduleName, true);
+                    }
+                }
             } 
+            readyForTick.set(true);
         }   
     }
     
     public SimulationServer() 
     {   
-        stopMainThread.set(false);
         stopped.set(true);
         
         config = NetworkConfig.defaultConfig().getModuleConfigs().get(1);
@@ -262,6 +306,8 @@ public class SimulationServer extends EventProcessor implements Runnable
         }
 
         mainThread = new Thread(this);
+        tickService = new Thread(new TickTask());
+        watchdogService = new Thread(new ModuleWatchdog());
     }
     
     /**
@@ -283,13 +329,14 @@ public class SimulationServer extends EventProcessor implements Runnable
         
         // Used auxiliary variable beacause interruptions are used for poll interrupting
         while(!Thread.interrupted()) {
-            System.out.print("+");
             try {
                 //event = client.getIncomingQueue().poll(pollTimeout, TimeUnit.MILLISECONDS);
                 event = client.getIncomingQueue().take();
                 logger.log(Level.INFO, "Received event, type: {0}", event.getClass().getSimpleName());
-                process(event);
-            } catch (InterruptedException ex) {}
+                handleEvent(event);
+            } catch (InterruptedException ex) {
+                break;
+            }
         }
     }
     
@@ -302,10 +349,10 @@ public class SimulationServer extends EventProcessor implements Runnable
         long t0 = System.nanoTime();
         
         logger.log(Level.INFO, "Pausing simulation...");
-        tickService.shutdownNow();
-        watchdogService.shutdownNow();
+        tickService.interrupt();
+        watchdogService.interrupt();
         try {
-            while(!tickService.isTerminated() && !watchdogService.isTerminated()) {
+            while(tickService.isAlive() || watchdogService.isAlive()) {
                 if(System.nanoTime() > t0 + 5*10e9) {
                     throw(new Exception("Can not pause simulation!"));
                 }
@@ -339,10 +386,12 @@ public class SimulationServer extends EventProcessor implements Runnable
     private void checkNextIterationClearance() 
     {            
         for(Entry<String, Boolean> entry : moduleStates.entrySet()) {
-            if(!entry.getValue() && !moduleIgnored.get(entry.getKey())) return;
+            if(!entry.getValue() && !moduleIgnored.get(entry.getKey())) {
+                return;
+            }
         }
         
-        watchdogService.shutdownNow();
+        watchdogService.interrupt();
         readyForTick.set(true);
     }
     
@@ -357,7 +406,6 @@ public class SimulationServer extends EventProcessor implements Runnable
         logger.log(Level.SEVERE, "Terminating simulation server.");
                 
         logger.log(Level.SEVERE, "Stopping main loop thread...");
-        stopMainThread.set(true);
         mainThread.interrupt();
         
         logger.log(Level.INFO, "Waiting for main loop thread to die...");
@@ -379,12 +427,16 @@ public class SimulationServer extends EventProcessor implements Runnable
         client.send(new TerminateSimulationEvent(config.getModuleName()));
 
         logger.log(Level.INFO, "Shutting down processes...");
-        tickService.shutdownNow();
-        watchdogService.shutdownNow();
-        stopMainThread.set(true);
-        mainThread.interrupt();
+        tickService.interrupt();
+        watchdogService.stop();
+        mainThread.stop();
                         
-        while(!tickService.isTerminated() && !watchdogService.isTerminated() && mainThread.isAlive()) {}
+        while(tickService.isAlive()) {}
+        logger.log(Level.INFO, "Tick service interrupted");
+        while(watchdogService.isAlive()) {}
+        logger.log(Level.INFO, "Module watchdog service interrupted");
+        while(mainThread.isAlive()) {}
+        logger.log(Level.INFO, "Main thread interrupted");
         
         logger.log(Level.INFO, "Disconnectiong client...");
         client.close();

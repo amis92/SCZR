@@ -16,19 +16,10 @@ public class Depot
      */
     private class BusData {
         
-        private final int busId;
-        /**
-         * Time of the last return of the bus.
-         */
-        private final long backTime;
-        
-        public BusData(Bus bus) {
-            busId = bus.getId();
-            backTime = Simulation.getSimulationTime();
-        };
+       
         
     }
     
-    Vector<BusData> busesInDepot;
+    
     
 }

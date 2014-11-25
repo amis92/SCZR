@@ -33,6 +33,7 @@ public class EventProcessorTest extends EventProcessor {
         process(event);
         event = new StartSimulationEvent("TEST", new String[] {});
         process(event);
+        System.out.println(event instanceof StartSimulationEvent);
     }
     
     

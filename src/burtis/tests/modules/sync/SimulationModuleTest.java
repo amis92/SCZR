@@ -36,8 +36,7 @@ public class SimulationModuleTest extends EventProcessor implements Runnable
         }
     }
         
-    @Override
-    public void process(TickEvent event) {
+    private void tickEvent(TickEvent event) {
         iteration = event.iteration();
         System.out.println("Iteration " + iteration);
         client.send(new CycleCompletedEvent(config.getModuleName(), iteration));
@@ -49,9 +48,8 @@ public class SimulationModuleTest extends EventProcessor implements Runnable
     }
     
     public void start() {
-        //client.send(new StartSimulationEvent(config.getModuleName(), 
-        //        new String[] { simServer.getModuleName() }));
-        client.send(new TerminateSimulationEvent(config.getModuleName()));
+        client.send(new StartSimulationEvent(config.getModuleName(), 
+                new String[] { simServer.getModuleName() }));
         mainThread.start();
     }
     
@@ -63,7 +61,12 @@ public class SimulationModuleTest extends EventProcessor implements Runnable
             try {
                 System.out.println("Waiting for tick...");
                 event = client.getIncomingQueue().take();
-                process(event);
+                if(event instanceof TickEvent) {
+                    tickEvent((TickEvent)event);
+                }
+                else {
+                    System.out.println("Unknown event " + event.getClass().getSimpleName());
+                }
             } catch (InterruptedException ex) {
                 Logger.getLogger(SimulationModuleTest.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
                 terminate();
