@@ -1,58 +1,69 @@
-/**
- * 
- */
 package burtis.modules.sync;
 
-import burtis.modules.common.ModuleConfig;
-import burtis.common.events.ChangeSimulationModeEvent;
-import burtis.common.events.ChangeSimulationModeEvent.State;
-import burtis.common.events.ChangeSimulationSpeedEvent;
 import burtis.common.events.CycleCompletedEvent;
-import burtis.common.events.ErrorEvent;
+import burtis.common.events.DoStepEvent;
+import burtis.common.events.EventProcessor;
+import burtis.common.events.PauseSimulationEvent;
 import burtis.common.events.SimulationEvent;
-import burtis.common.events.SlowDownEvent;
+import burtis.common.events.StartSimulationEvent;
 import burtis.common.events.TerminateSimulationEvent;
 import burtis.common.events.TickEvent;
+import burtis.modules.network.ModuleConfig;
 import burtis.modules.network.NetworkConfig;
-import burtis.modules.network.client.Client;
-import burtis.modules.network.server.Server;
+import burtis.modules.network.client.ClientModule;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import order.ServerOrder;
-
 
 /**
  * Synchronization source for all time-dependent modules along with communication server.
  * 
- * Sends {@link TickEvent} events to all modules as CLK client according to the internal mode set.
- * Server is to be controlled by {@link ServerOrder}s. 
- * 
-
+ * Sends {@link TickEvent} events to all modules according to the internal state.
  * 
  * @author Mikołaj Sowiński
  *
  */
-public class SimulationServer implements Runnable
+public class SimulationServer extends EventProcessor implements Runnable
 {
     
     private static final Logger logger = Logger.getLogger(SimulationServer.class.getName());
     
-    //private final Server server;
-    private final Client<SimulationEvent> client;
+    private final ClientModule client;
+      
+    /**
+     * List of module states.
+     */
+    private final Map<String,Boolean> moduleStates = new HashMap<>();
     
     /**
-     * Do we wait for a trigger to start new iteration? By default set true.
+     * List of module criticalness.
      */
-    private boolean waitForTrigger = true;
+    private final Map<String,Boolean> moduleCriticalness = new HashMap<>();
+    
+    /**
+     * List of module criticalness.
+     */
+    private final Map<String,Boolean> moduleIgnored = new HashMap<>();
+    
+    /**
+     * List of modules taking part in simulation.
+     */
+    private final List<String> modules = new ArrayList<>();
     
     /**
      * Sync module configuration.
      */
-    private final SyncConfig config;
+    private final ModuleConfig config;
     
     /**
      * Main execution loop thread.
@@ -60,69 +71,208 @@ public class SimulationServer implements Runnable
     private final Thread mainThread;
     
     /**
-     * Thread that calls at the time when new iteration should start.
+     * Desired time of single iteration, given in ms.
      */
-    private final ScheduledExecutorService tickAlarm = Executors.newSingleThreadScheduledExecutor();
+    private int iterationTime;
     
     /**
-     * Iteration start time.
+     * Timeout for response from modules, given in ms.
      */
-    private long iterStartTime = 0;
+    private final int moduleResponseTimeout;
     
     /**
-     * Stop simulation at next significant event.
+     * Poll timeout.
      */
-    private boolean stopAtNextEvent = false;
-    
+    private final long pollTimeout = 1000;
+             
     /**
      * Stops simulation at every iteration.
      */
-    private boolean stepMode = false;
+    private AtomicBoolean stepMode = new AtomicBoolean();
     
     /**
      * Simulation stopped.
      */
-    private boolean stopped = false;
+    private AtomicBoolean stopped = new AtomicBoolean();
     
     /**
      * Terminates main thread.
      */
-    AtomicBoolean stopMainThread = new AtomicBoolean();
+    private AtomicBoolean stopMainThread = new AtomicBoolean();
 
     /**
      * Ready for next tick.
      */
-    private boolean readyForTick;
+    private AtomicBoolean readyForTick = new AtomicBoolean();
+    
+    /**
+     * Number of iterations.
+     */
+    private AtomicLong iteration = new AtomicLong();
+    
+    /**
+     * Tick thread.
+     */
+    private final ScheduledExecutorService tickService = Executors.newSingleThreadScheduledExecutor();
+    
+    /**
+     * Dead module watchdog.
+     */
+    private final ScheduledExecutorService watchdogService = Executors.newSingleThreadScheduledExecutor();
+    
+    /**
+     * Time of the start of iteration.     
+     */
+    private AtomicLong iterationStartTime = new AtomicLong();
         
-    public SimulationServer() 
-    {        
-        config = SyncConfig.defaultConfig();
-        stopMainThread.set(false);
-        
-        logger.log(Level.INFO, "Starting communication server...");
-        // Start communication server
-        //server = new Server(new NetworkConfig("127.0.0.1", config.getNetworkServerModuleConfig()));
-        //server.run();
-       
-        logger.log(Level.INFO, "Starting client...");
-        // Create and connect client
-        client = new Client<>("127.0.0.1", config.getPort());
-        client.connect();
-        
-        logger.log(Level.INFO, "Starting main loop...");
-        // Start main loop
-        mainThread = new Thread(this);
-        mainThread.run();         
+    @Override
+    public void process(StartSimulationEvent event) 
+    {
+        System.out.println("START");
+        if(!stopped.get()) {
+            System.out.println("!!!! Sheduling ticks");
+            readyForTick.set(true);
+            tickService.scheduleAtFixedRate(new TickTask(), 0, iterationTime, TimeUnit.MILLISECONDS);
+            stopped.set(false);
+        }
+        else {
+            logger.log(Level.WARNING, "Simulation already started!");
+        }
+    }
+
+    @Override
+    public void process(PauseSimulationEvent event) {
+        if(!stopped.get()) {
+            pauseSimulation();
+        }
+        else {
+            logger.log(Level.WARNING, "Simulation is not running.");
+        }
+    }
+
+    @Override
+    public void process(DoStepEvent event) {
+        // Preparations
+        if(!tickService.isTerminated()) {
+            pauseSimulation();                    
+        }
+        logger.log(Level.INFO, "Doing one step of simulation.");
+        tickService.schedule(new TickTask(), 0, TimeUnit.MILLISECONDS);
+    }
+
+    @Override
+    public void process(CycleCompletedEvent event) {
+        // Being not in sync is uncacceptable.
+        if(event.iteration() != iteration.get()) {
+            logger.log(Level.SEVERE, "Synchronization error. "
+                    + "Module {0} is not in sync.", event.sender());
+            terminateServer();
+        }
+        else {
+            moduleStates.put(event.sender(), true);
+            checkNextIterationClearance();
+        }
     }
     
     /**
-     * @param args
+     * Class implementing thread responsible for sending ticks.
      */
-    public static void main(String[] args)
+    private class TickTask implements Runnable
     {
-        new SimulationServer();
+        @Override
+        public void run() {
+            while(!readyForTick.get() && !Thread.interrupted()) {}
+        
+            if(!Thread.interrupted()) {
+                readyForTick.set(false);
+                // Set all states false
+                for(String moduleName : modules) {
+                    moduleStates.put(moduleName, false);
+                }
+                
+                iterationStartTime.set(System.nanoTime());
+                watchdogService.schedule(new ModuleWatchdog(), moduleResponseTimeout, TimeUnit.MILLISECONDS);
+                client.send(new TickEvent(config.getModuleName(), iteration.get()));
+                logger.log(Level.INFO, "Simulation step {0}", iteration.get());
+            }
+        }   
     }
+    
+    /**
+     * Implements thread controlling liveness of modules.
+     * Checks all modules that have state set false and if one of them is critical
+     * terminate simulation. If modules with false state are not critical they 
+     * are added to ignored modules list (program will not wait for the response
+     * from them anymore).
+     */
+    private class ModuleWatchdog implements Runnable {
 
+        @Override
+        public void run() {
+            
+            if(!Thread.interrupted()) {
+                for(String moduleName : modules) {
+                    if(!moduleStates.get(moduleName)) {
+                        if(moduleCriticalness.get(moduleName)) {
+                            logger.log(Level.SEVERE, "Critical module {0} is "
+                                    + "not responding. Terminating simulation", moduleName);
+                            terminateServer();
+                            return; // Just for you, reader, to understand that it is the end.
+                        }
+                        else {
+                            moduleIgnored.put(moduleName, true);
+                        }
+                    }
+                } 
+                readyForTick.set(true);
+            } 
+        }   
+    }
+    
+    public SimulationServer() 
+    {   
+        stopMainThread.set(false);
+        stopped.set(true);
+        
+        config = NetworkConfig.defaultConfig().getModuleConfigs().get(1);
+        
+        String modulesInfo = "Available modules:\n";
+        for(ModuleConfig module : NetworkConfig.defaultConfig().getModuleConfigs()) {
+            if(module.getModuleName() != config.getModuleName()) {
+                modules.add(module.getModuleName());
+                moduleCriticalness.put(module.getModuleName(), module.isCritical());
+                modulesInfo += " * " + module.getModuleName() + (module.isCritical() ? "(critical)\n" : "\n");
+            }
+        }
+        logger.log(Level.INFO, modulesInfo);
+               
+        iterationTime = (int)config.getOption("iterationTime");
+        moduleResponseTimeout = (int)config.getOption("moduleResponseTimeout");
+        
+        iteration.set(0);
+              
+        logger.log(Level.INFO, "Starting communication client...");
+        client = new ClientModule(config);
+        try {
+            client.connect();
+        } catch (IOException ex) {
+            Logger.getLogger(SimulationServer.class.getName()).log(Level.SEVERE, 
+                    "Failed to connect to the communication server: {0}", ex.getMessage());
+            System.exit(1);
+        }
+
+        mainThread = new Thread(this);
+    }
+    
+    /**
+     * Starts simulation server.
+     */
+    public void start() {
+        logger.log(Level.INFO, "Starting main loop...");
+        mainThread.start();
+        logger.log(Level.INFO, "Main loop started.");
+    }
+    
     /**
      * Interruption causes return!
      */
@@ -131,261 +281,133 @@ public class SimulationServer implements Runnable
     {
         SimulationEvent event;
         
-        
         // Used auxiliary variable beacause interruptions are used for poll interrupting
-        while(!stopMainThread.get()) {
-            
-            // THIS MUST BE THE FIRST
-            if(!stopped && readyForTick && !waitForTrigger) tick();
-                        
-            // Wait for event
+        while(!Thread.interrupted()) {
+            System.out.print("+");
             try {
-                
-                // THE ONLY BLOCKING ALLOWED HERE
-                event = client.getEventsBlockingQueue()
-                        .poll(config.getModuleResponseTimeout(), TimeUnit.MILLISECONDS);
-                
-                // !! NO BLOCKING BEYOND THIS POINT
-                                
-            } catch (InterruptedException e) {
-                continue;
-            }
-            
-            // Timed out
-            if(event == null) {
-                timeout();
-            }
-            else {
-                handleEvent(event);
-            }            
-        }
-    }
-
-    /**
-     * Sets all modules waiting value true and sends TickEvent.
-     */
-    private void tick() {
-        
-        readyForTick = false;
-        
-        for(ModuleConfig module : config.getModuleConfigs()) {
-            module.setFinished(false);
-        }
-
-        client.send(new TickEvent(config.getName()));
-        iterStartTime = System.nanoTime();
-    }
-    
-    /**
-     * Handles poll timeout.
-     * This is important to detect module failures.
-     * 
-     * @return boolean should cause stop at triggering?
-     */
-    private boolean timeout() {
-        
-        boolean willStop = false;
-        String culprits = "";
-        
-        // Check for who we are waiting
-        for(ModuleConfig module : config.getModuleConfigs()) {
-            
-            if(!module.isFinished()) {
-                // Culprit!
-                if(module.isCritical()) {
-                    willStop = true;
-                    culprits = culprits + " " + module.getModuleName();
-                }
-                else {
-                    // If it's not critical ignore it
-                    module.setIgnore(true);
-                }
-            }
-            
-        }
-        
-        if(willStop) {
-            client.send(new ErrorEvent(config.getName(), "Critical modules (" 
-                    + culprits + ") failed to meet timing criteria"));
-            // This is FATAL
-            terminateServer();
-            return true; // Actually doesn't matter...
-        }
-        else {
-            return false;
+                //event = client.getIncomingQueue().poll(pollTimeout, TimeUnit.MILLISECONDS);
+                event = client.getIncomingQueue().take();
+                logger.log(Level.INFO, "Received event, type: {0}", event.getClass().getSimpleName());
+                process(event);
+            } catch (InterruptedException ex) {}
         }
     }
     
     /**
-     * Provides handling various events.
-     * 
-     * @param event event to be handled
+     * Tries to pause simulation and waits for result.
+     * If service is not in terminated state in 5 seconds an exception is thrown.
      */
-    private void handleEvent(SimulationEvent event) 
+    private void pauseSimulation()
     {
-        String eventName = event.getClass().getSimpleName();
-        switch(eventName) {
-            
-            case "CycleCompletedEvent":
-                cycleCompleted(event);
-                break;
-                
-            case "StartSimulationEvent":
-                waitForTrigger = false;
-                stopped = false;
-                break;
-                
-            case "StopSimulationEvent":
-                stopped = true;
-                break;
-                
-            case "ChangeSimulationSpeedEvent":
-                config.setIterationTime(((ChangeSimulationSpeedEvent)event).speed());
-                break;
-            
-            case "ChangeSimulationModeEvent":
-                changeSimulationMode(event);
-                break;
-            
-            case "TerminateSimulationEvent":
-                terminateServer();
-                logger.log(Level.SEVERE, "Simulation terminated by {0}", event.sender());
-                break;
-                
-            default:
-                logger.log(Level.WARNING, "Unhandled event: {0}", eventName);                
-        }
+        long t0 = System.nanoTime();
         
+        logger.log(Level.INFO, "Pausing simulation...");
+        tickService.shutdownNow();
+        watchdogService.shutdownNow();
+        try {
+            while(!tickService.isTerminated() && !watchdogService.isTerminated()) {
+                if(System.nanoTime() > t0 + 5*10e9) {
+                    throw(new Exception("Can not pause simulation!"));
+                }
+            }
+            logger.log(Level.INFO, "Simulation paused.");
+        }
+        catch(Exception e) {
+            handlePauseTimeoutException(e);
+        }
     }
     
-    private void changeSimulationMode(SimulationEvent event) {
-        
-        State targetState = ((ChangeSimulationModeEvent)event).getTargetState();
-        
-        switch(targetState) {
-            case STOPPED:
-                stopped = true;
-                break;
-            
-            case NEXTEVENT:
-                stopAtNextEvent = true;
-                stepMode = false;
-                stopped = false;
-                break;
-                
-            case STEPMODE:
-                stepMode = true;
-                stopped = false;
-                stopAtNextEvent = false;
-                break;
-                
-            case RUNNING:
-                stepMode = false;
-                stopped = false;
-                stopAtNextEvent = false;
-                break;
-                
+    /**
+     * Handles module wakeup.
+     * If the module was restarted and started responding for ticks correctly 
+     * (with the right iteration number in CycleCompletedEvent) it is removed 
+     * from ignored modules list.
+     * @param event CycleCompleted event
+     */
+    private void checkIgnoredModules(CycleCompletedEvent event) 
+    {
+        if(event.iteration() == iteration.get()) {
+            moduleIgnored.put(event.sender(), false);
         }
     }
       
     /**
-     * Dedicated handler for CycleCompletedEvent.
+     * Checks if next iteration can be done.
+     * The condition is that status of all modules is set true or modules with
+     * status false are not critical.
      */
-    private void cycleCompleted(final SimulationEvent event) {
-        
-        String sender = ((CycleCompletedEvent)event).sender();
-        boolean anyLeftWaiting = false;
-        
-        // Setting waiting value for appropriate module
-        for(ModuleConfig module : config.getModuleConfigs()) {            
-            if(module.getModuleName().equals(sender)) {
-                module.setFinished(true);
-            }
-            if(!module.isFinished()) anyLeftWaiting = true;
+    private void checkNextIterationClearance() 
+    {            
+        for(Entry<String, Boolean> entry : moduleStates.entrySet()) {
+            if(!entry.getValue() && !moduleIgnored.get(entry.getKey())) return;
         }
         
-        if(!anyLeftWaiting) {
-            checkTiming();
-            checkStopAtSignificantEvent(event);
-        }       
-    }
-
-    private void checkStopAtSignificantEvent(SimulationEvent event) {
-        // If we want to stop at next significant event
-        if(((CycleCompletedEvent)event).significant() && stopAtNextEvent) {
-            waitForTrigger = true;
-            logger.log(Level.INFO, "Simulation stopped due to significant event from {0}" , event.sender());
-        }
+        watchdogService.shutdownNow();
+        readyForTick.set(true);
     }
     
     /**
-     * Checks if iteration took less than set maximal iteration time (if we 
-     * are ready for the next tick).
-     * If iteration took more than iteration time set in configuration warning
-     * will be logged and configured time will be adjusted to 1.2 measured
-     * iteration time.
-     * If it took less, an alarm is set to make it ready to tick in specified time.
+     * Handles pause operation exceptions.
+     * If pause fails to be done an application is to be terminated.
+     * @param e Exception
      */
-    private void checkTiming() {
-        
-        long iterationTime = System.nanoTime()-iterStartTime;
-        
-        if( iterationTime > config.getIterationTime()) { 
-           config.setIterationTime((long)(iterationTime*1.2));
-           client.send(new SlowDownEvent(config.getName(), (long)(iterationTime*1.2)));
-           logger.log(Level.WARNING, "Simulation slowed down. New max. iteration time: {0}", (long)(iterationTime*1.2));
-           readyForTick = true;
-        }
-        
-        // If there is any time left to wait
-        else {
-            // If we are not in the step mode
-            if(!stepMode) {
-                long timeLeft = config.getIterationTime() - iterationTime;
-                tickAlarm.schedule(this::tickAlarmFunction, timeLeft, TimeUnit.NANOSECONDS);
-            }
-        }
-    }
-    
-    /**
-     * Handler for tick alarm.
-     */
-    private void tickAlarmFunction() {
-        readyForTick = true;
-        mainThread.interrupt();
-    }
-
-    /**
-     * Stops simulation and server.
-     */
-    public void terminateServer() {
-        
-        // Send termination signal to modules.
-        logger.log(Level.INFO, "Sending termination signal to modules...");
-        client.send(new TerminateSimulationEvent(config.getName()));
-
-        logger.log(Level.INFO, "Shutting down tick alarm...");
-        tickAlarm.shutdownNow();
-        while(!tickAlarm.isTerminated()) {}
-        
-        logger.log(Level.INFO, "Stopping main loop thread...");
-        // Stop main loop thread
+    private void handlePauseTimeoutException(Exception e) 
+    {
+        logger.log(Level.SEVERE, e.getMessage());
+        logger.log(Level.SEVERE, "Terminating simulation server.");
+                
+        logger.log(Level.SEVERE, "Stopping main loop thread...");
         stopMainThread.set(true);
         mainThread.interrupt();
         
         logger.log(Level.INFO, "Waiting for main loop thread to die...");
         while(mainThread.isAlive()) {}
-
+        
         logger.log(Level.INFO, "Disconnectiong client...");
         // Disconnecting client
-        client.closeConnection();
-          
-        logger.log(Level.INFO, "Stopping communication server...");
-        // Terminating server
-        //server.stop();
+        client.close();
+        
+        System.exit(1);       
+    }
+
+    /**
+     * Stops simulation environment.
+     */
+    public void terminateServer() 
+    {
+        logger.log(Level.INFO, "Sending termination signal to modules...");
+        client.send(new TerminateSimulationEvent(config.getModuleName()));
+
+        logger.log(Level.INFO, "Shutting down processes...");
+        tickService.shutdownNow();
+        watchdogService.shutdownNow();
+        stopMainThread.set(true);
+        mainThread.interrupt();
+                        
+        while(!tickService.isTerminated() && !watchdogService.isTerminated() && mainThread.isAlive()) {}
+        
+        logger.log(Level.INFO, "Disconnectiong client...");
+        client.close();
         
         // HAPPY END
-        System.exit(0);      
+        System.exit(0);
+    }
+    
+    /**
+     * Main method for application.
+     * @param args No parameters are expected.
+     */
+    public static void main(String[] args)
+    {
+        SimulationServer app = new SimulationServer();
+        app.start();
+        System.out.println("Naciśnij enter any zakończyć.");
+        try {
+            System.in.read();
+        } catch (IOException ex) {
+            Logger.getLogger(SimulationServer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        app.terminateServer();
         
     }
 }

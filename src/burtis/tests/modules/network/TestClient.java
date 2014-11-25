@@ -14,7 +14,7 @@ import burtis.modules.network.client.ClientModule;
 
 /**
  *
- * @author Mikołaj Sowiński <mikolaj.sowinski@gmail.com>
+ * @author Mikołaj Sowiński
  * @author Amadeusz Sadowski
  */
 public class TestClient

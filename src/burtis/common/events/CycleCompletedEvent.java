@@ -12,15 +12,15 @@ package burtis.common.events;
  */
 public class CycleCompletedEvent extends SimulationEvent {
     
-    private final boolean significantEventHappened;
+    private final long iteration;
 
-    public CycleCompletedEvent(String sender, boolean significantEventHappened) {
+    public CycleCompletedEvent(String sender, long iteration) {
         super(sender);
-        this.significantEventHappened = significantEventHappened;
+        this.iteration = iteration;
     }
    
-    public boolean significant() {
-        return significantEventHappened;
+    public long iteration() {
+        return iteration;
     }
     
 }

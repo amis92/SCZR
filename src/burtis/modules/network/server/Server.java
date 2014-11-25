@@ -83,9 +83,16 @@ public class Server extends EventProcessor
     @Override
     public void process(SimulationEvent event)
     {
-        for (String recipientName : event.getRecipients())
-        {
-            forward(event, recipientName);
+        if(!event.getRecipients().isEmpty()) {
+            for (String recipientName : event.getRecipients())
+            {
+                forward(event, recipientName);
+            }
+        }
+        else {
+            for (ModuleConnection moduleConnection : moduleConnections) {
+                forward(event, moduleConnection.getModuleName());
+            }
         }
     }
 

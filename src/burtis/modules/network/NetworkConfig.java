@@ -1,7 +1,9 @@
 package burtis.modules.network;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class NetworkConfig
 {
@@ -24,21 +26,27 @@ public class NetworkConfig
     {
         return serverAddress;
     }
-
+    
     public static NetworkConfig defaultConfig()
     {
         String serverAddress = "127.0.0.1";
+        
+        /* 0 */ String guiName  = "GUI Module"; 
+        /* 1 */ String syncName = "Synchronization Module";
+        /* 2 */ String busName  = "Bus Scheduling Module";
+        /* 3 */ String psgrName = "Passengers Module";
+        /* 4 */ String simName  = "Simulation Module";
+        
+        Map<String,Object> syncOptions = new HashMap<>();
+        syncOptions.put("iterationTime", 100);
+        syncOptions.put("moduleResponseTimeout", 1000);
+                
         List<ModuleConfig> configs = new ArrayList<ModuleConfig>(5);
-        String guiName  = "GUI Module";
-        String syncName = "Synchronization Module";
-        String busName  = "Bus Scheduling Module";
-        String psgrName = "Passengers Module";
-        String simName  = "Simulation Module";
-        configs.add(new ModuleConfig(guiName,   serverAddress, 8121, false));
-        configs.add(new ModuleConfig(syncName,  serverAddress, 8122, true));
-        configs.add(new ModuleConfig(busName,   serverAddress, 8123, false));
-        configs.add(new ModuleConfig(psgrName,  serverAddress, 8124, false));
-        configs.add(new ModuleConfig(simName,   serverAddress, 8125, true));
+        configs.add(new ModuleConfig(guiName,   serverAddress, 8121, false, null));
+        configs.add(new ModuleConfig(syncName,  serverAddress, 8122, true, syncOptions));
+        //configs.add(new ModuleConfig(busName,   serverAddress, 8123, false, null));
+        //configs.add(new ModuleConfig(psgrName,  serverAddress, 8124, false, null));
+        //configs.add(new ModuleConfig(simName,   serverAddress, 8125, true, null));
         return new NetworkConfig(serverAddress, configs);
     }
 }

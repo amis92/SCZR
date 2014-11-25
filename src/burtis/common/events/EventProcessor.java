@@ -11,6 +11,15 @@ public abstract class EventProcessor
 {
     public void process(SimulationEvent event)
     {
+        System.out.println("Stack");
+    }
+    
+    public void process(DoStepEvent event)
+    {
+    }
+    
+    public void process(PauseSimulationEvent event) 
+    {              
     }
 
     public void process(ChangeSimulationModeEvent event)

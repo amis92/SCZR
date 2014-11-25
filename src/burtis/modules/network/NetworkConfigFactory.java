@@ -78,7 +78,7 @@ public class NetworkConfigFactory
         final String portString = properties.getProperty(portPropertyKey);
         final boolean isCritical = criticalString == TRUE_VALUE ? true : false;
         final int port = Integer.parseInt(portString);
-        return new ModuleConfig(name, serverAddress, port, isCritical);
+        return new ModuleConfig(name, serverAddress, port, isCritical, null);
     }
 
     /**
