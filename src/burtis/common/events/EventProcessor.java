@@ -1,5 +1,10 @@
 package burtis.common.events;
 
+import burtis.common.events.Sync.TickEvent;
+import burtis.common.events.gui.DoStepEvent;
+import burtis.common.events.gui.PauseSimulationEvent;
+import burtis.common.events.gui.StartSimulationEvent;
+
 /**
  * Represents empty processor of all existing events. Each method can be
  * overridden, but by default has empty body. To be inherited.

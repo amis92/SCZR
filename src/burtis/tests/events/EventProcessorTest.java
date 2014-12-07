@@ -7,7 +7,7 @@ package burtis.tests.events;
 
 import burtis.common.events.EventProcessor;
 import burtis.common.events.SimulationEvent;
-import burtis.common.events.StartSimulationEvent;
+import burtis.common.events.gui.StartSimulationEvent;
 
 /**
  *

@@ -6,12 +6,13 @@ import burtis.common.events.Passengers.BusStopsListRequestEvent;
 import burtis.common.events.Simulation.BusStopsListEvent;
 import burtis.common.events.SimulationEvent;
 import burtis.common.events.TerminateSimulationEvent;
-import burtis.common.events.TickEvent;
+import burtis.common.events.Sync.TickEvent;
 import burtis.modules.network.ModuleConfig;
 import burtis.modules.network.NetworkConfig;
 import burtis.modules.network.client.ClientModule;
 import burtis.modules.simulation.models.Bus;
 import burtis.modules.simulation.models.BusStop;
+import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -63,21 +64,28 @@ public class Simulation
      * Creates a new simulation.
      */
     public Simulation() {
-        // Create buses at depot (default location)
-        for(int i=0; i<numberOfBuses; i++) {
-            Bus.add(busCapacity);
+        
+        try {
+            client.connect();
+            // Create buses at depot (default location)
+            for(int i=0; i<numberOfBuses; i++) {
+                Bus.add(busCapacity);
+            }
+            // Create bus stops
+            BusStop.addTerminus("Bielańska");
+            BusStop.add(30, "Plac Zamkowy");
+            BusStop.add(60, "Hotel Bristol");
+            BusStop.add(90, "Uniwersytet");
+            BusStop.add(120, "Ordynacka");
+            BusStop.add(150, "Foksal");
+            BusStop.add(180, "Plac Trzech Krzyży");
+            BusStop.add(210, "Plac na Rozdrożu");
+            BusStop.add(240, "Plac Unii Lubelskiej");
+            BusStop.add(270, "Rakowiecka");
+        } catch (IOException ex) {
+            handleError(Level.SEVERE, ex.getMessage());
         }
-        // Create bus stops
-        BusStop.addTerminus("Bielańska");
-        BusStop.add(30, "Plac Zamkowy");
-        BusStop.add(60, "Hotel Bristol");
-        BusStop.add(90, "Uniwersytet");
-        BusStop.add(120, "Ordynacka");
-        BusStop.add(150, "Foksal");
-        BusStop.add(180, "Plac Trzech Krzyży");
-        BusStop.add(210, "Plac na Rozdrożu");
-        BusStop.add(240, "Plac Unii Lubelskiej");
-        BusStop.add(270, "Rakowiecka");
+
     }
     
     /**

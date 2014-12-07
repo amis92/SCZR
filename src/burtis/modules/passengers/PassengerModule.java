@@ -11,7 +11,7 @@ import burtis.common.events.Simulation.BusStopsListEvent;
 import burtis.common.events.Simulation.WaitingPassengersRequestEvent;
 import burtis.common.events.SimulationEvent;
 import burtis.common.events.TerminateSimulationEvent;
-import burtis.common.events.TickEvent;
+import burtis.common.events.Sync.TickEvent;
 import burtis.common.events.gui.PassengerGenerationRateConfigurationEvent;
 import burtis.modules.network.ModuleConfig;
 import burtis.modules.network.NetworkConfig;

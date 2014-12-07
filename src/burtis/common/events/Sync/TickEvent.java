@@ -1,7 +1,9 @@
 /**
  * 
  */
-package burtis.common.events;
+package burtis.common.events.Sync;
+
+import burtis.common.events.SimulationEvent;
 
 /**
  * @author Mikołaj Sowiński

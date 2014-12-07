@@ -1,12 +1,12 @@
 package burtis.modules.sync;
 
 import burtis.common.events.CycleCompletedEvent;
-import burtis.common.events.DoStepEvent;
-import burtis.common.events.PauseSimulationEvent;
+import burtis.common.events.gui.DoStepEvent;
+import burtis.common.events.gui.PauseSimulationEvent;
 import burtis.common.events.SimulationEvent;
-import burtis.common.events.StartSimulationEvent;
+import burtis.common.events.gui.StartSimulationEvent;
 import burtis.common.events.TerminateSimulationEvent;
-import burtis.common.events.TickEvent;
+import burtis.common.events.Sync.TickEvent;
 import burtis.modules.network.ModuleConfig;
 import burtis.modules.network.NetworkConfig;
 import burtis.modules.network.client.ClientModule;
@@ -110,24 +110,19 @@ public class SimulationServer implements Runnable
      * Dead module watchdog.
      */
     private Thread watchdogService;
-    
-    /**
-     * Time of the start of iteration.     
-     */
-    private AtomicLong iterationStartTime = new AtomicLong();
-    
+        
     private AtomicBoolean executeOnce = new AtomicBoolean(false);
     
     private void handleEvent(SimulationEvent event) {
         
         if(event instanceof StartSimulationEvent) {
-            startSimulation((StartSimulationEvent)event);            
+            startSimulation();            
         }
         else if(event instanceof PauseSimulationEvent) {
-            pauseSimulation((PauseSimulationEvent)event);
+            pauseSimulation();
         }
         else if(event instanceof DoStepEvent) {
-            doStep((DoStepEvent)event);
+            doStep();
         }
         else if(event instanceof CycleCompletedEvent) {
             cycleCompleted((CycleCompletedEvent)event);
@@ -137,7 +132,7 @@ public class SimulationServer implements Runnable
         }
     }
         
-    private void startSimulation(StartSimulationEvent event) 
+    private void startSimulation() 
     {
         if(stopped.get()) {
             executeOnce.set(false);
@@ -150,16 +145,16 @@ public class SimulationServer implements Runnable
         }
     }
 
-    private void pauseSimulation(PauseSimulationEvent event) {
+    private void pauseSimulation() {
         if(!stopped.get()) {
-            pauseSimulation();
+            doPauseSimulation();
         }
         else {
             logger.log(Level.WARNING, "Simulation is not running.");
         }
     }
 
-    private void doStep(DoStepEvent event) {
+    private void doStep() {
         // Preparations
         if(tickService.isAlive()) {
             pauseSimulation();                    
@@ -339,7 +334,7 @@ public class SimulationServer implements Runnable
      * Tries to pause simulation and waits for result.
      * If service is not in terminated state in 5 seconds an exception is thrown.
      */
-    private void pauseSimulation()
+    private void doPauseSimulation()
     {
         long t0 = System.nanoTime();
         

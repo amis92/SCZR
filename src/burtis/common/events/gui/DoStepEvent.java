@@ -3,15 +3,17 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package burtis.common.events;
+package burtis.common.events.gui;
+
+import burtis.common.events.SimulationEvent;
 
 /**
  *
  * @author Mikołaj Sowiński <mikolaj.sowinski@gmail.com>
  */
-public class PauseSimulationEvent extends SimulationEvent {
+public class DoStepEvent extends SimulationEvent {
 
-    public PauseSimulationEvent(String sender) {
+    public DoStepEvent(String sender) {
         super(sender);
     }
     

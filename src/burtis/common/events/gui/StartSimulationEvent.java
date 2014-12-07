@@ -1,4 +1,6 @@
-package burtis.common.events;
+package burtis.common.events.gui;
+
+import burtis.common.events.SimulationEvent;
 
 public class StartSimulationEvent extends SimulationEvent
 {

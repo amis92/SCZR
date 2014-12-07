@@ -1,9 +1,5 @@
 package burtis.modules.simulation.models;
 
-import java.util.Vector;
-
-import burtis.modules.simulation.Simulation;
-import burtis.modules.simulation.models.Bus;
 import java.util.LinkedList;
 import java.util.List;
 
