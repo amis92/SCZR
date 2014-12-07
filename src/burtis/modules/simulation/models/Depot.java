@@ -4,20 +4,26 @@ import java.util.Vector;
 
 import burtis.modules.simulation.Simulation;
 import burtis.modules.simulation.models.Bus;
+import java.util.LinkedList;
+import java.util.List;
 
 public class Depot
 {
 
-    /**
-     * Class holding data of the bus remaining in the depot.
-     * 
-     * @author Mikołaj Sowiński
-     *
-     */
-    private class BusData {
-        
-       
-        
+    private static final List<Bus> buses = new LinkedList<>();
+    
+    public static void putBus(Bus bus) {
+        buses.add(bus);
+    }
+    
+    public static Bus getBus(int busId) {
+        for(Bus bus : buses) {
+            if(bus.getId()==busId) {
+                buses.remove(bus);
+                return bus;
+            }
+        }
+        return null;
     }
     
     

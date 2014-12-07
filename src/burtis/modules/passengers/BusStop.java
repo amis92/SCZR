@@ -1,5 +1,6 @@
 package burtis.modules.passengers;
 
+import burtis.common.events.Simulation.BusStopsListEvent;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -32,8 +33,10 @@ public class BusStop {
         this.name = name;
     }
     
-    public static void add(List<BusStop> busStopsList) {
-        busStops.addAll(busStopsList);
+    public static void add(List<BusStopsListEvent.BusStop> busStopsList) {
+        for(BusStopsListEvent.BusStop busStop: busStopsList) {
+            busStops.add(new BusStop(busStop.busStopId, busStop.busStopName));
+        }
     }
 
     public int getId() {

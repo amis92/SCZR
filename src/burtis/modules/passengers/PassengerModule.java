@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package burtis.modules.passengers;
 
 import burtis.common.events.ConfigurationEvent;
@@ -30,21 +25,22 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
+ * Module responsible for all passengers operations.
+ * 
  * @author Mikołaj Sowiński
  */
 public class PassengerModule {
     
-    public static final Logger logger = Logger.getLogger("PassengerModule");
-    
     private final ClientModule client;
     private final BlockingQueue<SimulationEvent> eventQueue;
     
-    private final ModuleConfig simulationModuleConfig = 
+    private static final ModuleConfig simulationModuleConfig = 
             NetworkConfig.defaultConfig().getModuleConfigs().get(NetworkConfig.SIM_MODULE);
-    private final ModuleConfig passengerModuleConfig = 
+    private static final ModuleConfig passengerModuleConfig = 
             NetworkConfig.defaultConfig().getModuleConfigs().get(NetworkConfig.PSNGR_MODULE);
 
+    public static final Logger logger = Logger.getLogger(passengerModuleConfig.getModuleName());
+    
     /**
      * Current cycle.
      * Positive value mens in cycle, negative in between.
@@ -328,7 +324,4 @@ public class PassengerModule {
         
     }
 
-   
-    
-    
 }

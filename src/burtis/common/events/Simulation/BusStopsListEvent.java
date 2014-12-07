@@ -6,7 +6,6 @@
 package burtis.common.events.Simulation;
 
 import burtis.common.events.SimulationEvent;
-import burtis.modules.passengers.BusStop;
 import java.util.List;
 
 /**
@@ -16,6 +15,18 @@ import java.util.List;
  */
 public class BusStopsListEvent extends SimulationEvent {
 
+    public static class BusStop {
+        
+        public final int busStopId;
+        public final String busStopName;
+
+        public BusStop(int busStopId, String busStopName) {
+            this.busStopId = busStopId;
+            this.busStopName = busStopName;
+        }
+        
+    }
+    
     private final List<BusStop> busStops;
     
     public BusStopsListEvent(String sender, List<BusStop> busStops) {

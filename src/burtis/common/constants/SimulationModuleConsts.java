@@ -12,5 +12,8 @@ package burtis.common.constants;
 public class SimulationModuleConsts {
     
     public static final int BUS_CAPACITY = 70;
+    public static final int NUMBER_OF_BUSES = 10;
+    public static final int BUS_SPEED = 3;
+    public static final int BUS_START_INTERVAL = 300;
     
 }
