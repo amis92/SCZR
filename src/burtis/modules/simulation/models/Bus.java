@@ -37,6 +37,10 @@ public class Bus
     public int getClosestBusStopId() {
         return closestBusStopId;
     }
+    
+    public int getFreePlaces() {
+        return capacity-numberOfPassengers;
+    }
 
     /**
      * Set the value of closestBusStop

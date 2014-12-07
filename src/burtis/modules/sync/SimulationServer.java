@@ -2,7 +2,6 @@ package burtis.modules.sync;
 
 import burtis.common.events.CycleCompletedEvent;
 import burtis.common.events.DoStepEvent;
-import burtis.common.events.EventProcessor;
 import burtis.common.events.PauseSimulationEvent;
 import burtis.common.events.SimulationEvent;
 import burtis.common.events.StartSimulationEvent;
@@ -17,10 +16,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;

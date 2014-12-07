@@ -6,6 +6,8 @@ import burtis.common.events.CycleCompletedEvent;
 import burtis.common.events.DeathErrorEvent;
 import burtis.common.events.GetBusStopsEvent;
 import burtis.common.events.GetPassengersOnBusStopEvent;
+import burtis.common.events.PassengerTransaction;
+import burtis.common.events.PassengerTransactionEvent;
 import burtis.common.events.PassengersOnBusStopEvent;
 import burtis.common.events.SendBusEvent;
 import burtis.common.events.SimulationEvent;
@@ -24,6 +26,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -80,6 +83,8 @@ public class Simulation implements Runnable
      */
     private BlockingQueue<SimulationEvent> queryPassengerNoQueue = new ArrayBlockingQueue<>(1);
     
+    private BlockingQueue<SimulationEvent> incomingPassengerTransactions = new ArrayBlockingQueue<>(1);
+    
     /**
      * Method for thread computing next simulation state.
      */
@@ -94,7 +99,7 @@ public class Simulation implements Runnable
             */
             
             updateBusPositions();
-            //realizeTransaction();
+            makeTransactions();
             //sheduledBuses();
             
             client.send(new CycleCompletedEvent(config.getModuleName(), iteration));
@@ -210,14 +215,45 @@ public class Simulation implements Runnable
         }
         return null;
     }
-      
+    
+    private Bus getBusById(int id) {
+        for(Bus bus : buses) {
+            if(bus.getId() == id) return bus;
+        }
+        return null;
+    }
+    
     /**
      * Iterates through bus stops and realizes transactions between buses and bus stops.
      */
     public void makeTransactions() {
-        for(BusStop busStop : busStops) {
-            
+        
+        List<PassengerTransaction> transactions = new ArrayList<>();
+        
+        try {
+            // Check queue for finished transactions
+            incomingPassengerTransactions.poll(0, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Simulation.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+        for(BusStop busStop : busStops) {
+            // There are buses enqued
+            if(busStop.getWaitingBuses().size() > 0) {
+                // Negative processed bus id means no bus is processed at the moment
+                if(busStop.getProcessedBusId() < 0) {
+                    int firstBusId = (int)busStop.getWaitingBuses().poll();
+                    
+                    busStop.setProcessedBusId(firstBusId);
+                    transactions.add(new PassengerTransaction(busStop.getId(), firstBusId, getBusById(firstBusId).getFreePlaces()));
+                }
+            }
+        }
+        
+        // If there are any transactions send them to the passengers module
+        if(transactions.size() > 0) client.send(new PassengerTransactionEvent(
+                config.getModuleName(), new String[] {psgrConfig.getModuleName()},
+                transactions));
     }
             
     /**

@@ -44,9 +44,15 @@ public class NetworkConfig
         List<ModuleConfig> configs = new ArrayList<ModuleConfig>(5);
         configs.add(new ModuleConfig(guiName,   serverAddress, 8121, true, null));
         configs.add(new ModuleConfig(syncName,  serverAddress, 8122, true, syncOptions));
-        //configs.add(new ModuleConfig(busName,   serverAddress, 8123, false, null));
-        //configs.add(new ModuleConfig(psgrName,  serverAddress, 8124, false, null));
-        //configs.add(new ModuleConfig(simName,   serverAddress, 8125, true, null));
+        configs.add(new ModuleConfig(busName,   serverAddress, 8123, false, null));
+        configs.add(new ModuleConfig(psgrName,  serverAddress, 8124, false, null));
+        configs.add(new ModuleConfig(simName,   serverAddress, 8125, true, null));
         return new NetworkConfig(serverAddress, configs);
     }
+    
+    public final static int GUI_MODULE = 0;
+    public final static int SYNC_MODULE = 1;
+    public final static int BUSSHED_MODULE = 2;
+    public final static int PSNGR_MODULE = 3;
+    public final static int SIM_MODULE = 4;
 }

@@ -13,4 +13,4 @@
  * Piotr Suchorab
  *
  */
-package burtis.modules.passengersimulator;
+package burtis.modules.passengers;

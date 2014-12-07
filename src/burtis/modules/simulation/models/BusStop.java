@@ -16,6 +16,27 @@ public class BusStop
     
     private final Queue waitingBuses  = new LinkedList<Integer>();
     
+        private int processedBusId;
+
+    /**
+     * Get the value of processedBusId
+     *
+     * @return the value of processedBusId
+     */
+    public int getProcessedBusId() {
+        return processedBusId;
+    }
+
+    /**
+     * Set the value of processedBusId
+     *
+     * @param processedBusId new value of processedBusId
+     */
+    public void setProcessedBusId(int processedBusId) {
+        this.processedBusId = processedBusId;
+    }
+
+    
     private static class IDGenerator
     {
         private static int lastId = 0;
@@ -37,6 +58,10 @@ public class BusStop
         }
         
         
+    }
+    
+    public Queue getWaitingBuses() {
+        return waitingBuses;
     }
     
     public int getId() {
