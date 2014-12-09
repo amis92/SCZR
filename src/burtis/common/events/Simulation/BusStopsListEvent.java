@@ -5,8 +5,10 @@
  */
 package burtis.common.events.Simulation;
 
+import burtis.common.events.AbstractEventProcessor;
 import burtis.common.events.SimulationEvent;
 import burtis.modules.network.NetworkConfig;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -44,7 +46,9 @@ public class BusStopsListEvent extends SimulationEvent {
     public List<BusStop> getBusStops() {
         return busStops;
     }
-    
-    
-    
+
+    public void visit(AbstractEventProcessor eventProcessor)
+    {
+        eventProcessor.process(this);
+    }
 }

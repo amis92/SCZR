@@ -3,6 +3,7 @@
  */
 package burtis.common.events.Sync;
 
+import burtis.common.events.AbstractEventProcessor;
 import burtis.common.events.SimulationEvent;
 
 /**
@@ -23,5 +24,10 @@ public class TickEvent extends SimulationEvent
     }
     
     private static final long serialVersionUID = -7732041429086152989L;
-  
+
+
+    public void visit(AbstractEventProcessor eventProcessor)
+    {
+        eventProcessor.process(this);
+    }
 }

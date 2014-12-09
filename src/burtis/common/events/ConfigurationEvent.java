@@ -10,5 +10,9 @@ public class ConfigurationEvent extends SimulationEvent {
     public ConfigurationEvent(String sender) {
         super(sender);
     }
-    
+
+    public void visit(AbstractEventProcessor eventProcessor)
+    {
+        eventProcessor.process(this);
+    }
 }

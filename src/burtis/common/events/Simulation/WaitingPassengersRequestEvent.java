@@ -5,6 +5,7 @@
  */
 package burtis.common.events.Simulation;
 
+import burtis.common.events.AbstractEventProcessor;
 import burtis.common.events.PassengerInfoRequestEvent;
 
 /**
@@ -23,7 +24,9 @@ public class WaitingPassengersRequestEvent extends PassengerInfoRequestEvent {
     public int getBusStopId() {
         return busStopId;
     }
-    
-    
-    
+
+    public void visit(AbstractEventProcessor eventProcessor)
+    {
+        eventProcessor.process(this);
+    }
 }

@@ -22,5 +22,9 @@ public class WithdrawBusEvent extends SimulationEvent {
         super(sender, recipients);
         this.busId = busId;
     }
-    
+
+    public void visit(AbstractEventProcessor eventProcessor)
+    {
+        eventProcessor.process(this);
+    }
 }

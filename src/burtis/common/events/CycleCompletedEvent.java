@@ -20,5 +20,9 @@ public class CycleCompletedEvent extends SimulationEvent {
     public long iteration() {
         return iteration;
     }
-    
+
+    public void visit(AbstractEventProcessor eventProcessor)
+    {
+        eventProcessor.process(this);
+    }
 }

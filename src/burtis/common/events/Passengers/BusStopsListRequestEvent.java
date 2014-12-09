@@ -1,5 +1,6 @@
 package burtis.common.events.Passengers;
 
+import burtis.common.events.AbstractEventProcessor;
 import burtis.common.events.SimulationEvent;
 import burtis.modules.network.NetworkConfig;
 import burtis.modules.simulation.Simulation;
@@ -19,5 +20,9 @@ public class BusStopsListRequestEvent extends SimulationEvent {
             NetworkConfig.defaultConfig().getModuleConfigs().get(NetworkConfig.PSNGR_MODULE).getModuleName(),
             new String[] { NetworkConfig.defaultConfig().getModuleConfigs().get(NetworkConfig.SIM_MODULE).getModuleName() });
     }
-    
+
+    public void visit(AbstractEventProcessor eventProcessor)
+    {
+        eventProcessor.process(this);
+    }
 }

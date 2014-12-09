@@ -11,5 +11,10 @@ public class PassengerInfoRequestEvent extends SimulationEvent {
     public PassengerInfoRequestEvent(String sender) {
         super(sender);
     }
-    
+
+
+    public void visit(AbstractEventProcessor eventProcessor)
+    {
+        eventProcessor.process(this);
+    }
 }

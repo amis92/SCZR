@@ -5,6 +5,7 @@
  */
 package burtis.common.events.gui;
 
+import burtis.common.events.AbstractEventProcessor;
 import burtis.common.events.SimulationEvent;
 
 /**
@@ -16,5 +17,9 @@ public class DoStepEvent extends SimulationEvent {
     public DoStepEvent(String sender) {
         super(sender);
     }
-    
+
+    public void visit(AbstractEventProcessor eventProcessor)
+    {
+        eventProcessor.process(this);
+    }
 }

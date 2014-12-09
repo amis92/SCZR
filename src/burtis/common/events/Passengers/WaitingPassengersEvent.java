@@ -5,6 +5,7 @@
  */
 package burtis.common.events.Passengers;
 
+import burtis.common.events.AbstractEventProcessor;
 import burtis.common.events.SimulationEvent;
 
 /**
@@ -29,6 +30,9 @@ public class WaitingPassengersEvent extends SimulationEvent {
     public int getWaitingPassengers() {
         return waitingPassengers;
     }
-    
-        
+
+    public void visit(AbstractEventProcessor eventProcessor)
+    {
+        eventProcessor.process(this);
+    }
 }

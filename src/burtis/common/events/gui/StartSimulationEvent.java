@@ -1,5 +1,6 @@
 package burtis.common.events.gui;
 
+import burtis.common.events.AbstractEventProcessor;
 import burtis.common.events.SimulationEvent;
 
 public class StartSimulationEvent extends SimulationEvent
@@ -9,5 +10,10 @@ public class StartSimulationEvent extends SimulationEvent
 
     public StartSimulationEvent(String sender, String[] recipients) {
         super(sender, recipients);
+    }
+
+    public void visit(AbstractEventProcessor eventProcessor)
+    {
+        eventProcessor.process(this);
     }
 }

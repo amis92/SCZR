@@ -16,5 +16,10 @@ public class SendBusEvent extends SimulationEvent {
     public int busId() { 
         return busId;
     }
-    
+
+
+    public void visit(AbstractEventProcessor eventProcessor)
+    {
+        eventProcessor.process(this);
+    }
 }

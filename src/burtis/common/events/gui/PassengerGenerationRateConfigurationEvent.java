@@ -5,6 +5,7 @@
  */
 package burtis.common.events.gui;
 
+import burtis.common.events.AbstractEventProcessor;
 import burtis.common.events.ConfigurationEvent;
 
 /**
@@ -30,7 +31,10 @@ public class PassengerGenerationRateConfigurationEvent extends ConfigurationEven
         return passengersPerCycle;
     }
     
-    
-    
-    
+
+
+    public void visit(AbstractEventProcessor eventProcessor)
+    {
+        eventProcessor.process(this);
+    }
 }

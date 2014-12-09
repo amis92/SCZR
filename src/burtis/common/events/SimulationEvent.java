@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SimulationEvent implements Serializable
+public abstract class SimulationEvent implements Serializable
 {
     private static final long serialVersionUID = 1L;
     private final String sender;
@@ -35,4 +35,6 @@ public class SimulationEvent implements Serializable
         }
         return result;
     }
+    
+    public abstract void visit(AbstractEventProcessor eventProcessor);
 }

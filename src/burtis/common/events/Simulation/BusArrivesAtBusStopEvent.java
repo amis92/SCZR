@@ -5,6 +5,7 @@
  */
 package burtis.common.events.Simulation;
 
+import burtis.common.events.AbstractEventProcessor;
 import burtis.common.events.SimulationEvent;
 
 /**
@@ -29,7 +30,9 @@ public class BusArrivesAtBusStopEvent extends SimulationEvent {
     public int getBusStopId() {
         return busStopId;
     }
-    
-    
-    
+
+    public void visit(AbstractEventProcessor eventProcessor)
+    {
+        eventProcessor.process(this);
+    }
 }
