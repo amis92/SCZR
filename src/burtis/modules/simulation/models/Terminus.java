@@ -7,6 +7,8 @@ public class Terminus extends BusStop
 {
     
     private static final List<Bus> buses = new LinkedList<>();
+    
+    private static long lastBusDeparture = 0;
 
     public Terminus(String name) {
         super(0, name);
@@ -15,5 +17,7 @@ public class Terminus extends BusStop
     public static void enqueueBus(Bus bus) {
         buses.add(bus);
     }
+    
+
     
 }

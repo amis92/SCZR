@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import burtis.common.events.EventProcessor;
 import burtis.common.events.SimulationEvent;
 import burtis.common.events.TerminateSimulationEvent;
 import burtis.modules.network.ModuleConfig;
@@ -25,7 +24,7 @@ import burtis.modules.network.server.impl.ServerSender;
  * @author Amadeusz Sadowski
  *
  */
-public class Server extends EventProcessor
+public class Server 
 {
     private final static Logger logger = Logger.getLogger(Server.class
             .getName());
@@ -79,7 +78,6 @@ public class Server extends EventProcessor
         }
     }
 
-    @Override
     public void process(SimulationEvent event)
     {
         if(!event.getRecipients().isEmpty()) {
@@ -95,7 +93,6 @@ public class Server extends EventProcessor
         }
     }
 
-    @Override
     public void process(TerminateSimulationEvent event)
     {
         for (ModuleConnection moduleConnection : moduleConnections)

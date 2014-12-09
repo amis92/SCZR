@@ -261,12 +261,14 @@ public class PassengerModule {
         
         SimulationEvent event;
         
-        logger.log(Level.INFO, "Requesting bus stops list...");
+        
         client.send(new BusStopsListRequestEvent(passengerModuleConfig.getModuleName()));
         
         while(true) {
             
             try {
+                logger.log(Level.INFO, "Requesting bus stops list...(timeout 1min)");
+                client.send(new BusStopsListRequestEvent());
                 event = eventQueue.poll(1, TimeUnit.MINUTES);
                 
                 if(event instanceof TerminateSimulationEvent) {
@@ -279,6 +281,14 @@ public class PassengerModule {
                     BusStop.add(((BusStopsListEvent)event).getBusStops());
                     client.send(new ModuleReadyEvent(passengerModuleConfig.getModuleName()));
                     break;
+                }
+                else {
+                    if(event != null) {
+                        logger.log(Level.WARNING, 
+                                "Event {0} ignored. Application in init state.", 
+                                event.getClass().getSimpleName());
+                        eventQueue.remove(event);
+                    }
                 }
                 
             } catch (InterruptedException ex) {
@@ -314,6 +324,8 @@ public class PassengerModule {
     }
     
     public static void main(String[] args) {
+        
+        
         
         PassengerModule moduleApp = new PassengerModule();
         moduleApp.start();

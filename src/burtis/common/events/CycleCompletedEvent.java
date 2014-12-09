@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package burtis.common.events;
 
 /**
@@ -12,6 +7,9 @@ package burtis.common.events;
  */
 public class CycleCompletedEvent extends SimulationEvent {
     
+    /**
+     * Which iteration it concerns.
+     */
     private final long iteration;
 
     public CycleCompletedEvent(String sender, long iteration) {

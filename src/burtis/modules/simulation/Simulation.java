@@ -18,6 +18,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
+ * Simulation module.
+ * 
+ * Contains depot, terminus, buses and bus stops. No passengers here. Communicates
+ * with passenger module to obtain information on passengers waiting at bus stops.
+ * 
  * @author Mikołaj Sowiński <mikolaj.sowinski@gmail.com>
  *
  */
@@ -29,7 +34,7 @@ public class Simulation
     public static final ModuleConfig passengerModuleConfig = 
             NetworkConfig.defaultConfig().getModuleConfigs().get(NetworkConfig.PSNGR_MODULE);
     
-    public static final ClientModule client = new ClientModule(passengerModuleConfig);
+    public static final ClientModule client = new ClientModule(simulationModuleConfig);
     public static final BlockingQueue<SimulationEvent> eventQueue = client.getIncomingQueue();
     
     public static final Logger logger = Logger.getLogger(simulationModuleConfig.getModuleName());
@@ -136,6 +141,7 @@ public class Simulation
             
                 // Handler for BusStopsListRequest (init only)
                 else if(event instanceof BusStopsListRequestEvent) {
+                    logger.log(Level.INFO, "Bus stops list requested.");
                     client.send(new BusStopsListEvent(
                             simulationModuleConfig.getModuleName(), 
                             BusStop.getBusStopsList()));
@@ -169,6 +175,7 @@ public class Simulation
      * @param event BusDepartEvent
      */
     private void busDepartEvent(BusDepartEvent event) {
+        logger.log(Level.INFO, "Bus {0} departs from the bus stop.", event.getBusId());
         Bus bus = Bus.getBusById(event.getBusId());
         bus.depart();
         bus.setNextBusStop(BusStop.getBusStopById(event.getNextBusStopId()));

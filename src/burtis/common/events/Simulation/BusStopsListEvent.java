@@ -6,6 +6,8 @@
 package burtis.common.events.Simulation;
 
 import burtis.common.events.SimulationEvent;
+import burtis.modules.network.NetworkConfig;
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -15,7 +17,7 @@ import java.util.List;
  */
 public class BusStopsListEvent extends SimulationEvent {
 
-    public static class BusStop {
+    public static class BusStop implements Serializable {
         
         public final int busStopId;
         public final String busStopName;
@@ -31,6 +33,11 @@ public class BusStopsListEvent extends SimulationEvent {
     
     public BusStopsListEvent(String sender, List<BusStop> busStops) {
         super(sender);
+        this.busStops = busStops;
+    }
+    
+    public BusStopsListEvent(List<BusStop> busStops) {
+        super(NetworkConfig.defaultConfig().getModuleConfigs().get(NetworkConfig.SIM_MODULE).getModuleName());
         this.busStops = busStops;
     }
 
