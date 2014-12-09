@@ -1,7 +1,9 @@
 package burtis.modules.network;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class NetworkConfig
 {
@@ -17,24 +19,40 @@ public class NetworkConfig
 
     public List<ModuleConfig> getModuleConfigs()
     {
-        return moduleConfigs;
+        return new ArrayList<ModuleConfig>(moduleConfigs);
     }
 
     public String getServerAddress()
     {
         return serverAddress;
     }
-
+    
     public static NetworkConfig defaultConfig()
     {
         String serverAddress = "127.0.0.1";
-        List<ModuleConfig> configs = new ArrayList<ModuleConfig>(3);
-        String guiName = "GUI Module";
-        String simName = "Simulation Module";
-        String psngrName = "Passengers Module";
-        configs.add(new ModuleConfig(guiName, 8123, new String[]{psngrName}));
-        configs.add(new ModuleConfig(psngrName, 8124, new String[]{simName, guiName}));
-        configs.add(new ModuleConfig(simName, 8125, new String[]{psngrName}));
+        
+        /* 0 */ String guiName  = "GUI Module"; 
+        /* 1 */ String syncName = "Synchronization Module";
+        /* 2 */ String busName  = "Bus Scheduling Module";
+        /* 3 */ String psgrName = "Passengers Module";
+        /* 4 */ String simName  = "Simulation Module";
+        
+        Map<String,Object> syncOptions = new HashMap<>();
+        syncOptions.put("iterationTime", 100);
+        syncOptions.put("moduleResponseTimeout", 1000);
+                
+        List<ModuleConfig> configs = new ArrayList<ModuleConfig>(5);
+        configs.add(new ModuleConfig(guiName,   serverAddress, 8121, true, null));
+        configs.add(new ModuleConfig(syncName,  serverAddress, 8122, true, syncOptions));
+        configs.add(new ModuleConfig(busName,   serverAddress, 8123, false, null));
+        configs.add(new ModuleConfig(psgrName,  serverAddress, 8124, false, null));
+        configs.add(new ModuleConfig(simName,   serverAddress, 8125, true, null));
         return new NetworkConfig(serverAddress, configs);
     }
+    
+    public final static int GUI_MODULE = 0;
+    public final static int SYNC_MODULE = 1;
+    public final static int BUSSHED_MODULE = 2;
+    public final static int PSNGR_MODULE = 3;
+    public final static int SIM_MODULE = 4;
 }

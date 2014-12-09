@@ -1,194 +1,114 @@
 package burtis.modules.network.client;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.InetSocketAddress;
-import java.net.Socket;
-import java.net.SocketAddress;
+import java.nio.channels.ClosedByInterruptException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-import java.util.function.Consumer;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import main.SimulatorConstants;
-import burtis.modules.network.Connection;
+import burtis.modules.network.Listener;
+import burtis.modules.network.ListenerImpl;
 
 /**
- * Manages connection to specified address/port pair.
- * 
- * Allows for opening, closing and reopening connection. Connection status can
- * be retrieved. Thread-safety: each action on Socket is done in Locked block.
- * 
+ * Sends and receives objects to/from server.
+ *
  * @author Amadeusz Sadowski
  *
  * @param <T>
- *            Received objects are cast to this type, and then consumed by
- *            provided Consumer.
+ *            Received objects are cast to this type.
  */
-class ClientConnection<T> implements Connection
+public class ClientConnection<T>
 {
-    private final Logger logger = Logger.getLogger(Client.class.getName());
-    private final Consumer<T> receiveAction;
-    private final ExecutorService receiveLoopExecutorService = Executors
-            .newSingleThreadExecutor();
-    private final String serverAddress;
-    private final int serverPort;
-    private Socket socket = new Socket();
-    private final Lock socketLock = new ReentrantLock();
-
+    private final static Logger logger = Logger
+            .getLogger(ClientConnection.class.getName());
     /**
-     * Creates new unconnected client connection to server. Call
-     * {@link #connect()} to attempt connection with server.
-     * 
-     * @param receiveAction
-     *            - for every received object, accept is called on this
-     *            {@link Consumer}
+     * Queue of events received from server.
      */
-    public ClientConnection(final String serverAddress, final int serverPort,
-            final Consumer<T> receiveAction)
+    protected final LinkedBlockingQueue<T> incomingQueue = new LinkedBlockingQueue<T>();
+    private final Listener listener;
+    private ExecutorService listenerExecutor = Executors
+            .newSingleThreadExecutor();
+    private final ClientSocketService socketService;
+
+    public ClientConnection(final String serverAddress, final int serverPort)
     {
-        this.serverAddress = serverAddress;
-        this.serverPort = serverPort;
-        this.receiveAction = receiveAction;
+        this.socketService = new ClientSocketService(serverAddress, serverPort);
+        this.listener = new ListenerImpl(socketService, this::receive,
+                this::reconnect, logger);
     }
 
-    /**
-     * Attempts to close connection and create new empty Socket.
-     */
-    public void closeConnection()
+    public void close()
     {
-        socketLock.lock();
+        listenerExecutor.shutdownNow();
+        listenerExecutor = Executors.newSingleThreadExecutor();
+        socketService.close();
+    }
+
+    public void connect() throws IOException
+    {
         try
         {
-            if (!socket.isClosed())
-            {
-                socket.close();
-            }
+            logger.info(String.format(
+                    "Oczekuję na połączenie z serwerem na porcie %d",
+                    socketService.getPort()));
+            close();
+            socketService.connect();
+            listenerExecutor.execute(listener::listen);
+            logger.info(String.format("Podłączono do serwera na porcie %d",
+                    socketService.getPort()));
+        }
+        catch (final ClosedByInterruptException e)
+        {
+            logger.info("Przerywam łączenie z serwerem.");
         }
         catch (final IOException e)
         {
-            logger.log(Level.WARNING, "Błąd zamykania połączenia", e);
-            receiveLoopExecutorService.shutdownNow();
-        }
-        finally
-        {
-            socket = new Socket();
-            socketLock.unlock();
+            logger.log(Level.SEVERE, "Błąd tworzenia Listener'a", e);
+            throw e;
         }
     }
 
-    /**
-     * Attempts to connect with server. Blocking method. On success listener is
-     * subscribed to open connection.
-     */
-    public boolean connect()
+    public T takeFromQueue() throws InterruptedException
     {
-        if (isConnected() || !socketLock.tryLock())
-        {
-            return true;
-        }
-        try
-        {
-            closeConnection();
-            SocketAddress address = new InetSocketAddress(serverAddress,
-                    serverPort);
-            socket.connect(address, SimulatorConstants.connectingTimeout);
-            receiveLoopExecutorService.execute(this::listenOnSocket);
-            return true;
-        }
-        catch (final Exception e)
-        {
-            logger.log(Level.WARNING, "Błąd łączenia z serwerem", e);
-            closeConnection();
-            return false;
-        }
-        finally
-        {
-            socketLock.unlock();
-        }
+        return incomingQueue.take();
     }
 
     public boolean isConnected()
     {
-        socketLock.lock();
-        try
-        {
-            boolean isConnected = socket.isConnected() && !socket.isClosed();
-            return isConnected;
-        }
-        finally
-        {
-            socketLock.unlock();
-        }
+        return socketService.isConnected();
     }
 
-    /**
-     * Sends parameter to Socket. Closes connection on failure.
-     */
-    public boolean send(final Object object)
-    {
-        if (!isConnected())
-        {
-            return false;
-        }
-        socketLock.lock();
-        ObjectOutputStream oos = null;
-        try
-        {
-            oos = new ObjectOutputStream(socket.getOutputStream());
-            oos.writeObject(object);
-            oos.flush();
-            return true;
-        }
-        catch (final IOException e)
-        {
-            logger.log(Level.WARNING, "Błąd wysyłania do serwera", e);
-            closeConnection();
-            return false;
-        }
-        finally
-        {
-            socketLock.unlock();
-        }
-    }
-
-    /**
-     * Awaits for incoming objects, and calls receive action for them.
-     */
     @SuppressWarnings("unchecked")
-    private void listenOnSocket()
+    private void receive(Object receivedObject)
     {
-        logger.log(Level.INFO, "Rozpoczynam nasłuchiwanie w kliencie");
-        ObjectInputStream ois = null;
-        while (isConnected() && !Thread.interrupted())
+        incomingQueue.add((T) receivedObject);
+    }
+
+    private void reconnect()
+    {
+        try
         {
-            socketLock.lock();
-            try
-            {
-                logger.log(Level.FINER, "Czekam " + socket.getLocalPort());
-                ois = new ObjectInputStream(socket.getInputStream());
-                final Object receivedObject = ois.readObject();
-                logger.log(Level.FINER,
-                        "Dostalem: " + receivedObject.getClass());
-                receiveAction.accept((T) receivedObject);
-            }
-            catch (final IOException e)
-            {
-                logger.log(Level.SEVERE, "Błąd odbierania z serwera", e);
-            }
-            catch (final ClassNotFoundException e)
-            {
-                logger.log(Level.WARNING, "Ignorowanie nieznanej klasy", e);
-            }
-            finally
-            {
-                socketLock.unlock();
-            }
+            connect();
         }
-        logger.log(Level.INFO, "Zakończyłem nasłuchiwanie w kliencie");
+        catch (IOException e)
+        {
+            logger.severe("Klient nie mógł połączyć się ponownie.");
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void send(Object objectToSend)
+    {
+        logger.entering("write to socket", null);
+        try
+        {
+            socketService.writeToSocket(objectToSend);
+        }
+        catch (Exception e)
+        {
+            logger.log(Level.WARNING, "Błąd wysyłania", e);
+        }
     }
 }

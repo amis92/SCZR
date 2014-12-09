@@ -7,7 +7,7 @@ package burtis.modules.network.server;
  *
  */
 @FunctionalInterface
-interface Action
+public interface Action
 {
     public void perform();
 }

@@ -1,6 +1,5 @@
-package burtis.modules.network.server;
+package burtis.modules.network.server.impl;
 
-import java.io.ObjectOutputStream;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -8,23 +7,29 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import burtis.modules.network.SocketService;
+import burtis.modules.network.server.ModuleConnection;
+import burtis.modules.network.server.Sender;
+import burtis.modules.network.server.Server;
+
 /**
  * Sends objects using blocking queue on separate thread.
  * 
  * @author Amadeusz Sadowski
  *
  */
-class SendingService implements Sender
+public class ServerSender implements Sender
 {
-    private final Logger logger = Logger.getLogger(Server.class.getName());
+    private final static Logger logger = Logger.getLogger(Server.class.getName());
     private ExecutorService sendingExecutor = Executors
             .newSingleThreadExecutor();
     private final BlockingQueue<Package> toSendQueue = new LinkedBlockingQueue<Package>();
+    private volatile boolean isStopped = true;
 
     /**
      * Creates non-running service. To run, call {@link #startSending()}.
      */
-    public SendingService()
+    public ServerSender()
     {
     }
 
@@ -37,7 +42,7 @@ class SendingService implements Sender
         final Package newPack = new Package(object, recipient);
         if (!toSendQueue.offer(newPack))
         {
-            logger.log(Level.WARNING, "Kolejka do wysłania przepełniona");
+            logger.warning("Kolejka do wysłania przepełniona");
         }
     }
 
@@ -46,11 +51,13 @@ class SendingService implements Sender
      */
     public void startSending()
     {
+        isStopped = false;
         sendingExecutor.execute(this::sendFromQueue);
     }
 
     public void stopSending()
     {
+        isStopped = true;
         sendingExecutor.shutdownNow();
         sendingExecutor = Executors.newSingleThreadExecutor();
     }
@@ -58,7 +65,7 @@ class SendingService implements Sender
     private void sendFromQueue()
     {
         Package pack;
-        while (!Thread.interrupted())
+        while (!isStopped)
         {
             try
             {
@@ -67,8 +74,8 @@ class SendingService implements Sender
             }
             catch (final InterruptedException e)
             {
-                logger.log(Level.WARNING,
-                        "Błąd oczekiwania na kolejkę wysyłania");
+                stopSending();
+                logger.warning("Przerywam wysyłanie.");
             }
         }
     }
@@ -80,25 +87,19 @@ class SendingService implements Sender
         final int recipientPort = recipientSocketService.getPort();
         if (!recipientSocketService.isConnected())
         {
-            logger.log(Level.WARNING, "Nie ma połączenia - utracono paczkę");
+            logger.warning("Nie ma połączenia - utracono paczkę");
             return;
         }
-        logger.log(Level.FINEST, "Wysyłam do " + recipientPort);
-        recipientSocketService.useSocket((socket) ->
+        logger.finest("Wysyłam do " + recipientPort);
+        try
         {
-            ObjectOutputStream oos = null;
-            try
-            {
-                oos = new ObjectOutputStream(socket.getOutputStream());
-                oos.writeObject(pack.getObject());
-                oos.flush();
-                logger.log(Level.FINEST, "Wysłałem do " + recipientPort);
-            }
-            catch (Exception e)
-            {
-                logger.log(Level.WARNING, "Błąd wysyłania", e);
-            }
-        });
+            recipientSocketService.writeToSocket(pack.getObject());
+            logger.finest("Wysłałem do " + recipientPort);
+        }
+        catch (Exception e)
+        {
+            logger.log(Level.WARNING, "Błąd wysyłania", e);
+        }
     }
 
     /**

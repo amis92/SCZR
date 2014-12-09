@@ -8,9 +8,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import order.ServerOrder;
-import order.ServerOrderExecutor;
+import burtis.common.events.EventProcessor;
+import burtis.common.events.SimulationEvent;
+import burtis.common.events.TerminateSimulationEvent;
 import burtis.modules.network.ModuleConfig;
 import burtis.modules.network.NetworkConfig;
+import burtis.modules.network.server.impl.ServerSender;
 
 /**
  * Performs traffic forwarding according to configuration provided. All traffic
@@ -23,40 +26,27 @@ import burtis.modules.network.NetworkConfig;
  * @author Amadeusz Sadowski
  *
  */
-public class Server implements ServerOrderExecutor
+public class Server extends EventProcessor
 {
-    private final Logger logger = Logger.getLogger(Server.class.getName());
-    private final SendingService sendingService = new SendingService();
+    private final static Logger logger = Logger.getLogger(Server.class
+            .getName());
+    private final ServerSender sender = new ServerSender();
     private final Collection<ModuleConnection> moduleConnections;
+    private final Map<String, ModuleConnection> moduleMap = new HashMap<>();
 
     public Server(final NetworkConfig netConfig)
     {
         final Collection<ModuleConfig> configs = netConfig.getModuleConfigs();
         this.moduleConnections = new ArrayList<>(configs.size());
-        final Map<String, ModuleConnection> moduleMap = new HashMap<>();
         final ModuleConnectionFactory factory = new ModuleConnectionFactory(
-                sendingService, this::executeOrder);
-        for (ModuleConfig config : configs)
-        {
-            ModuleConnection connection = factory.createFromConfig(config);
-            moduleConnections.add(connection);
-            moduleMap.put(connection.getModuleName(), connection);
-        }
-        for (ModuleConfig config : configs)
-        {
-            String moduleName = config.getModuleName();
-            ModuleConnection connection = moduleMap.get(moduleName);
-            for (String name : config.getConnectedModuleNames())
-            {
-                connection.addRecipient(moduleMap.get(name));
-            }
-        }
+                moduleConnections, moduleMap, this::receive);
+        factory.readConfig(netConfig);
     }
 
     public void run()
     {
         logger.log(Level.INFO, "Server preparing to run");
-        sendingService.startSending();
+        sender.startSending();
         for (ModuleConnection moduleConnection : moduleConnections)
         {
             moduleConnection.connect();
@@ -64,7 +54,6 @@ public class Server implements ServerOrderExecutor
         logger.log(Level.INFO, "Server running");
     }
 
-    @Override
     public void stop()
     {
         logger.log(Level.INFO, "Server stopping...");
@@ -72,12 +61,61 @@ public class Server implements ServerOrderExecutor
         {
             moduleConnection.close();
         }
-        sendingService.stopSending();
+        sender.stopSending();
         logger.log(Level.INFO, "Server stopped");
     }
 
-    private void executeOrder(ServerOrder order)
+    private void receive(Object receivedObject)
     {
-        order.execute(this);
+        if (receivedObject instanceof SimulationEvent)
+        {
+            SimulationEvent event = (SimulationEvent) receivedObject;
+            logger.finer("Przesyłam dalej obiekt " + event.getClass().getName());
+            process(event);
+        }
+        else
+        {
+            logger.warning("Odebrałem nieprawidłowy obiekt: "
+                    + receivedObject.getClass().getName());
+        }
+    }
+
+    @Override
+    public void process(SimulationEvent event)
+    {
+        if(!event.getRecipients().isEmpty()) {
+            for (String recipientName : event.getRecipients())
+            {
+                forward(event, recipientName);
+            }
+        }
+        else {
+            for (ModuleConnection moduleConnection : moduleConnections) {
+                forward(event, moduleConnection.getModuleName());
+            }
+        }
+    }
+
+    @Override
+    public void process(TerminateSimulationEvent event)
+    {
+        for (ModuleConnection moduleConnection : moduleConnections)
+        {
+            sender.send(event, moduleConnection);
+        }
+        stop();
+    }
+
+    private void forward(SimulationEvent event, String recipientName)
+    {
+        if (moduleMap.containsKey(recipientName))
+        {
+            sender.send(event, moduleMap.get(recipientName));
+        }
+        else
+        {
+            logger.warning("Brak takiego modułu - nie można przesłać zdarzenia do "
+                    + recipientName);
+        }
     }
 }

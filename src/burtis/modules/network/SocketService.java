@@ -1,7 +1,7 @@
-package burtis.modules.network.server;
+package burtis.modules.network;
 
 import java.io.IOException;
-import java.net.Socket;
+import java.net.ServerSocket;
 import java.util.function.Consumer;
 
 /**
@@ -10,7 +10,7 @@ import java.util.function.Consumer;
  * @author Amadeusz Sadowski
  *
  */
-interface SocketService
+public interface SocketService
 {
     /**
      * Attempts to close socket. Fails silently.
@@ -44,11 +44,25 @@ interface SocketService
 
     /**
      * Allows for thread-safe use of the socket. After acquiring lock on socket,
-     * it won't be closed or reopened. The lock is released after Consumer
-     * method returns. Fails silently.
+     * it won't be closed or reopened. The lock is released after method
+     * returns. Fails silently.
      * 
-     * @param action
-     *            It's called with the socket of this service.
+     * @param o
+     *            Object sent into connection.
      */
-    public void useSocket(Consumer<Socket> action);
+    public void writeToSocket(Object o);
+
+    /**
+     * Allows for thread-safe reading. This method acquires read-lock, but
+     * doesn't lock socket from being closed or written to in the meantime. The
+     * only assert it provides is that only one thread may call this method at
+     * once.
+     * 
+     * @param receive
+     *            Called with the object received, or not called if error
+     *            occurs.
+     * @throws IOException
+     *             When an IO error occurs.
+     */
+    public void readFromSocket(Consumer<Object> receive) throws IOException;
 }
