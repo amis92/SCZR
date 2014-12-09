@@ -31,7 +31,7 @@ public abstract class AbstractNetworkModule
             .newSingleThreadExecutor();
     private boolean isRunning = true;
     private BlockingQueue<SimulationEvent> queue;
-    protected final AbstractEventProcessor eventHandler;
+    protected AbstractEventProcessor eventHandler = null;
     /**
      * Must return configuration for your implementation, even before
      * {@link #init()} call.
@@ -46,11 +46,9 @@ public abstract class AbstractNetworkModule
      * @param config
      * @param eventHandler
      */
-    protected AbstractNetworkModule(ModuleConfig config,
-            AbstractEventProcessor eventHandler)
+    protected AbstractNetworkModule(ModuleConfig config)
     {
         this.moduleConfig = config;
-        this.eventHandler = eventHandler;
     }
 
     private void closeModule()
@@ -89,6 +87,8 @@ public abstract class AbstractNetworkModule
     protected abstract void init();
 
     /**
+     * IMPORTANT: set protected field {@link #eventHandler} before calling this
+     * method.
      * 
      * It provides main method, so in your main method you can just write:</br>
      * <code>
