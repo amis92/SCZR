@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import order.ServerOrder;
 import burtis.common.events.EventProcessor;
 import burtis.common.events.SimulationEvent;
 import burtis.common.events.TerminateSimulationEvent;
