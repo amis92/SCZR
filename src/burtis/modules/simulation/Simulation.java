@@ -56,12 +56,6 @@ public class Simulation
      */
     private final int busCapacity = SimulationModuleConsts.BUS_CAPACITY;
     
-    /**
-     * Bus starting frequency.
-     * Given in number of simulation iterations.
-     */
-    private int busStartInterval = SimulationModuleConsts.BUS_START_INTERVAL;
-
     public static long getCurrentCycle() {
         return currentCycle;
     }
