@@ -169,8 +169,9 @@ public class Simulation
     }
     
     private void iterate() {
+        // This will depart a bas at the initial call.
+        Terminus.departBus();
         Bus.updatePositions();
-        // Terminus.
     }
     
     /**

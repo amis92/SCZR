@@ -1,12 +1,12 @@
 package burtis.modules.simulation.models;
 
 import java.util.LinkedList;
-import java.util.List;
+import java.util.Queue;
 
 public class Depot
 {
 
-    private static final List<Bus> buses = new LinkedList<>();
+    private static final Queue<Bus> buses = new LinkedList<>();
     
     public static void putBus(Bus bus) {
         buses.add(bus);
@@ -22,6 +22,8 @@ public class Depot
         return null;
     }
     
-    
-    
+    public static Bus getBus() {
+        return buses.poll();
+    }
+  
 }

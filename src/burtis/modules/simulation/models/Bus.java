@@ -287,17 +287,14 @@ public class Bus
             
             // If nearest bus stop is terminus we are at the terminus
             if(bus.getClosestBusStop() instanceof Terminus) {
-                // Withdraw to the depot
+                // Withdraw to the depot if requested or max. number of cycles achieved.
                 if(bus.goToDepot || bus.cycle == bus.maxCycles) {
                     bus.setState(Bus.State.DEPOT);
-                    bus.setPosition(0);
                     Depot.putBus(bus);
                 }
                 // Enqueue to the terminus
                 else {
-                    bus.cycle++;
                     bus.setState(State.TERMINUS);
-                    bus.setPosition(0);
                     Terminus.enqueueBus(bus);
                 }    
             }
@@ -311,7 +308,7 @@ public class Bus
             
             // If no one wanted to stop here maybe someone is waiting ...
             else {
-                // It blocks!
+                // It blocks! - If anyone is waiting stay at the bus stop.
                 if(queryForWaitingPassengers(bus.getClosestBusStop())) {
                     bus.setState(Bus.State.BUSSTOP);
                     bus.setPosition(closestBusStop.getPosition());
@@ -386,10 +383,6 @@ public class Bus
     }
     
     /**
-     * Checks if 
-     */    
-    
-    /**
      * Sets bus to start at next iteration after arriving from the depot.
      * It clears bus cycles count.
      * 
@@ -398,13 +391,58 @@ public class Bus
     public static void sendFromDepot(int busId) {
         Bus bus = getBusById(busId);
         if(bus != null) {
-            bus.setState(State.RUNNING);
-            bus.cycle = 0;
-            //bus.setStartAt(Simulation.getCurrentCycle()+1);
+            if(bus.state != State.DEPOT) {
+                Simulation.logger.log(
+                        Level.WARNING, "Bus {0} is not in a depot. However, it was to be sent from the depot...", bus.id);
+            }
+            else {
+                bus.setState(State.RUNNING);
+                bus.cycle = 0;
+                bus.setPosition(0);
+            }
         }
         else {
             Simulation.logger.log(Level.WARNING, "No such bus {0}", busId);
         }
+    }
+    
+     /**
+     * Sets bus to start at next iteration after arriving from the depot.
+     */
+    public void sendFromDepot() {
+        sendFromDepot(id);
+    }
+    
+    /**
+     * Sets bus to start at next iteration after being at the terminus.
+     * Increments bus cycles count.
+     * 
+     * @param busId id of the bus
+     */
+    public static void sendFromTerminus(int busId) {
+        Bus bus = getBusById(busId);
+        if(bus != null) {
+            if(bus.state != State.TERMINUS) {
+                Simulation.logger.log(
+                        Level.WARNING, "Bus {0} is not in at the terminus. However, it was to be sent from the terminus...", bus.id);
+            }
+            else {
+                bus.setState(State.RUNNING);
+                bus.cycle++;
+                bus.setPosition(0);
+                //bus.setStartAt(Simulation.getCurrentCycle()+1);
+            }
+        }
+        else {
+            Simulation.logger.log(Level.WARNING, "No such bus {0}", busId);
+        }
+    }
+    
+    /**
+     * Sets bus to start at next iteration after being at the terminus.
+     */
+    public void sendFromTerminus() {
+        sendFromTerminus(id);
     }
     
     /**
