@@ -18,6 +18,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
+ * Simulation module.
+ * 
+ * Contains depot, terminus, buses and bus stops. No passengers here. Communicates
+ * with passenger module to obtain information on passengers waiting at bus stops.
+ * 
  * @author Mikołaj Sowiński <mikolaj.sowinski@gmail.com>
  *
  */
