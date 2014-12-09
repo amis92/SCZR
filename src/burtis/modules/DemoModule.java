@@ -15,9 +15,9 @@ import burtis.modules.network.NetworkConfig;
  */
 public class DemoModule extends AbstractNetworkModule
 {
-    private DemoModule(ModuleConfig config, AbstractEventProcessor handler)
+    private DemoModule(ModuleConfig config)
     {
-        super(config, handler);
+        super(config);
     }
 
     @Override
@@ -37,12 +37,12 @@ public class DemoModule extends AbstractNetworkModule
     {
         ModuleConfig config = NetworkConfig.defaultConfig().getModuleConfigs()
                 .get(NetworkConfig.GUI_MODULE);
-        EventHandler handler = new EventHandler();
-        DemoModule app = new DemoModule(config, handler);
+        DemoModule app = new DemoModule(config);
+        app.eventHandler = app.new EventHandler();
         app.main();
     }
 
-    private static class EventHandler extends AbstractEventProcessor
+    private class EventHandler extends AbstractEventProcessor
     {
         @Override
         public void defaultHandle(SimulationEvent event)
