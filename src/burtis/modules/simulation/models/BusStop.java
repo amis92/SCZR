@@ -58,13 +58,26 @@ public class BusStop
         return busStop;
     }
     
-    public static void addTerminus(String name) {
-        if(!hasTerminus()) {
-            busStops.add(new Terminus(name));
-        }
+    /**
+     * Adds new bus stop object to the list of bus stops.
+     * 
+     * @param busStop bus stop to be added
+     * @return bus stop given as parameter
+     */
+    public static BusStop add(BusStop busStop) {
+        busStops.add(busStop);
+        return busStop;
     }
     
+//    public static void addTerminus(name) {
+//        if(!hasTerminus()) {
+//            busStops.add(new Terminus(name));
+//        }
+//    }
+    
     /**
+     * TO BE DELETED
+     * 
      * Checks if line already has terminus.
      * @return has terminus
      */

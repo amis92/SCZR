@@ -12,6 +12,7 @@ import burtis.modules.network.NetworkConfig;
 import burtis.modules.network.client.ClientModule;
 import burtis.modules.simulation.models.Bus;
 import burtis.modules.simulation.models.BusStop;
+import burtis.modules.simulation.models.Terminus;
 import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
 import java.util.logging.Level;
@@ -77,7 +78,7 @@ public class Simulation
                 Bus.add(busCapacity);
             }
             // Create bus stops
-            BusStop.addTerminus("Bielańska");
+            BusStop.add(new Terminus(0,"Bielańska"));
             BusStop.add(30, "Plac Zamkowy");
             BusStop.add(60, "Hotel Bristol");
             BusStop.add(90, "Uniwersytet");
@@ -87,6 +88,7 @@ public class Simulation
             BusStop.add(210, "Plac na Rozdrożu");
             BusStop.add(240, "Plac Unii Lubelskiej");
             BusStop.add(270, "Rakowiecka");
+            BusStop.add(new Terminus(300,"Bielańska"));
         } catch (IOException ex) {
             handleError(Level.SEVERE, ex.getMessage());
         }
@@ -168,6 +170,7 @@ public class Simulation
     
     private void iterate() {
         Bus.updatePositions();
+        // Terminus.
     }
     
     /**

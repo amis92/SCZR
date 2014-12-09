@@ -46,15 +46,25 @@ public class Bus
      */
     private BusStop closestBusStop;
    
-    /**
-     * Departure iteration.
-     */
-    private long startAt;
+//    /**
+//     * Departure iteration.
+//     */
+//    private long startAt;
     
     /**
-     * 
+     * Determines if bus should be moved to the depot after arriving to the terminus.
      */
     private boolean goToDepot;
+    
+    /**
+     * Number of full line cycle.
+     */
+    private int cycle;
+    
+    /**
+     * Number of cycles to be done by default.
+     */
+    private final int maxCycles = SimulationModuleConsts.BUS_MAX_CYCLES;
     
     /**
      * Current bus position.
@@ -179,23 +189,23 @@ public class Bus
         this.goToDepot = goToDepot;
     }
 
-    /**
-     * Get the value of startAt
-     *
-     * @return the value of startAt
-     */
-    public long getStartAt() {
-        return startAt;
-    }
-
-    /**
-     * Set the value of startAt
-     *
-     * @param startAt new value of startAt
-     */
-    public void setStartAt(long startAt) {
-        this.startAt = startAt;
-    }
+//    /**
+//     * Get the value of startAt
+//     *
+//     * @return the value of startAt
+//     */
+//    public long getStartAt() {
+//        return startAt;
+//    }
+//
+//    /**
+//     * Set the value of startAt
+//     *
+//     * @param startAt new value of startAt
+//     */
+//    public void setStartAt(long startAt) {
+//        this.startAt = startAt;
+//    }
     
     public int getId() {
         return id;
@@ -249,15 +259,15 @@ public class Bus
                 calculatePosition(bus);
             }
             
-            // Terminus case
-            else if(bus.getState() == Bus.State.TERMINUS) {
-                
-                // Check if it is time to go...?
-                if(Simulation.getCurrentCycle() >= bus.getStartAt()) {
-                    bus.setState(Bus.State.RUNNING);
-                    calculatePosition(bus);
-                }
-            }
+//            // Terminus case
+//            else if(bus.getState() == Bus.State.TERMINUS) {
+//                
+//                // Check if it is time to go...?
+//                if(Simulation.getCurrentCycle() >= bus.getStartAt()) {
+//                    bus.setState(Bus.State.RUNNING);
+//                    calculatePosition(bus);
+//                }
+//            }
         }
     }
     
@@ -278,13 +288,14 @@ public class Bus
             // If nearest bus stop is terminus we are at the terminus
             if(bus.getClosestBusStop() instanceof Terminus) {
                 // Withdraw to the depot
-                if(bus.goToDepot) {
+                if(bus.goToDepot || bus.cycle == bus.maxCycles) {
                     bus.setState(Bus.State.DEPOT);
                     bus.setPosition(0);
                     Depot.putBus(bus);
                 }
                 // Enqueue to the terminus
                 else {
+                    bus.cycle++;
                     bus.setState(State.TERMINUS);
                     bus.setPosition(0);
                     Terminus.enqueueBus(bus);
@@ -324,9 +335,7 @@ public class Bus
      * @return true if at least one passenger is waiting
      */
     private static boolean queryForWaitingPassengers(BusStop busStop) {
-    
-        WaitingPassengersEvent event;
-        
+           
         Simulation.client.send(new WaitingPassengersRequestEvent(
                 Simulation.simulationModuleConfig.getModuleName(), 
                 busStop.getId()));
@@ -377,15 +386,21 @@ public class Bus
     }
     
     /**
-     * Sets bus to start at next iteration.
+     * Checks if 
+     */    
+    
+    /**
+     * Sets bus to start at next iteration after arriving from the depot.
+     * It clears bus cycles count.
      * 
      * @param busId id of the bus
      */
-    public static void sendBus(int busId) {
+    public static void sendFromDepot(int busId) {
         Bus bus = getBusById(busId);
         if(bus != null) {
-            bus.setState(State.TERMINUS);
-            bus.setStartAt(Simulation.getCurrentCycle()+1);
+            bus.setState(State.RUNNING);
+            bus.cycle = 0;
+            //bus.setStartAt(Simulation.getCurrentCycle()+1);
         }
         else {
             Simulation.logger.log(Level.WARNING, "No such bus {0}", busId);

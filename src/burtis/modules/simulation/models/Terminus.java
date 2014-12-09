@@ -7,16 +7,26 @@ public class Terminus extends BusStop
 {
     
     private static final List<Bus> buses = new LinkedList<>();
-    
-    private static long lastBusDeparture = 0;
+    private static long toTheNextDeparture = 0;
 
-    public Terminus(String name) {
-        super(0, name);
+    public Terminus(int position, String name) {
+        super(position, name);
     }
     
     public static void enqueueBus(Bus bus) {
         buses.add(bus);
     }
+    
+    /**
+     * Departs buses at given intervals.
+     */
+    public static void departBus() {
+        if(toTheNextDeparture == 0) {
+            
+        };
+    }
+    
+    
     
 
     
