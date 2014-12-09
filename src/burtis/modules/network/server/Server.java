@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import burtis.common.events.AbstractEventProcessor;
 import burtis.common.events.SimulationEvent;
 import burtis.common.events.TerminateSimulationEvent;
 import burtis.modules.network.ModuleConfig;
@@ -24,13 +25,14 @@ import burtis.modules.network.server.impl.ServerSender;
  * @author Amadeusz Sadowski
  *
  */
-public class Server 
+public class Server extends AbstractEventProcessor
 {
-    private final static Logger logger = Logger.getLogger(Server.class
+    protected final static Logger logger = Logger.getLogger(Server.class
             .getName());
     private final ServerSender sender = new ServerSender();
     private final Collection<ModuleConnection> moduleConnections;
     private final Map<String, ModuleConnection> moduleMap = new HashMap<>();
+    protected boolean isRunning = false;
 
     public Server(final NetworkConfig netConfig)
     {
@@ -49,11 +51,17 @@ public class Server
         {
             moduleConnection.connect();
         }
+        isRunning = true;
         logger.log(Level.INFO, "Server running");
     }
 
     public void stop()
     {
+        if (!isRunning)
+        {
+            return;
+        }
+        isRunning = false;
         logger.log(Level.INFO, "Server stopping...");
         for (ModuleConnection moduleConnection : moduleConnections)
         {
@@ -69,7 +77,7 @@ public class Server
         {
             SimulationEvent event = (SimulationEvent) receivedObject;
             logger.finer("Przesyłam dalej obiekt " + event.getClass().getName());
-            process(event);
+            event.visit(this);
         }
         else
         {
@@ -78,21 +86,7 @@ public class Server
         }
     }
 
-    public void process(SimulationEvent event)
-    {
-        if(!event.getRecipients().isEmpty()) {
-            for (String recipientName : event.getRecipients())
-            {
-                forward(event, recipientName);
-            }
-        }
-        else {
-            for (ModuleConnection moduleConnection : moduleConnections) {
-                forward(event, moduleConnection.getModuleName());
-            }
-        }
-    }
-
+    @Override
     public void process(TerminateSimulationEvent event)
     {
         for (ModuleConnection moduleConnection : moduleConnections)
@@ -112,6 +106,25 @@ public class Server
         {
             logger.warning("Brak takiego modułu - nie można przesłać zdarzenia do "
                     + recipientName);
+        }
+    }
+
+    @Override
+    public void defaultHandle(SimulationEvent event)
+    {
+        if (!event.getRecipients().isEmpty())
+        {
+            for (String recipientName : event.getRecipients())
+            {
+                forward(event, recipientName);
+            }
+        }
+        else
+        {
+            for (ModuleConnection moduleConnection : moduleConnections)
+            {
+                forward(event, moduleConnection.getModuleName());
+            }
         }
     }
 }
