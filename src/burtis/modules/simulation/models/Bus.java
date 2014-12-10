@@ -2,11 +2,15 @@ package burtis.modules.simulation.models;
 
 import burtis.common.constants.SimulationModuleConsts;
 import burtis.common.events.Passengers.WaitingPassengersEvent;
+import burtis.common.events.Simulation.BusStateEvent;
 import burtis.common.events.Simulation.WaitingPassengersRequestEvent;
 import burtis.common.events.SimulationEvent;
+import burtis.common.mockups.MockupBusState;
 import burtis.modules.simulation.Simulation;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Level;
 
 public class Bus
@@ -14,12 +18,23 @@ public class Bus
     
     private static final List<Bus> buses = new ArrayList<>();
     
+    /**
+     * Queue for the results of querying passenger module. 
+     */
+    private final static BlockingQueue<WaitingPassengersEvent> passengerQueryResults = new LinkedBlockingQueue<>(1);
+    
     public enum State {
         DEPOT, BUSSTOP, RUNNING, TERMINUS
     }
     private State state;
    
     private final int id;
+
+    public BusStop getCurrentBusStop() {
+        return currentBusStop;
+    }
+    
+    
     
     /**
      * Maximum bus capacity.
@@ -45,6 +60,8 @@ public class Bus
      * Next bus stop on the line.
      */
     private BusStop closestBusStop;
+    
+    private BusStop currentBusStop;
    
 //    /**
 //     * Departure iteration.
@@ -215,8 +232,9 @@ public class Bus
         return "BUS: " + id + ", POS: " + position + " S: " + state;
     }
     
-    public void depart() {
+    public void depart(BusStop nextBusStop) {
         state = State.RUNNING;
+        this.nextBusStop = nextBusStop;
     }
     
     ////////////////////////////////
@@ -287,17 +305,14 @@ public class Bus
             
             // If nearest bus stop is terminus we are at the terminus
             if(bus.getClosestBusStop() instanceof Terminus) {
-                // Withdraw to the depot
+                // Withdraw to the depot if requested or max. number of cycles achieved.
                 if(bus.goToDepot || bus.cycle == bus.maxCycles) {
                     bus.setState(Bus.State.DEPOT);
-                    bus.setPosition(0);
                     Depot.putBus(bus);
                 }
                 // Enqueue to the terminus
                 else {
-                    bus.cycle++;
                     bus.setState(State.TERMINUS);
-                    bus.setPosition(0);
                     Terminus.enqueueBus(bus);
                 }    
             }
@@ -305,15 +320,17 @@ public class Bus
             // Some passenger requested to stop here
             else if(bus.getClosestBusStop() == bus.getNextBusStop()) {
                 bus.setState(Bus.State.BUSSTOP);
+                bus.currentBusStop = closestBusStop;
                 bus.setPosition(closestBusStop.getPosition());
                 BusStop.enqueueBus(bus, closestBusStop);
             }
             
             // If no one wanted to stop here maybe someone is waiting ...
             else {
-                // It blocks!
+                // It blocks! - If anyone is waiting stay at the bus stop.
                 if(queryForWaitingPassengers(bus.getClosestBusStop())) {
                     bus.setState(Bus.State.BUSSTOP);
+                    bus.currentBusStop = closestBusStop;
                     bus.setPosition(closestBusStop.getPosition());
                     BusStop.enqueueBus(bus, closestBusStop);
                 }
@@ -336,38 +353,17 @@ public class Bus
      */
     private static boolean queryForWaitingPassengers(BusStop busStop) {
            
-        Simulation.client.send(new WaitingPassengersRequestEvent(
-                Simulation.simulationModuleConfig.getModuleName(), 
+        Simulation.getInstance().send(
+            new WaitingPassengersRequestEvent(
+                Simulation.getInstance().getModuleConfig().getModuleName(),
                 busStop.getId()));
         
-        return waitForWaitingPassengersQueryResult() > 0;
+        WaitingPassengersEvent event = passengerQueryResults.poll();
+        
+        return event.getWaitingPassengers() > 0;
    
     }
-    
-    /**
-     * Blocks until result of waiting passengers query becomes available.
-     * 
-     * @return number of waiting passengers.
-     */
-    private static int waitForWaitingPassengersQueryResult() {
         
-        int waitingPassengers = -1;
-        while(waitingPassengers < 0) {
-            
-            for(SimulationEvent event : Simulation.eventQueue) {
-                if(event instanceof WaitingPassengersEvent) {
-                    waitingPassengers = ((WaitingPassengersEvent)event).getWaitingPassengers();
-                    Simulation.eventQueue.remove(event);
-                    break;
-                }
-            }
-            
-        }
-        
-        return waitingPassengers;
-        
-    }
-    
     /**
      * Withdraws bus of given id.
      * Bus will be withdrawn to the depot at the moment of the arrival to the 
@@ -381,13 +377,9 @@ public class Bus
             bus.setGoToDepot(true);
         }
         else {
-            Simulation.logger.log(Level.WARNING, "No such bus {0}", busId);
+            Simulation.getInstance().getLogger().log(Level.WARNING, "No such bus {0}", busId);
         }
     }
-    
-    /**
-     * Checks if 
-     */    
     
     /**
      * Sets bus to start at next iteration after arriving from the depot.
@@ -398,13 +390,60 @@ public class Bus
     public static void sendFromDepot(int busId) {
         Bus bus = getBusById(busId);
         if(bus != null) {
-            bus.setState(State.RUNNING);
-            bus.cycle = 0;
-            //bus.setStartAt(Simulation.getCurrentCycle()+1);
+            if(bus.state != State.DEPOT) {
+                Simulation.getInstance().getLogger().log(
+                        Level.WARNING, "Bus {0} is not in a depot. However, it was to be sent from the depot...", bus.id);
+            }
+            else {
+                bus.setState(State.RUNNING);
+                bus.currentBusStop = null;
+                bus.cycle = 0;
+                bus.setPosition(0);
+            }
         }
         else {
-            Simulation.logger.log(Level.WARNING, "No such bus {0}", busId);
+            Simulation.getInstance().getLogger().log(Level.WARNING, "No such bus {0}", busId);
         }
+    }
+    
+     /**
+     * Sets bus to start at next iteration after arriving from the depot.
+     */
+    public void sendFromDepot() {
+        sendFromDepot(id);
+    }
+    
+    /**
+     * Sets bus to start at next iteration after being at the terminus.
+     * Increments bus cycles count.
+     * 
+     * @param busId id of the bus
+     */
+    public static void sendFromTerminus(int busId) {
+        Bus bus = getBusById(busId);
+        if(bus != null) {
+            if(bus.state != State.TERMINUS) {
+                Simulation.getInstance().getLogger().log(
+                        Level.WARNING, "Bus {0} is not in at the terminus. However, it was to be sent from the terminus...", bus.id);
+            }
+            else {
+                bus.setState(State.RUNNING);
+                bus.cycle++;
+                bus.setPosition(0);
+                bus.currentBusStop = null;
+                //bus.setStartAt(Simulation.getCurrentCycle()+1);
+            }
+        }
+        else {
+            Simulation.getInstance().getLogger().log(Level.WARNING, "No such bus {0}", busId);
+        }
+    }
+    
+    /**
+     * Sets bus to start at next iteration after being at the terminus.
+     */
+    public void sendFromTerminus() {
+        sendFromTerminus(id);
     }
     
     /**
@@ -412,15 +451,23 @@ public class Bus
      * 
      * @param busId bus id
      */
-    public static void departBus(int busId) {
-        Bus bus = getBusById(busId);
-        if(bus != null) {
-            bus.depart();
-        }
-        else {
-            Simulation.logger.log(Level.WARNING, "No such bus {0}", busId);
-        }
+//    public static void departBus(int busId) {
+//        Bus bus = getBusById(busId);
+//        if(bus != null) {
+//            bus.depart();
+//        }
+//        else {
+//            Simulation.logger.log(Level.WARNING, "No such bus {0}", busId);
+//        }
+//    }
+    
+     /**
+     * Adds query result to the results queue.
+     * 
+     * @param event WaitingPassengersEvent
+     */
+    public static void addQueryResult(WaitingPassengersEvent event) {
+        passengerQueryResults.add(event);
     }
 
-    
 }

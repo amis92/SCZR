@@ -26,11 +26,11 @@ import burtis.modules.network.client.ClientModule;
  */
 public abstract class AbstractNetworkModule
 {
-    private ClientModule client;
     private final ExecutorService handlerExecutor = Executors
             .newSingleThreadExecutor();
     private boolean isRunning = true;
     private BlockingQueue<SimulationEvent> queue;
+    protected ClientModule client;
     protected AbstractEventProcessor eventHandler = null;
     /**
      * Must return configuration for your implementation, even before
@@ -44,11 +44,30 @@ public abstract class AbstractNetworkModule
      * Creates module ready to have {@link #main()} called.
      * 
      * @param config
-     * @param eventHandler
      */
     protected AbstractNetworkModule(ModuleConfig config)
     {
         this.moduleConfig = config;
+    }
+
+    public void send(SimulationEvent event)
+    {
+        client.send(event);
+    }
+
+    private boolean checkInputAndSleep()
+    {
+        try
+        {
+            Thread.sleep(500);
+            return System.in.available() != 0;
+        }
+        catch (Exception e)
+        {
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null,
+                    e);
+        }
+        return false;
     }
 
     private void closeModule()
@@ -56,6 +75,7 @@ public abstract class AbstractNetworkModule
         client.close();
         isRunning = false;
         handlerExecutor.shutdownNow();
+        terminate();
     }
 
     private void initializeModule() throws IOException
@@ -65,6 +85,7 @@ public abstract class AbstractNetworkModule
         handlerExecutor.execute(this::listenOnClient);
         client.connect();
         client.getIncomingQueue();
+        init();
     }
 
     private void listenOnClient()
@@ -105,22 +126,20 @@ public abstract class AbstractNetworkModule
         try
         {
             initializeModule();
-            init();
-            System.out.println("Naciśnij enter any zakończyć.");
-            System.in.read();
         }
         catch (IOException ex)
         {
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null,
                     ex);
+            return;
+        }
+        System.out.println("Naciśnij enter any zakończyć.");
+        boolean isInputAvailable = false;
+        while (!isInputAvailable)
+        {
+            isInputAvailable = checkInputAndSleep();
         }
         closeModule();
-        terminate();
-    }
-
-    protected void send(SimulationEvent event)
-    {
-        client.send(event);
     }
 
     protected abstract void terminate();
