@@ -105,6 +105,10 @@ public abstract class AbstractNetworkModule
         }
     }
 
+    /**
+     * In this method the client is connected and set up, so you can use it
+     * already.
+     */
     protected abstract void init();
 
     /**

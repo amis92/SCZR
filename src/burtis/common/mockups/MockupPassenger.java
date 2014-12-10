@@ -4,6 +4,7 @@ import burtis.modules.passengers.Passenger;
 import java.io.Serializable;
 
 public class MockupPassenger implements Serializable{
+    private static final long serialVersionUID = 6872262177092264743L;
     private final int Id;
     private String depot; // origin
     private String destination;
@@ -33,5 +34,9 @@ public class MockupPassenger implements Serializable{
     
     public String getDepot() {
         return depot;
+    }
+    
+    public long getWaitingTime() {
+        return waitingTime;
     }
 }

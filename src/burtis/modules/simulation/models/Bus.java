@@ -1,17 +1,15 @@
 package burtis.modules.simulation.models;
 
-import burtis.common.constants.SimulationModuleConsts;
-import burtis.common.events.Passengers.WaitingPassengersEvent;
-import burtis.common.events.Simulation.BusStateEvent;
-import burtis.common.events.Simulation.WaitingPassengersRequestEvent;
-import burtis.common.events.SimulationEvent;
-import burtis.common.mockups.MockupBusState;
-import burtis.modules.simulation.Simulation;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Level;
+
+import burtis.common.constants.SimulationModuleConsts;
+import burtis.common.events.Passengers.WaitingPassengersEvent;
+import burtis.common.events.Simulation.WaitingPassengersRequestEvent;
+import burtis.modules.simulation.Simulation;
 
 public class Bus
 {

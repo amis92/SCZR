@@ -9,7 +9,7 @@ import burtis.common.events.Simulation.BusStateEvent;
 import burtis.common.events.Simulation.BusStopsListEvent;
 import burtis.common.events.Simulation.WaitingPassengersRequestEvent;
 import burtis.common.events.Sync.TickEvent;
-import burtis.common.events.ZTM.ChangeReleasingFrequencyEvent;
+import burtis.common.events.busscheduler.ChangeReleasingFrequencyEvent;
 import burtis.common.events.gui.DoStepEvent;
 import burtis.common.events.gui.PassengerGenerationRateConfigurationEvent;
 import burtis.common.events.gui.PauseSimulationEvent;

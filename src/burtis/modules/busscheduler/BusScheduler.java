@@ -1,41 +1,71 @@
 package burtis.modules.busscheduler;
 
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.logging.Level;
 
 import burtis.common.constants.SimulationModuleConsts;
+import burtis.common.events.AbstractEventProcessor;
+import burtis.common.events.SimulationEvent;
+import burtis.common.events.Passengers.BusStopsListRequestEvent;
+import burtis.common.events.Passengers.MainMockupEvent;
+import burtis.common.events.Simulation.BusStopsListEvent;
+import burtis.common.events.busscheduler.ChangeReleasingFrequencyEvent;
 import burtis.common.mockups.Mockup;
 import burtis.common.mockups.MockupBus;
 import burtis.common.mockups.MockupBusStop;
 import burtis.common.mockups.MockupPassenger;
+import burtis.modules.network.ModuleConfig;
+import burtis.modules.network.NetworkConfig;
+import burtis.modules.simulation.models.Bus;
 
-public class BusScheduler
+import com.sun.istack.internal.logging.Logger;
+
+/**
+ * Schedules frequency with which Depot sends buses en route.
+ * 
+ * @author Kamil Drożdżał
+ *
+ */
+public class BusScheduler extends AbstractEventProcessor
 {
+    private static final Logger logger = Logger.getLogger(BusScheduler.class);
     /**
      * zmienna przechowująca ilość kroków potrzebną do jednokrotnego przejazdu
      * trasy (nie zlicza czasu potrzebnego na wsiadanie i wysiadanie pasażerów)
      */
-    private Integer loopTimeMinute = 0;
+    private int busStopCount;
+    private final String moduleName;
+    private final String[] receiverNames;
+    private final Consumer<SimulationEvent> sender;
 
-    public void receive(Mockup mockup)
+    public BusScheduler(ModuleConfig config, Consumer<SimulationEvent> sender)
     {
-        List<MockupBus> busList = mockup.getBuses();
-        List<MockupBusStop> busStops = mockup.getBusStops();
-        int passengersSittingTotal = countPassengersSitting(busList);
-        int waitingPassengersTotal = 0;
-        Long waitingTimeTotal = 0L;
-        for (MockupBusStop busStop : busStops)
-        {
-            waitingPassengersTotal += busStop.getPassengerCount();
-            for (MockupPassenger passenger : busStop.getPassengers())
-            {
-                long waitingTime = 0; /* TODO waiting time */
-                System.out.println("Mockup time: " + mockup.getCurrentTime()
-                        + "; Passenger timestamp: " + waitingTime);
-                waitingTimeTotal += mockup.getCurrentTime() - waitingTime;
-            }
-        }
-        makeDecision(passengersSittingTotal, waitingPassengersTotal,
-                waitingTimeTotal);
+        List<ModuleConfig> configs = NetworkConfig.defaultConfig()
+                .getModuleConfigs();
+        this.moduleName = config.getModuleName();
+        String receiverName = configs.get(NetworkConfig.SIM_MODULE)
+                .getModuleName();
+        this.receiverNames = new String[] { receiverName };
+        this.sender = sender;
+    }
+
+    @Override
+    public void defaultHandle(SimulationEvent event)
+    {
+        logger.log(Level.WARNING, "Unhandled event received: " + event);
+    }
+
+    @Override
+    public void process(MainMockupEvent event)
+    {
+        optimize(event.getMainMockup());
+    }
+
+    @Override
+    public void process(BusStopsListEvent event)
+    {
+        busStopCount = event.getBusStops().size();
     }
 
     private int countPassengersSitting(List<MockupBus> busList)
@@ -44,11 +74,10 @@ public class BusScheduler
         for (MockupBus bus : busList)
         {
             int passengerCount = bus.getPassengerList().size();
-            if (false /* TODO sprawdź czy jest z zajezdni */)
+            if (bus.getState() == Bus.State.BUSSTOP
+                    || bus.getState() == Bus.State.RUNNING)
             {
                 passengersSittingTotal += passengerCount;
-                // System.out.println("Pasażerów w autobusie: " +
-                // passengerCount);
             }
         }
         return passengersSittingTotal;
@@ -60,18 +89,13 @@ public class BusScheduler
         int peopleInTheWorld = passengersSittingTotal + waitingPassengersTotal;
         int howManyBuses = (int) Math.ceil(peopleInTheWorld
                 / (double) SimulationModuleConsts.BUS_CAPACITY);
-        // System.out.println("HowManyBuses: " + howManyBuses
-        // + "; CurrentNumberOfBuses: " + noOfBuses + "; freeSeatsNr: "
-        // + freeSeatsNr + "; generalPeopleWaitingNr: "
-        // + generalPeopleWaitingNr + "; generalSumOfWaitingTime: "
-        // + generalSumOfWaitingTime);
         if (howManyBuses == 0)
         {
             setNewFrequency(0);
         }
         else
         {
-            int newFrequency = (loopTimeMinute * SimulationModuleConsts.BUS_MAX_CYCLES)
+            int newFrequency = (busStopCount * SimulationModuleConsts.BUS_MAX_CYCLES)
                     / (howManyBuses);
             setNewFrequency(newFrequency);
         }
@@ -86,7 +110,48 @@ public class BusScheduler
          */
     }
 
+    private void optimize(Mockup mockup)
+    {
+        List<MockupBus> busList = mockup.getBuses();
+        List<MockupBusStop> busStops = mockup.getBusStops();
+        int passengersSittingTotal = countPassengersSitting(busList);
+        int waitingPassengersTotal = 0;
+        Long waitingTimeTotal = 0L;
+        for (MockupBusStop busStop : busStops)
+        {
+            waitingPassengersTotal += busStop.getPassengerCount();
+            for (MockupPassenger passenger : busStop.getPassengers())
+            {
+                long waitingTime = passenger.getWaitingTime();
+                logger.log(Level.FINE, "Passenger waiting time: " + waitingTime);
+                waitingTimeTotal += waitingTime;
+            }
+        }
+        makeDecision(passengersSittingTotal, waitingPassengersTotal,
+                waitingTimeTotal);
+    }
+
     private void setNewFrequency(int newFrequency)
     {
+        logger.log(Level.INFO,
+                "Sending calculated frequency [frames between bus releases]: "
+                        + newFrequency);
+        ChangeReleasingFrequencyEvent event;
+        event = new ChangeReleasingFrequencyEvent(moduleName, receiverNames,
+                newFrequency);
+        sender.accept(event);
+    }
+
+    /**
+     * Retrieves list of bus stops to get their count.
+     */
+    public void init()
+    {
+        sender.accept(new BusStopsListRequestEvent(moduleName));
+    }
+
+    public void terminate()
+    {
+        logger.info("Terminating " + BusScheduler.class);
     }
 }
