@@ -7,10 +7,10 @@ public class MockupPassenger implements Serializable{
     private String depot;
     private String destination;
 
-    public MockupPassenger(MockupPassenger passenger) {
-        this.Id = passenger.getId();
-        this.destination = passenger.getDestination();
-        this.destination = passenger.getDepot();
+    public MockupPassenger(Integer Id, String destination, String depot) {
+        this.Id = Id;
+        this.destination = destination;
+        this.depot = depot;
     }
 
     public int getId() {

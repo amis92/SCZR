@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 
 public class MockupBus implements Serializable{
-    private final ArrayList<MockupPassenger> passengerList;
+    private ArrayList<MockupPassenger> passengerList;
     private final String currentBusStop;
     private final int lengthPassed;
     private final Integer Id;
@@ -75,4 +75,9 @@ public class MockupBus implements Serializable{
 		// TODO Auto-generated method stub
 		return Id;
 	}
+
+    public void setPassengerList(ArrayList<MockupPassenger> passengerList)
+    {
+        this.passengerList = passengerList;
+    }
 }

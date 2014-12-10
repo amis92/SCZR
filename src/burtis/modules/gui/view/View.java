@@ -38,7 +38,6 @@ import javax.swing.event.ListSelectionListener;
 import burtis.common.mockups.Mockup;
 import burtis.common.mockups.MockupBus;
 import burtis.common.mockups.MockupBusStop;
-import burtis.common.model.Bus;
 import burtis.modules.gui.events.ConnectEvent;
 import burtis.modules.gui.events.DisconnectEvent;
 import burtis.modules.gui.events.GoEvent;
@@ -125,38 +124,34 @@ public class View {
 		this.currentTime = mockup.getCurrentTime();
 		timeLabel.setText(Long.toString(this.currentTime));
 		
-		//for(MockupBusStop mbs : busStops) {
-		for(int i=0 ; i != 10 ; i++) {
-			//String s = mbs.getName();
-			
+		for(MockupBusStop mbs : busStops) {
+			String s = mbs.getName();
 			tmpBusStationButton = new BusStationButton("Warszawa", bQueue);
 			tmpBusStationButton.getButton().addActionListener(new BusStationInfoPanelActionListener());
 			buttonPanel.add(tmpBusStationButton);
 		}
 		
-		//for(MockupBus bus : mockup.getBuses()for(Integer i=0 ; i != 10 ; i++) {
-		animationPanel.addBus(new Bus(0));
-			
-			
-		
+		for(MockupBus bus : schedule) {
+		    animationPanel.addBus(new MockupBus(bus.getId()), bus.getLengthPassed());	
+		}
 	}
 	
 	class BusStationInfoPanelActionListener implements ActionListener {
-		public void actionPerformed(ActionEvent e) {
-			String s = ((JButton)e.getSource()).getText();
-			busStopInfoPanel.setCurrentBusStop(s);
-		}
+	    public void actionPerformed(ActionEvent e) {
+	        String s = ((JButton)e.getSource()).getText();
+	        busStopInfoPanel.setCurrentBusStop(s);
+	    }
 	}
 	
-	class GoButtonActionListener implements ActionListener {
-		public void actionPerformed(ActionEvent e) {
-			try {
-				bQueue.put(new GoEvent());
-			} catch (InterruptedException e1) {
-				e1.printStackTrace();
-			}
-		}
-	}
+    class GoButtonActionListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            try {
+                bQueue.put(new GoEvent());
+            } catch (InterruptedException e1) {
+                e1.printStackTrace();
+            }
+        }
+    }
 	
 	class StepButtonActionListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
@@ -198,29 +193,21 @@ public class View {
 		}
 	}
 	
-	public void updateBusStopInfoPanel(String s) {
-		
-		for(MockupBusStop bus : busStops) {
-			if(bus.getName() == s) {
-				busStopInfoPanel.setCurrentBusStop(s);
+	public void updateBusStopInfoPanel(String s) {	
+		for(MockupBusStop busStop : busStops) {
+			if(busStop.getName() == s) {
+				busStopInfoPanel.setCurrentBusStop(s, busStop.getPassengerList());
 				return;
 			}
 		}
-		
-		//busStopInfoPanel.setCurrentBusStop("nn");
 	}
 	
-	public void updateBusInfoPanel(Integer s) {
-		
-		for(MockupBus bus : schedule) {
-			if(bus.getId() == 0) {
-				busStopInfoPanel.setCurrentBus(bus.getId().toString());
+	public void updateBusInfoPanel(Integer i) {
+	    for(MockupBus bus : schedule) {
+			if(bus.getId() == i) {
+				busStopInfoPanel.setCurrentBus(i, bus.getPassengerList());
 				return;
 			}
 		}
-		
-		//busStopInfoPanel.setCurrentBusStop("nn");
-		
-		//busStopInfoPanel.setCurrentBus("some bus");
 	}
 }
