@@ -46,25 +46,6 @@ public class Controller {
 	 * zapelnia kontener eventActionMap
 	 */
 	private void fillEventActionMap(){
-		/*
-		eventActionMap.put(CloseAppEvent.class, new ProgramAction(){
-			public void go(ProgramEvent e){
-				System.exit(0);
-			}
-		});
-		
-		eventActionMap.put(ShowBusStationInfoEvent.class, new ProgramAction(){
-			public void go(ProgramEvent e){
-				
-			}
-		});		
-		
-		eventActionMap.put(ShowBusInfoEvent.class, new ProgramAction(){
-			public void go(ProgramEvent e){
-				System.out.println("show bus");
-			}
-		});		
-		*/
 		eventActionMap.put(GoEvent.class, new ProgramAction(){
 			public void go(ProgramEvent e){
 				System.out.println("Go");
@@ -97,14 +78,16 @@ public class Controller {
 		
 		eventActionMap.put(ShowBusEvent.class, new ProgramAction(){
 			public void go(ProgramEvent e){
-				System.out.println("Show Bus");
+				
 				view.updateBusInfoPanel(((ShowBusEvent)e).getId());
+				//System.out.println("Show Bus" + ((ShowBusEvent)e).getId());
+				
 			}
 		});
 		
 		eventActionMap.put(ShowBusStopEvent.class, new ProgramAction(){
 			public void go(ProgramEvent e){
-				System.out.println("Show Bus Stop");
+				//System.out.println("Show Bus Stop");
 				view.updateBusStopInfoPanel(((ShowBusStopEvent)e).getName());
 			}
 		});

@@ -3,22 +3,27 @@ package burtis.modules.gui.view;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.util.ArrayList;
+import java.util.Vector;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
+import burtis.common.mockups.MockupPassenger;
+
 public class BusStopInfoPanel extends JPanel {
 	private JTable table;
+	private ArrayList<MockupPassenger> passengerList;
 	private JLabel title = new JLabel();
 	
     String[] columnNames = {"Id",
             				"Depot",
             				"Destination"};
-    Object[][] data = {
-    	    {"Kathy", "Smith", "Snowboarding", new Integer(5), new Boolean(false)}};
 
+    Object[][] data = new Object[30][3];
+    
 	public BusStopInfoPanel() {
 		setLayout(new BorderLayout());	
 
@@ -30,10 +35,45 @@ public class BusStopInfoPanel extends JPanel {
 	}
 
 	public void setCurrentBusStop(String s) {
-		title.setText(s);
+	    this.passengerList = passengerList;
+	    title.setText("Bus Stop Name: " + s);
+		
+		
 	}
 	
-	public void setCurrentBus(String s) {
-		title.setText(s);		
+	public void setCurrentBus(Integer i) {
+	    this.passengerList = passengerList;
+		title.setText("Bus Id: " + i.toString());
+		
+		/*
+		for(MockupPassenger mp : passengerList) {
+		    
+		    
+		}*/
+	}
+	
+	public void setCurrentBusStop(String s, ArrayList<MockupPassenger> passengerList) {
+	    this.passengerList = passengerList;
+	    title.setText("Bus Stop Name: " + s);
+	    
+	    /*
+	    for(MockupPassenger mp : passengerList) {
+           	    
+	    }*/
+	}
+	
+	public void setCurrentBus(Integer i, ArrayList<MockupPassenger> passengerList) {
+	    this.passengerList = passengerList;
+	    title.setText("Bus Id: " + i.toString());
+	    int count = 0;
+	    
+	    for(MockupPassenger mp : passengerList) {
+	        table.setValueAt(mp.getId(), count , 0);
+	        table.setValueAt(mp.getDepot(), count , 1);
+	        table.setValueAt(mp.getDestination(), count , 2);
+	        
+	        count++;
+	        //System.out.println(mp.getId() + ", " + mp.getDepot() + ", " + mp.getDestination());   
+	    }
 	}
 }

@@ -12,11 +12,12 @@ public final class Mockup implements Serializable
     private int minPassengerGenerationTime;
     private int maxPassengerGenerationTime;
 
-    public Mockup(final ArrayList<MockupBus> buses, final MockupBusStop mockupBusStop, long currentTime) {
-        for (MockupBus b: buses) {
+    public Mockup(final ArrayList<MockupBus> mockupBusArray, final ArrayList<MockupBusStop> mockupBusStopArray, long currentTime) {
+        for (MockupBus b: mockupBusArray) {
             this.schedule.add(b);
         }
-        for (MockupBusStop bs: busStops) {
+        
+        for (MockupBusStop bs: mockupBusStopArray) {
             this.busStops.add(bs);
         }
         
