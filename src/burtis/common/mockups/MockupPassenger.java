@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 public class MockupPassenger implements Serializable{
     private final int Id;
-    private String depot;
+    private String depot; // origin
     private String destination;
 
     public MockupPassenger(MockupPassenger passenger) {

@@ -85,8 +85,10 @@ public class Passenger {
         Passenger.passengersPerCycle = passengersPerCycle;
     }
     
-    //public static void deletePassenger
-       
+    public static void deletePassenger(Passenger passenger) {
+        passengers.remove(passenger);
+    }
+          
     public static void generatePassengers() {
         if(generationCycle == 0) {
             generationCycle = generationCycleLength;
@@ -104,8 +106,6 @@ public class Passenger {
         }
     }
     
-   
-
     @Override
     public String toString() {
         return "Passenger{" + "id=" + id + ", origin=" + origin + ", destination=" + destination + ", waitingTime=" + waitingTime + ", bus=" + bus + '}';

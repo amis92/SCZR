@@ -7,15 +7,13 @@ import java.util.LinkedList;
 public class MockupBus implements Serializable{
     private final ArrayList<MockupPassenger> passengerList;
     private final String currentBusStop;
-    private final int lengthPassed;
+    private final int lengthPassed; // Posiiton in % of total line length 0..100
     private final Integer Id;
     private final MockupBusState busState;
-    private final int busStopDistace;
 
     public MockupBus(Integer Id) {
         this.passengerList = new ArrayList<MockupPassenger>();
         this.currentBusStop = null; //bus.getCurrentBusStop().getNAME();
-        this.busStopDistace = 0; //bus.getToNextStop().getValue();
         this.lengthPassed = 0; //bus.getCurrentBusStop().getRoute().getLength() - bus.getToNextStop().getValue();
         this.Id = Id;
         this.busState = MockupBusState.ON_BUS_STOP;
@@ -61,10 +59,6 @@ public class MockupBus implements Serializable{
 
     public int getLengthPassed() {
         return lengthPassed;
-    }
-
-    public int getBusStopDistace() {
-        return busStopDistace;
     }
 
     public MockupBusState getState(){

@@ -2,8 +2,10 @@ package burtis.common.events;
 
 import burtis.common.events.Passengers.BusDepartEvent;
 import burtis.common.events.Passengers.BusStopsListRequestEvent;
+import burtis.common.events.Passengers.MainMockupEvent;
 import burtis.common.events.Passengers.WaitingPassengersEvent;
 import burtis.common.events.Simulation.BusArrivesAtBusStopEvent;
+import burtis.common.events.Simulation.BusStateEvent;
 import burtis.common.events.Simulation.BusStopsListEvent;
 import burtis.common.events.Simulation.WaitingPassengersRequestEvent;
 import burtis.common.events.Sync.TickEvent;
@@ -113,6 +115,16 @@ public abstract class AbstractEventProcessor
     }
     
     public void process(TickEvent event)
+    {
+        defaultHandle(event);
+    }
+    
+    public void process(BusStateEvent event)
+    {
+        defaultHandle(event);
+    }
+    
+    public void process(MainMockupEvent event)
     {
         defaultHandle(event);
     }
