@@ -33,9 +33,10 @@ public class SimulationEventHandler extends AbstractEventProcessor {
     
     @Override
     public void process(BusStopsListRequestEvent event) {
-        Simulation.getInstance().getLogger().log(Level.INFO, "Bus stops list requested.");
+        Simulation.getInstance().getLogger().log(Level.INFO, "Bus stops list requested from {0}.", event.sender());
         sim.send(new BusStopsListEvent(
             sim.getModuleConfig().getModuleName(),
+            new String[] { event.sender() },
             BusStop.getBusStopsList()));
     }
     
@@ -51,6 +52,11 @@ public class SimulationEventHandler extends AbstractEventProcessor {
         sim.currentCycle = event.iteration();
         Terminus.departBus();
         Bus.updatePositions();
+        
+        
+
+// Send bus state
+        // Send cycle completed
     }
     
     @Override

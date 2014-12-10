@@ -2,8 +2,10 @@ package burtis.modules.simulation.models;
 
 import burtis.common.constants.SimulationModuleConsts;
 import burtis.common.events.Passengers.WaitingPassengersEvent;
+import burtis.common.events.Simulation.BusStateEvent;
 import burtis.common.events.Simulation.WaitingPassengersRequestEvent;
 import burtis.common.events.SimulationEvent;
+import burtis.common.mockups.MockupBusState;
 import burtis.modules.simulation.Simulation;
 import java.util.ArrayList;
 import java.util.List;
@@ -446,6 +448,19 @@ public class Bus
 //            Simulation.logger.log(Level.WARNING, "No such bus {0}", busId);
 //        }
 //    }
+    
+    public static BusStateEvent.BusInfo getBusInfo(Bus bus) {
+        
+        MockupBusState busState;
+        if(bus.state == State.DEPOT || bus.state == State.TERMINUS) {
+            busState = MockupBusState.WAITING;
+        }
+        else if(bus.state == State.BUSSTOP) {
+            
+        }
+        
+        BusStateEvent.BusInfo busInfo = new BusInfo(bus.id)
+    }
     
     /**
      * Adds query result to the results queue.

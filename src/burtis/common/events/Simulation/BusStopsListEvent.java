@@ -28,8 +28,8 @@ public class BusStopsListEvent extends SimulationEvent {
     
     private final List<BusStop> busStops;
     
-    public BusStopsListEvent(String sender, List<BusStop> busStops) {
-        super(sender);
+    public BusStopsListEvent(String sender, String[] recipients, List<BusStop> busStops) {
+        super(sender, recipients);
         this.busStops = busStops;
     }
     

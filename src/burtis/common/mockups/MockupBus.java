@@ -1,5 +1,6 @@
 package burtis.common.mockups;
 
+import burtis.modules.simulation.models.Bus;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -9,7 +10,7 @@ public class MockupBus implements Serializable{
     private final String currentBusStop;
     private final int lengthPassed; // Posiiton in % of total line length 0..100
     private final Integer Id;
-    private final MockupBusState busState;
+    private final Bus.State busState;
 
     public MockupBus(Integer Id) {
         this.passengerList = new ArrayList<MockupPassenger>();
