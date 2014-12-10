@@ -1,6 +1,8 @@
 package burtis.modules.passengers;
 
 import burtis.common.constants.PassengersModuleConsts;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Representation of single passenger. 
@@ -8,6 +10,8 @@ import burtis.common.constants.PassengersModuleConsts;
  * @author Mikołaj Sowiński
  */
 public class Passenger {
+    
+    private static final List<Passenger> passengers = new ArrayList<>();
     
     /**
      * Passenger id.
@@ -80,15 +84,19 @@ public class Passenger {
     public static void setPassengersPerCycle(int passengersPerCycle) {
         Passenger.passengersPerCycle = passengersPerCycle;
     }
+    
+    //public static void deletePassenger
        
     public static void generatePassengers() {
         if(generationCycle == 0) {
             generationCycle = generationCycleLength;
             BusStop busStop;
+            Passenger passenger;
             for(int i=0; i<passengersPerCycle; i++) {
                 busStop = BusStop.getRandomBusStop();
-                busStop.enqueuePassenger(
-                        new Passenger(busStop, BusStop.getRandomNextBusStop(busStop)));
+                passenger = new Passenger(busStop, BusStop.getRandomNextBusStop(busStop));
+                busStop.enqueuePassenger(passenger);
+                passengers.add(passenger);
             }
         }
         else {

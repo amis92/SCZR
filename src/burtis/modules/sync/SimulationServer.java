@@ -1,22 +1,10 @@
 package burtis.modules.sync;
 
-import burtis.common.events.CycleCompletedEvent;
-import burtis.common.events.gui.DoStepEvent;
-import burtis.common.events.gui.PauseSimulationEvent;
-import burtis.common.events.SimulationEvent;
-import burtis.common.events.gui.StartSimulationEvent;
-import burtis.common.events.TerminateSimulationEvent;
 import burtis.common.events.Sync.TickEvent;
+import burtis.common.events.TerminateSimulationEvent;
 import burtis.modules.AbstractNetworkModule;
 import burtis.modules.network.ModuleConfig;
 import burtis.modules.network.NetworkConfig;
-import burtis.modules.network.client.ClientModule;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
@@ -164,44 +152,15 @@ public class SimulationServer extends AbstractNetworkModule
         logger = Logger.getLogger(SimulationServer.class.getName()); 
     }
     
-
-    
-    
-    
     /**
      * Tries to pause simulation and waits for result.
      * If service is not in terminated state in 5 seconds an exception is thrown.
      */
     private void doPauseSimulation()
-    {
-        long t0 = System.nanoTime();
-        
+    {      
         logger.log(Level.INFO, "Pausing simulation...");
         tickService.interrupt();
         Module.interruptModuleWatchdog();
-//        try {
-//            while(tickService.isAlive() || watchdogService.isAlive()) {
-//                if(System.nanoTime() > t0 + 5*10e9) {
-//                    throw(new Exception("Can not pause simulation!"));
-//                }
-//            }
-//            logger.log(Level.INFO, "Simulation paused.");
-//        }
-//        catch(Exception e) {
-//            handlePauseTimeoutException(e);
-//        }
-    }
-
-    /**
-     * Handles pause operation exceptions.
-     * If pause fails to be done an application is to be terminated.
-     * @param e Exception
-     */
-    private void handlePauseTimeoutException(Exception e) 
-    {
-        logger.log(Level.SEVERE, e.getMessage());
-        logger.log(Level.SEVERE, "Terminating simulation server.");
-        terminate(); 
     }
 
     /**

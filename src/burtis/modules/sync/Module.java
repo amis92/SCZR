@@ -1,14 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package burtis.modules.sync;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -118,11 +111,13 @@ public class Module {
     }
     
     public static void stopModuleWatchdog() {
-        watchdogService.interrupt();
+        if(!watchdogService.isInterrupted()) {
+            watchdogService.interrupt();
+        }
         try {
-            watchdogService.join();
+            if(watchdogService.isAlive()) watchdogService.join();
         } catch (InterruptedException ex) {
-            Logger.getLogger(Module.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Module.class.getName()).log(Level.SEVERE, ex.getMessage());
         }
     }
     
@@ -165,10 +160,5 @@ public class Module {
             SimulationServer.getInstance().readyForTick();
         }   
     }
-    
-    
-    
-    
-    
-    
+
 }
