@@ -54,12 +54,12 @@ public class BusStop {
     
     public void enqueueBus(Bus bus) {
         busQueue.add(bus);
-        PassengerModule.logger.log(Level.INFO, "{0} arrived at {1}", new Object[]{bus, this});
+        PassengerModule.getInstance().getLogger().log(Level.INFO, "{0} arrived at {1}", new Object[]{bus, this});
     }
     
     public void enqueuePassenger(Passenger passenger) {
         passengerQueue.add(passenger);
-        PassengerModule.logger.log(Level.INFO, "{0} generated at {1}", new Object[]{passenger, this});
+        PassengerModule.getInstance().getLogger().log(Level.INFO, "{0} generated at {1}", new Object[]{passenger, this});
     }
     
     public void departBus() {

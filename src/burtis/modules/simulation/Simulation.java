@@ -41,10 +41,14 @@ public class Simulation extends AbstractNetworkModule
         return simulation;
     }
     
+    public ModuleConfig getModuleConfig() {
+        return moduleConfig;
+    }
+    
     /**
      * Creates a new simulation.
      */
-    public Simulation(ModuleConfig config) {
+    private Simulation(ModuleConfig config) {
         super(config); 
         logger = Logger.getLogger(moduleConfig.getModuleName());
     }
@@ -87,8 +91,6 @@ public class Simulation extends AbstractNetworkModule
         closeModule();
     }
 
-    public ModuleConfig getModuleConfig() {
-        return moduleConfig;
-    }
+   
 
 }
