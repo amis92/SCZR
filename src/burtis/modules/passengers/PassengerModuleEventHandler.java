@@ -7,7 +7,7 @@ package burtis.modules.passengers;
 
 import burtis.common.events.AbstractEventProcessor;
 import burtis.common.events.CycleCompletedEvent;
-import burtis.common.events.ModuleReadyEvent;
+//import burtis.common.events.ModuleReadyEvent;
 import burtis.common.events.PassengerInfoRequestEvent;
 import burtis.common.events.Passengers.WaitingPassengersEvent;
 import burtis.common.events.Simulation.BusArrivesAtBusStopEvent;
@@ -142,7 +142,7 @@ public class PassengerModuleEventHandler extends AbstractEventProcessor {
     public void process(BusStopsListEvent event) {
         pm.getLogger().log(Level.INFO, "Bus stops list received. Entering running state.");
         BusStop.add(event.getBusStops());
-        pm.send(new ModuleReadyEvent(pm.getModuleConfig().getModuleName()));
+        //pm.send(new ModuleReadyEvent(pm.getModuleConfig().getModuleName()));
         pm.state = PassengerModule.State.RUNNING;
         BusStop.printBusStopsList();
     }
