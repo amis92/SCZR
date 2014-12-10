@@ -11,6 +11,12 @@ public class Terminus extends BusStop
     
     private static final Queue<Bus> buses = new LinkedList<>();
     private static long toTheNextDeparture = 0;
+    
+    private static long releasingFrequency = SimulationModuleConsts.TERMINUS_RELEASING_FREQUENCY;
+    
+    public static void changeReleasingFrequency(long newFrequency) {
+        releasingFrequency = newFrequency;
+    }
 
     public Terminus(int position, String name) {
         super(position, name);
@@ -31,7 +37,7 @@ public class Terminus extends BusStop
         // It's departure time! :D
         if(toTheNextDeparture == 0) {
             
-            toTheNextDeparture = SimulationModuleConsts.TERMINUS_RELEASING_FREQUENCY;
+            toTheNextDeparture = releasingFrequency;
             
             // Take first bus waiting at the terminus
             bus = buses.poll();

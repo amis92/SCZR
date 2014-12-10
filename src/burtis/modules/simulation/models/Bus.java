@@ -29,6 +29,12 @@ public class Bus
     private State state;
    
     private final int id;
+
+    public BusStop getCurrentBusStop() {
+        return currentBusStop;
+    }
+    
+    
     
     /**
      * Maximum bus capacity.
@@ -54,6 +60,8 @@ public class Bus
      * Next bus stop on the line.
      */
     private BusStop closestBusStop;
+    
+    private BusStop currentBusStop;
    
 //    /**
 //     * Departure iteration.
@@ -312,6 +320,7 @@ public class Bus
             // Some passenger requested to stop here
             else if(bus.getClosestBusStop() == bus.getNextBusStop()) {
                 bus.setState(Bus.State.BUSSTOP);
+                bus.currentBusStop = closestBusStop;
                 bus.setPosition(closestBusStop.getPosition());
                 BusStop.enqueueBus(bus, closestBusStop);
             }
@@ -321,6 +330,7 @@ public class Bus
                 // It blocks! - If anyone is waiting stay at the bus stop.
                 if(queryForWaitingPassengers(bus.getClosestBusStop())) {
                     bus.setState(Bus.State.BUSSTOP);
+                    bus.currentBusStop = closestBusStop;
                     bus.setPosition(closestBusStop.getPosition());
                     BusStop.enqueueBus(bus, closestBusStop);
                 }
@@ -386,6 +396,7 @@ public class Bus
             }
             else {
                 bus.setState(State.RUNNING);
+                bus.currentBusStop = null;
                 bus.cycle = 0;
                 bus.setPosition(0);
             }
@@ -419,6 +430,7 @@ public class Bus
                 bus.setState(State.RUNNING);
                 bus.cycle++;
                 bus.setPosition(0);
+                bus.currentBusStop = null;
                 //bus.setStartAt(Simulation.getCurrentCycle()+1);
             }
         }
@@ -449,20 +461,7 @@ public class Bus
 //        }
 //    }
     
-    public static BusStateEvent.BusInfo getBusInfo(Bus bus) {
-        
-        MockupBusState busState;
-        if(bus.state == State.DEPOT || bus.state == State.TERMINUS) {
-            busState = MockupBusState.WAITING;
-        }
-        else if(bus.state == State.BUSSTOP) {
-            
-        }
-        
-        BusStateEvent.BusInfo busInfo = new BusInfo(bus.id)
-    }
-    
-    /**
+     /**
      * Adds query result to the results queue.
      * 
      * @param event WaitingPassengersEvent

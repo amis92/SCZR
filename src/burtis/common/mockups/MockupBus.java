@@ -1,5 +1,6 @@
 package burtis.common.mockups;
 
+import burtis.modules.simulation.Simulation;
 import burtis.modules.simulation.models.Bus;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ public class MockupBus implements Serializable{
     private final String currentBusStop;
     private final int lengthPassed; // Posiiton in % of total line length 0..100
     private final Integer Id;
+    private final MockupBusState oldBusState;
     private final Bus.State busState;
 
     public MockupBus(Integer Id) {
@@ -17,37 +19,17 @@ public class MockupBus implements Serializable{
         this.currentBusStop = null; //bus.getCurrentBusStop().getNAME();
         this.lengthPassed = 0; //bus.getCurrentBusStop().getRoute().getLength() - bus.getToNextStop().getValue();
         this.Id = Id;
-        this.busState = MockupBusState.ON_BUS_STOP;
+        this.oldBusState = MockupBusState.ON_BUS_STOP;
+        this.busState = Bus.State.BUSSTOP;
+    }
+    
+    public MockupBus(Bus bus) {
+        this.Id = bus.getId();
+        this.currentBusStop = bus.getCurrentBusStop().getName();
+        this.lengthPassed = bus.getPosition()*100/Simulation.getInstance().getLineLength();
+        this.busState = bus.getState();
+        if(this.busState == Bus.State.DEPOT || this.busState == Bus.State.TERMINUS)
         
-        /*
-        switch(bus.getState()) {
-            case READY_TO_GO:
-                this.busState = MockupBusState.ON_BUS_STOP;
-                break;
-            case RUNNING:
-                this.busState = MockupBusState.RUNNING;
-                break;
-            case WAITING:
-                this.busState = MockupBusState.WAITING;
-                break;
-            case PUT_OUT_ALL:
-                this.busState = MockupBusState.ON_BUS_STOP;
-                break;
-            case PUT_OUT:
-                this.busState = MockupBusState.ON_BUS_STOP;
-                break;
-            case TAKE_IN:
-                this.busState = MockupBusState.ON_BUS_STOP;
-                break;
-            case FINISHED:
-                this.busState = MockupBusState.RUNNING;
-                break;
-            case HAVING_BREAK:
-                this.busState = MockupBusState.ON_BUS_STOP;
-                break;
-            default:
-                this.busState = MockupBusState.ON_BUS_STOP;
-        }*/
     }
 
     public ArrayList<MockupPassenger> getPassengerList() {

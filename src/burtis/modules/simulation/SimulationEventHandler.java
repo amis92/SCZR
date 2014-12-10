@@ -78,6 +78,11 @@ public class SimulationEventHandler extends AbstractEventProcessor {
         Bus.addQueryResult(event);
     }
     
+    @Override
+    public void process(ChangeReleasingFrequencyEvent event) {
+        }
+    }
+    
     
     
     

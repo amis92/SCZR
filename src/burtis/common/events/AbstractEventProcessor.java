@@ -9,6 +9,7 @@ import burtis.common.events.Simulation.BusStateEvent;
 import burtis.common.events.Simulation.BusStopsListEvent;
 import burtis.common.events.Simulation.WaitingPassengersRequestEvent;
 import burtis.common.events.Sync.TickEvent;
+import burtis.common.events.ZTM.ChangeReleasingFrequencyEvent;
 import burtis.common.events.gui.DoStepEvent;
 import burtis.common.events.gui.PassengerGenerationRateConfigurationEvent;
 import burtis.common.events.gui.PauseSimulationEvent;
@@ -125,6 +126,11 @@ public abstract class AbstractEventProcessor
     }
     
     public void process(MainMockupEvent event)
+    {
+        defaultHandle(event);
+    }
+    
+    public void process(ChangeReleasingFrequencyEvent event)
     {
         defaultHandle(event);
     }

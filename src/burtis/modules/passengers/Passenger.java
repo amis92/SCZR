@@ -38,6 +38,8 @@ public class Passenger {
      */
     private Bus bus;
     
+    
+    
     /**
      * New id to be assigned to next generated passenger.
      */

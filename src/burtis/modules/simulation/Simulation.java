@@ -33,6 +33,14 @@ public class Simulation extends AbstractNetworkModule
      */
     protected static long currentCycle;
     
+    private int lineLength = 0;
+
+    public int getLineLength() {
+        return lineLength;
+    }
+    
+    
+    
     public Logger getLogger() {
         return logger;
     }
@@ -82,6 +90,8 @@ public class Simulation extends AbstractNetworkModule
         BusStop.add(240, "Plac Unii Lubelskiej");
         BusStop.add(270, "Rakowiecka");
         BusStop.add(new Terminus(300,"Bielańska"));
+        
+        lineLength = 300;
         
     }
 
