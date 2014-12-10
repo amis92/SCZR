@@ -5,4 +5,4 @@
  * @author vanqyard
  *
  */
-package burtis.modules.gui;
+package burtis.modules.gui.controller;
