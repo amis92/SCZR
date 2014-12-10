@@ -28,16 +28,20 @@ public abstract class AbstractNetworkModule
 {
     private final ExecutorService handlerExecutor = Executors
             .newSingleThreadExecutor();
+    /**
+     * Controls litener loop.
+     */
     private boolean isRunning = true;
+    /**
+     * Controls loop checking for input.
+     */
+    private boolean isShutdownDemanded = false;
     private BlockingQueue<SimulationEvent> queue;
     protected ClientModule client;
-    protected AbstractEventProcessor eventHandler = null;
     /**
-     * Must return configuration for your implementation, even before
-     * {@link #init()} call.
-     * 
-     * @return
+     * Must return handler for your implementation, before {@link #main} call.
      */
+    protected AbstractEventProcessor eventHandler = null;
     protected final ModuleConfig moduleConfig;
 
     /**
@@ -48,6 +52,14 @@ public abstract class AbstractNetworkModule
     protected AbstractNetworkModule(ModuleConfig config)
     {
         this.moduleConfig = config;
+    }
+
+    /**
+     * Interrupts main method. In effect, {@link #terminate()} will be called.
+     */
+    public void shutdown()
+    {
+        isShutdownDemanded = true;
     }
 
     public void send(SimulationEvent event)
@@ -72,10 +84,10 @@ public abstract class AbstractNetworkModule
 
     private void closeModule()
     {
+        terminate();
         client.close();
         isRunning = false;
         handlerExecutor.shutdownNow();
-        terminate();
     }
 
     private void initializeModule() throws IOException
@@ -105,6 +117,10 @@ public abstract class AbstractNetworkModule
         }
     }
 
+    /**
+     * Called at the beginning of {@link #main}. The module is already connected
+     * and {@link AbstractNetworkModule#send(SimulationEvent)} works.
+     */
     protected abstract void init();
 
     /**
@@ -135,12 +151,18 @@ public abstract class AbstractNetworkModule
         }
         System.out.println("Naciśnij enter any zakończyć.");
         boolean isInputAvailable = false;
-        while (!isInputAvailable)
+        while (!isInputAvailable && !isShutdownDemanded)
         {
             isInputAvailable = checkInputAndSleep();
         }
         closeModule();
     }
 
+    /**
+     * Called automatically at the end of {@link #main}. It's guaranteed to be
+     * called. Use it to release used resources.
+     * 
+     * It doesn't interrupt {@link #main()}. Don't this manually.
+     */
     protected abstract void terminate();
 }

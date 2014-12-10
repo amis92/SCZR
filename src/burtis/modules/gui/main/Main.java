@@ -6,9 +6,11 @@ import java.util.Collections;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import burtis.common.events.Simulation.BusStopsListEvent.BusStop;
 import burtis.common.mockups.Mockup;
-import burtis.common.model.Bus;
-import burtis.common.model.Schedule;
+import burtis.common.mockups.MockupBus;
+import burtis.common.mockups.MockupBusStop;
+import burtis.common.mockups.MockupPassenger;
 import burtis.modules.gui.controller.Controller;
 import burtis.modules.gui.events.ProgramEvent;
 import burtis.modules.gui.model.Model;
@@ -26,9 +28,37 @@ public class Main {
 		model = new Model(bQueue);
 		controller = new Controller(view, model, bQueue);
 		
-		try {		    
-			ArrayList<Bus> buses = new ArrayList<Bus>(Collections.nCopies(10, new Bus(0)));
-			Schedule schedule = new Schedule(20);
+		try {
+			ArrayList<MockupBus> buses = new ArrayList<MockupBus>();
+			ArrayList<MockupBusStop> schedule = new ArrayList<MockupBusStop>();
+			
+			ArrayList<MockupPassenger> passengerList = new ArrayList<MockupPassenger>();
+			
+			passengerList.add(new MockupPassenger(0,"wfewef","fwefwef"));
+            passengerList.add(new MockupPassenger(1,"wfewef","fwefwef"));
+            passengerList.add(new MockupPassenger(2,"wfewef","fwefwef"));
+            passengerList.add(new MockupPassenger(3,"wfewef","fwefwef"));
+
+            buses.add(new MockupBus(0));
+            buses.add(new MockupBus(1));
+            buses.add(new MockupBus(2));
+            buses.add(new MockupBus(3));
+
+            schedule.add(new MockupBusStop("Warszawa"));
+            schedule.add(new MockupBusStop("Warszawa"));
+            schedule.add(new MockupBusStop("Warszawa"));
+            schedule.add(new MockupBusStop("Warszawa"));
+            
+            schedule.get(0).setPassengerList(passengerList);
+            schedule.get(1).setPassengerList(passengerList);
+            schedule.get(2).setPassengerList(passengerList);
+            schedule.get(3).setPassengerList(passengerList);
+            
+            buses.get(0).setPassengerList(passengerList);
+            buses.get(1).setPassengerList(passengerList);
+            buses.get(2).setPassengerList(passengerList);
+            buses.get(3).setPassengerList(passengerList);
+            
 			long currentTime = 666;
 			
 			Mockup mockup = new Mockup(buses, schedule, currentTime);

@@ -14,14 +14,14 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
-import burtis.common.model.Bus;
+import burtis.common.mockups.MockupBus;
 import burtis.modules.gui.events.ProgramEvent;
 import burtis.modules.gui.events.ShowBusEvent;
 
 class AnimationPanel extends JPanel {
 	private final LinkedBlockingQueue<ProgramEvent> bQueue;
 	private ArrayList<Location> locationArray = new ArrayList<Location>();	
-    private int squareX = 10;
+    //private int squareX;
     private int squareY = 0;
     private int squareW = 70;
     private int squareH = 40;
@@ -52,12 +52,13 @@ class AnimationPanel extends JPanel {
     			(l.getX()+squareW>=x) && (l.getY()+squareH>=y)) 
     		{       	
     			tmp = l;
-    			System.out.println("Bus " + tmp.getName());
+    			System.out.println("Bus " + tmp.getId());
     		}
     	}
     	
     	try {
-    		bQueue.put(new ShowBusEvent("0"));
+    		if(tmp != null)
+    		    bQueue.put(new ShowBusEvent(tmp.getId()));
     	} catch (InterruptedException e) {
     		e.printStackTrace();
     	}
@@ -82,30 +83,30 @@ class AnimationPanel extends JPanel {
         	g.setColor(Color.BLACK);
         	g.drawRect(l.getX(),l.getY(),squareW,squareH);
         	
-        	g.drawString("Bus " + l.getName(),l.getX()+18,l.getY()+24);
+        	g.drawString("Bus " + l.getId(),l.getX()+18,l.getY()+24);
     	}
     }
     
-    public void addBus(Bus tmp) {
-    	locationArray.add(new Location(squareX, squareY, tmp.getId().toString(), false));
+    public void addBus(MockupBus tmp, Integer squareX) {
+    	locationArray.add(new Location(squareX, squareY, tmp.getId(), false));
     	squareY += 50;
     }
     
     class Location {
     	private int x;
     	private int y;
-    	private String name;
+    	private Integer Id;
     	private Boolean stop;
     	
-    	Location(int x, int y, String name, Boolean stop) {
+    	Location(int x, int y, Integer Id, Boolean stop) {
     		this.x = x;
     		this.y = y;
-    		this.name = name;
+    		this.Id = Id;
     		this.stop = stop;
     	}
     	
-    	int getX() { return x;}
-    	int getY() { return y;}
-    	String getName() { return name;}
+    	public int getX() { return x;}
+    	public int getY() { return y;}
+    	public Integer getId() { return Id;}
     }
 }
