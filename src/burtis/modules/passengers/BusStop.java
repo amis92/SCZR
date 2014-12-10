@@ -123,5 +123,13 @@ public class BusStop {
         BusStop busStop = getBusStop(busStopId);
         return busStop.passengerQueue.size();
     }
+    
+    public static void printBusStopsList() {
+        System.out.println("\nBus stops:\n==========\n");
+        for(BusStop busStop : busStops) {
+            System.out.println( busStop.id + " " + busStop.name );
+        }
+        System.out.println();
+    }
 
 }

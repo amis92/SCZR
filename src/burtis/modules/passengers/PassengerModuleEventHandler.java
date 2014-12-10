@@ -144,6 +144,7 @@ public class PassengerModuleEventHandler extends AbstractEventProcessor {
         BusStop.add(event.getBusStops());
         pm.send(new ModuleReadyEvent(pm.getModuleConfig().getModuleName()));
         pm.state = PassengerModule.State.RUNNING;
+        BusStop.printBusStopsList();
     }
     
     
