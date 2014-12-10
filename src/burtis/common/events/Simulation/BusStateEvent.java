@@ -2,6 +2,7 @@ package burtis.common.events.Simulation;
 
 import burtis.common.events.AbstractEventProcessor;
 import burtis.common.events.SimulationEvent;
+import java.util.List;
 
 /**
  *
@@ -9,14 +10,15 @@ import burtis.common.events.SimulationEvent;
  */
 public class BusStateEvent extends SimulationEvent {
     
-    public static BussInfo {
+    public static class BusInfo {
         
     }
     
-    private final List<BusInfo> 
+    private final List<BusInfo> buses; 
 
-    public BusStateEvent(String sender) {
+    public BusStateEvent(String sender, List<BusInfo> buses) {
         super(sender);
+        this.buses = buses;
     }
 
     @Override

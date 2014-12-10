@@ -7,6 +7,7 @@ package burtis.common.events.Passengers;
 
 import burtis.common.events.AbstractEventProcessor;
 import burtis.common.events.SimulationEvent;
+import burtis.common.mockups.Mockup;
 
 /**
  *
@@ -14,9 +15,18 @@ import burtis.common.events.SimulationEvent;
  */
 public class MainMockupEvent extends SimulationEvent {
 
-    public MainMockupEvent(String sender) {
+    private final Mockup mainMockup;
+    
+    public MainMockupEvent(String sender, Mockup mainMockup) {
         super(sender);
+        this.mainMockup = mainMockup;
     }
+
+    public Mockup getMainMockup() {
+        return mainMockup;
+    }
+    
+    
 
     @Override
     public void visit(AbstractEventProcessor eventProcessor) {
