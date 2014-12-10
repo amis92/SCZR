@@ -48,7 +48,7 @@ public class Terminus extends BusStop
                 }
                 // No bus at all
                 else {
-                    Simulation.logger.log(
+                    Simulation.getInstance().getLogger().log(
                             Level.WARNING, "Bus was to be sent by the terminus, however no bus was available!");
                 }
             }
