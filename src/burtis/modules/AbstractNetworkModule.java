@@ -117,7 +117,7 @@ public abstract class AbstractNetworkModule
 
     /**
      * Called at the beginning of {@link #main}. The module is already connected
-     * and {@link AbstractNetworkModule#send(SimulationEvent)} works.
+     * and {@link #send(SimulationEvent)} works.
      */
     protected abstract void init();
 

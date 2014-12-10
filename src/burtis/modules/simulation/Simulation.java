@@ -98,7 +98,6 @@ public class Simulation extends AbstractNetworkModule
     @Override
     protected void terminate() {
         logger.log(Level.INFO, "Terminating module...");
-        closeModule();
     }
 
    

@@ -11,6 +11,12 @@ import burtis.modules.gui.controller.Controller;
 import burtis.modules.gui.events.ProgramEvent;
 import burtis.modules.gui.view.View;
 
+/**
+ * Runs GUI with some example data. No network connection.
+ * 
+ * @author Rafał Braun
+ *
+ */
 public class GuiTest
 {
     static LinkedBlockingQueue<ProgramEvent> bQueue;
@@ -21,7 +27,9 @@ public class GuiTest
     {
         bQueue = new LinkedBlockingQueue<ProgramEvent>();
         view = new View(bQueue, null);
-        controller = new Controller(view, bQueue);
+        controller = new Controller(view, bQueue, (e) ->
+        {
+        });
         try
         {
             ArrayList<MockupBus> buses = new ArrayList<MockupBus>();
@@ -57,6 +65,6 @@ public class GuiTest
             e.printStackTrace();
             System.exit(1);
         }
-        controller.work();
+        controller.start();
     }
 }
