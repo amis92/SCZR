@@ -58,6 +58,7 @@ public class Transaction {
         for(Passenger passenger : bus.getPassengers()) {
             if(passenger.getDestination() == busStop) {
                 bus.getPassengers().remove(passenger);
+                Passenger.deletePassenger(passenger);
                 unloadedPassengers++;
             }
         }

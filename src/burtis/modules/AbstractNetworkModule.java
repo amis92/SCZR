@@ -26,11 +26,11 @@ import burtis.modules.network.client.ClientModule;
  */
 public abstract class AbstractNetworkModule
 {
-    private ClientModule client;
     private final ExecutorService handlerExecutor = Executors
             .newSingleThreadExecutor();
     private boolean isRunning = true;
     private BlockingQueue<SimulationEvent> queue;
+    protected ClientModule client;
     protected AbstractEventProcessor eventHandler = null;
     /**
      * Must return configuration for your implementation, even before
@@ -44,11 +44,15 @@ public abstract class AbstractNetworkModule
      * Creates module ready to have {@link #main()} called.
      * 
      * @param config
-     * @param eventHandler
      */
     protected AbstractNetworkModule(ModuleConfig config)
     {
         this.moduleConfig = config;
+    }
+
+    public void send(SimulationEvent event)
+    {
+        client.send(event);
     }
 
     private boolean checkInputAndSleep()
@@ -136,11 +140,6 @@ public abstract class AbstractNetworkModule
             isInputAvailable = checkInputAndSleep();
         }
         closeModule();
-    }
-
-    protected void send(SimulationEvent event)
-    {
-        client.send(event);
     }
 
     protected abstract void terminate();
