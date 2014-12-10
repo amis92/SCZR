@@ -4,21 +4,21 @@ import burtis.modules.passengers.Passenger;
 import java.io.Serializable;
 
 public class MockupPassenger implements Serializable{
-    private final int Id;
-    private String depot; // origin
+    private int Id;
+    private String origin;
     private String destination;
     private final long waitingTime;
 
-    public MockupPassenger(MockupPassenger passenger) {
-        this.Id = passenger.getId();
-        this.destination = passenger.getDestination();
-        this.destination = passenger.getDepot();
-        this.waitingTime = passenger.waitingTime;
+    public MockupPassenger(Integer Id, String origin, String destination) {
+        this.Id = Id;
+        this.destination = destination;
+        this.origin = origin;
+        this.waitingTime = 0;
     }
     
     public MockupPassenger(Passenger passenger) {
         this.Id = passenger.getId();
-        this.depot = passenger.getOrigin().getName();
+        this.origin = passenger.getOrigin().getName();
         this.destination = passenger.getDestination().getName();
         this.waitingTime = passenger.getWaitingTime();
     }
@@ -32,6 +32,6 @@ public class MockupPassenger implements Serializable{
     }
     
     public String getDepot() {
-        return depot;
+        return origin;
     }
 }

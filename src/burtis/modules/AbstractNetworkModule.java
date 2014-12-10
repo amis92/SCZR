@@ -29,7 +29,7 @@ public abstract class AbstractNetworkModule
     private final ExecutorService handlerExecutor = Executors
             .newSingleThreadExecutor();
     /**
-     * Controls litener loop.
+     * Controls listener loop.
      */
     private boolean isRunning = true;
     /**
@@ -82,22 +82,20 @@ public abstract class AbstractNetworkModule
         return false;
     }
 
-    private void closeModule()
+    protected void closeModule()
     {
-        terminate();
         client.close();
         isRunning = false;
         handlerExecutor.shutdownNow();
     }
 
-    private void initializeModule() throws IOException
+    protected void initializeModule() throws IOException
     {
         client = new ClientModule(moduleConfig);
         queue = client.getIncomingQueue();
         handlerExecutor.execute(this::listenOnClient);
         client.connect();
         client.getIncomingQueue();
-        init();
     }
 
     private void listenOnClient()
@@ -142,6 +140,7 @@ public abstract class AbstractNetworkModule
         try
         {
             initializeModule();
+            init();
         }
         catch (IOException ex)
         {
@@ -155,6 +154,7 @@ public abstract class AbstractNetworkModule
         {
             isInputAvailable = checkInputAndSleep();
         }
+        terminate();
         closeModule();
     }
 

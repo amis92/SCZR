@@ -1,39 +1,20 @@
 package burtis.modules.gui.view;
 
 import java.awt.BorderLayout;
-import java.awt.Canvas;
 import java.awt.FlowLayout;
-import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowListener;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import javax.imageio.ImageIO;
-import javax.swing.AbstractButton;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import javax.swing.JTable;
 import javax.swing.JToolBar;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import burtis.common.mockups.Mockup;
 import burtis.common.mockups.MockupBus;
@@ -44,9 +25,6 @@ import burtis.modules.gui.events.GoEvent;
 import burtis.modules.gui.events.ProgramEvent;
 import burtis.modules.gui.events.StepEvent;
 import burtis.modules.gui.events.StopEvent;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class View {
 	/* Kolejka, do ktorej wrzucamy obiekty odpowidajace eventom */
@@ -77,12 +55,21 @@ public class View {
 	private BusStopInfoPanel busStopInfoPanel = new BusStopInfoPanel();
 	private AnimationPanel animationPanel;
 	
-	public View(LinkedBlockingQueue<ProgramEvent> bQueue) {
+	public View(LinkedBlockingQueue<ProgramEvent> bQueue, WindowListener exitListener) {
 		this.bQueue = bQueue;
 		
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		frame = new JFrame();
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		if (exitListener == null)
+		{
+	        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		}
+		else
+		{
+
+            frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+	        frame.addWindowListener(exitListener);
+		}
 		frame.setLayout(new BorderLayout());
 		frame.setTitle("burtis");
 		frame.setVisible(true);

@@ -7,6 +7,7 @@ import burtis.modules.gui.events.ProgramEvent;
  * aby z niego skorzystac nalezy zdefiniowac funkcje go
  * @version 1.0
  */
+@FunctionalInterface
 public interface ProgramAction {
-	abstract public void go(ProgramEvent e);
+	public void go(ProgramEvent e);
 }

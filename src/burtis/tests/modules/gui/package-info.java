@@ -5,4 +5,4 @@
  * @author vanqyard
  *
  */
-package burtis.modules.gui.model;
+package burtis.tests.modules.gui;
