@@ -26,7 +26,7 @@ import burtis.modules.network.client.ClientModule;
  */
 public abstract class AbstractNetworkModule
 {
-    private ClientModule client;
+    protected ClientModule client;
     private final ExecutorService handlerExecutor = Executors
             .newSingleThreadExecutor();
     private boolean isRunning = true;
@@ -44,14 +44,13 @@ public abstract class AbstractNetworkModule
      * Creates module ready to have {@link #main()} called.
      * 
      * @param config
-     * @param eventHandler
      */
     protected AbstractNetworkModule(ModuleConfig config)
     {
         this.moduleConfig = config;
     }
 
-    private void closeModule()
+    protected void closeModule()
     {
         client.close();
         isRunning = false;
@@ -115,10 +114,11 @@ public abstract class AbstractNetworkModule
                     ex);
         }
         closeModule();
-        terminate();
+        // Is it really necessary here?
+        // terminate();
     }
 
-    protected void send(SimulationEvent event)
+    public void send(SimulationEvent event)
     {
         client.send(event);
     }

@@ -139,8 +139,8 @@ public class BusStop
      * @param busStop bus stop bus to be queued to
      */
     public static void enqueueBus(Bus bus, BusStop busStop) {
-        Simulation.client.send(new BusArrivesAtBusStopEvent(
-                Simulation.simulationModuleConfig.getModuleName(),
+        Simulation.getInstance().send(new BusArrivesAtBusStopEvent(
+                Simulation.getInstance().getModuleConfig().getModuleName(),
                 bus.getId(), 
                 busStop.getId()));
     }
