@@ -51,11 +51,27 @@ public abstract class AbstractNetworkModule
         this.moduleConfig = config;
     }
 
+    private boolean checkInputAndSleep()
+    {
+        try
+        {
+            Thread.sleep(500);
+            return System.in.available() != 0;
+        }
+        catch (Exception e)
+        {
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null,
+                    e);
+        }
+        return false;
+    }
+
     private void closeModule()
     {
         client.close();
         isRunning = false;
         handlerExecutor.shutdownNow();
+        terminate();
     }
 
     private void initializeModule() throws IOException
@@ -65,6 +81,7 @@ public abstract class AbstractNetworkModule
         handlerExecutor.execute(this::listenOnClient);
         client.connect();
         client.getIncomingQueue();
+        init();
     }
 
     private void listenOnClient()
@@ -105,17 +122,20 @@ public abstract class AbstractNetworkModule
         try
         {
             initializeModule();
-            init();
-            System.out.println("Naciśnij enter any zakończyć.");
-            System.in.read();
         }
         catch (IOException ex)
         {
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null,
                     ex);
+            return;
+        }
+        System.out.println("Naciśnij enter any zakończyć.");
+        boolean isInputAvailable = false;
+        while (!isInputAvailable)
+        {
+            isInputAvailable = checkInputAndSleep();
         }
         closeModule();
-        terminate();
     }
 
     protected void send(SimulationEvent event)
