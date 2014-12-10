@@ -1,6 +1,7 @@
 package burtis.common.mockups;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MockupBusStop {
     private final ArrayList<MockupPassenger> passengerList;
@@ -12,5 +13,14 @@ public class MockupBusStop {
 		
 		
 	}
+	
+	public List<MockupPassenger> getPassengers()
+	{
+	    return passengerList;
+	}
 
+	public int getPassengerCount()
+	{
+	    return passengerList.size();
+	}
 }
