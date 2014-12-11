@@ -21,16 +21,19 @@ public class SyncEventHandler extends AbstractEventProcessor
     private final static Logger logger = Logger
             .getLogger(SynchronizationModule.class);
     private final SynchronizationModule syncModule;
+    private final WatchdogService watchdogService;
 
-    public SyncEventHandler(SynchronizationModule syncModule)
+    public SyncEventHandler(SynchronizationModule syncModule,
+            WatchdogService watchdogService)
     {
         this.syncModule = syncModule;
+        this.watchdogService = watchdogService;
     }
 
     @Override
     public void defaultHandle(SimulationEvent event)
     {
-        logger.log(Level.WARNING, "Unknown event {0}", event.getClass()
+        logger.log(Level.WARNING, "Unhandled event {0}", event.getClass()
                 .getSimpleName());
     }
 
@@ -71,7 +74,7 @@ public class SyncEventHandler extends AbstractEventProcessor
         }
         else
         {
-            Module.setReady(event.sender());
+            watchdogService.handleModuleResponded(event.sender());
         }
     }
 }
