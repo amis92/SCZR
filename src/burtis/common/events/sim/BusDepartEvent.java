@@ -1,4 +1,4 @@
-package burtis.common.events.simulation;
+package burtis.common.events.sim;
 
 import burtis.common.events.AbstractEventHandler;
 import burtis.common.events.SimulationEvent;

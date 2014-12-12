@@ -1,4 +1,4 @@
-package burtis.common.events.simulation;
+package burtis.common.events.sim;
 
 import java.util.List;
 
