@@ -1,5 +1,8 @@
 package burtis.modules.simulation;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import burtis.common.constants.SimulationModuleConsts;
 import burtis.modules.AbstractNetworkModule;
 import burtis.modules.network.ModuleConfig;
@@ -7,9 +10,6 @@ import burtis.modules.network.NetworkConfig;
 import burtis.modules.simulation.models.Bus;
 import burtis.modules.simulation.models.BusStop;
 import burtis.modules.simulation.models.Terminus;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Simulation module.

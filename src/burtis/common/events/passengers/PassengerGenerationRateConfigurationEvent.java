@@ -1,4 +1,4 @@
-package burtis.common.events.pass;
+package burtis.common.events.passengers;
 
 import burtis.common.events.AbstractEventHandler;
 import burtis.common.events.ConfigurationEvent;

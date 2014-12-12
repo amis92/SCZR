@@ -1,5 +1,7 @@
 package burtis.modules.simulation;
 
+import java.util.logging.Level;
+
 import burtis.common.events.AbstractEventHandler;
 import burtis.common.events.SimulationEvent;
 import burtis.common.events.flow.TerminateSimulationEvent;
@@ -12,8 +14,6 @@ import burtis.common.events.simulation.ChangeReleasingFrequencyEvent;
 import burtis.modules.simulation.models.Bus;
 import burtis.modules.simulation.models.BusStop;
 import burtis.modules.simulation.models.Terminus;
-
-import java.util.logging.Level;
 
 /**
  *

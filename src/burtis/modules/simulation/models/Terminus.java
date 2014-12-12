@@ -1,10 +1,11 @@
 package burtis.modules.simulation.models;
 
-import burtis.common.constants.SimulationModuleConsts;
-import burtis.modules.simulation.Simulation;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.logging.Level;
+
+import burtis.common.constants.SimulationModuleConsts;
+import burtis.modules.simulation.Simulation;
 
 public class Terminus extends BusStop
 {

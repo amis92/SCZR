@@ -1,13 +1,11 @@
 package burtis.modules.simulation.models;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import burtis.common.events.simulation.BusArrivesAtBusStopEvent;
 import burtis.common.events.simulation.BusStopsListEvent;
 import burtis.modules.simulation.Simulation;
-
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Queue;
 
 public class BusStop
 {

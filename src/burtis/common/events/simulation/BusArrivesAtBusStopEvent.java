@@ -1,4 +1,4 @@
-package burtis.common.events.pass;
+package burtis.common.events.simulation;
 
 import burtis.common.events.AbstractEventHandler;
 import burtis.common.events.SimulationEvent;
@@ -7,28 +7,27 @@ import burtis.common.events.SimulationEvent;
  *
  * @author Mikołaj Sowiński
  */
-public class WaitingPassengersEvent extends SimulationEvent
+public class BusArrivesAtBusStopEvent extends SimulationEvent
 {
     private static final long serialVersionUID = 1L;
+    private final int busId;
     private final int busStopId;
-    private final int waitingPassengers;
 
-    public WaitingPassengersEvent(String sender, int busStopId,
-            int waitingPassengers)
+    public BusArrivesAtBusStopEvent(String sender, int busId, int busStopId)
     {
         super(sender);
+        this.busId = busId;
         this.busStopId = busStopId;
-        this.waitingPassengers = waitingPassengers;
+    }
+
+    public int getBusId()
+    {
+        return busId;
     }
 
     public int getBusStopId()
     {
         return busStopId;
-    }
-
-    public int getWaitingPassengers()
-    {
-        return waitingPassengers;
     }
 
     public void visit(AbstractEventHandler eventProcessor)
