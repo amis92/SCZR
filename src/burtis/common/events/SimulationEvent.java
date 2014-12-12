@@ -36,5 +36,5 @@ public abstract class SimulationEvent implements Serializable
         return result;
     }
     
-    public abstract void visit(AbstractEventProcessor eventProcessor);
+    public abstract void visit(AbstractEventHandler eventProcessor);
 }

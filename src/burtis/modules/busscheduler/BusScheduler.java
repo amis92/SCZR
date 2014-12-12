@@ -5,12 +5,12 @@ import java.util.function.Consumer;
 import java.util.logging.Level;
 
 import burtis.common.constants.SimulationModuleConsts;
-import burtis.common.events.AbstractEventProcessor;
+import burtis.common.events.AbstractEventHandler;
+import burtis.common.events.MainMockupEvent;
 import burtis.common.events.SimulationEvent;
-import burtis.common.events.Passengers.BusStopsListRequestEvent;
-import burtis.common.events.Passengers.MainMockupEvent;
-import burtis.common.events.Simulation.BusStopsListEvent;
-import burtis.common.events.busscheduler.ChangeReleasingFrequencyEvent;
+import burtis.common.events.simulation.BusStopsListEvent;
+import burtis.common.events.simulation.BusStopsListRequestEvent;
+import burtis.common.events.simulation.ChangeReleasingFrequencyEvent;
 import burtis.common.mockups.Mockup;
 import burtis.common.mockups.MockupBus;
 import burtis.common.mockups.MockupBusStop;
@@ -27,7 +27,7 @@ import com.sun.istack.internal.logging.Logger;
  * @author Kamil Drożdżał
  *
  */
-public class BusScheduler extends AbstractEventProcessor
+public class BusScheduler extends AbstractEventHandler
 {
     private static final Logger logger = Logger.getLogger(BusScheduler.class);
     /**

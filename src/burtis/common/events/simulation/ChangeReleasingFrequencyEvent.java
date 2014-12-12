@@ -1,6 +1,6 @@
-package burtis.common.events.busscheduler;
+package burtis.common.events.simulation;
 
-import burtis.common.events.AbstractEventProcessor;
+import burtis.common.events.AbstractEventHandler;
 import burtis.common.events.SimulationEvent;
 
 /**
@@ -10,7 +10,7 @@ import burtis.common.events.SimulationEvent;
  */
 public class ChangeReleasingFrequencyEvent extends SimulationEvent
 {
-    private static final long serialVersionUID = 446524068178435062L;
+    private static final long serialVersionUID = 1L;
     private long newReleasingFrequency;
 
     public ChangeReleasingFrequencyEvent(String sender, String[] recipients,
@@ -25,7 +25,7 @@ public class ChangeReleasingFrequencyEvent extends SimulationEvent
     }
 
     @Override
-    public void visit(AbstractEventProcessor eventProcessor)
+    public void visit(AbstractEventHandler eventProcessor)
     {
         eventProcessor.process(this);
     }

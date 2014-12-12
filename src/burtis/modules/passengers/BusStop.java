@@ -1,6 +1,7 @@
 package burtis.modules.passengers;
 
-import burtis.common.events.Simulation.BusStopsListEvent;
+import burtis.common.events.simulation.BusStopsListEvent;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;

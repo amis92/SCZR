@@ -5,13 +5,16 @@ package burtis.common.events;
  * 
  * @author Mikołaj Sowiński
  */
-public class ConfigurationEvent extends SimulationEvent {
+public class ConfigurationEvent extends SimulationEvent
+{
+    private static final long serialVersionUID = 1L;
 
-    public ConfigurationEvent(String sender) {
+    public ConfigurationEvent(String sender)
+    {
         super(sender);
     }
 
-    public void visit(AbstractEventProcessor eventProcessor)
+    public void visit(AbstractEventHandler eventProcessor)
     {
         eventProcessor.process(this);
     }

@@ -1,19 +1,24 @@
 package burtis.common.events;
 
-import burtis.common.events.Passengers.BusDepartEvent;
-import burtis.common.events.Passengers.BusStopsListRequestEvent;
-import burtis.common.events.Passengers.MainMockupEvent;
-import burtis.common.events.Passengers.WaitingPassengersEvent;
-import burtis.common.events.Simulation.BusArrivesAtBusStopEvent;
-import burtis.common.events.Simulation.BusStateEvent;
-import burtis.common.events.Simulation.BusStopsListEvent;
-import burtis.common.events.Simulation.WaitingPassengersRequestEvent;
-import burtis.common.events.Sync.TickEvent;
-import burtis.common.events.busscheduler.ChangeReleasingFrequencyEvent;
-import burtis.common.events.gui.DoStepEvent;
-import burtis.common.events.gui.PassengerGenerationRateConfigurationEvent;
-import burtis.common.events.gui.PauseSimulationEvent;
-import burtis.common.events.gui.StartSimulationEvent;
+import burtis.common.events.flow.CycleCompletedEvent;
+import burtis.common.events.flow.DoStepEvent;
+import burtis.common.events.flow.ModuleReadyEvent;
+import burtis.common.events.flow.PauseSimulationEvent;
+import burtis.common.events.flow.StartSimulationEvent;
+import burtis.common.events.flow.TerminateSimulationEvent;
+import burtis.common.events.flow.TickEvent;
+import burtis.common.events.passengers.PassengerGenerationRateConfigurationEvent;
+import burtis.common.events.passengers.PassengerInfoRequestEvent;
+import burtis.common.events.passengers.WaitingPassengersEvent;
+import burtis.common.events.passengers.WaitingPassengersRequestEvent;
+import burtis.common.events.simulation.BusArrivesAtBusStopEvent;
+import burtis.common.events.simulation.BusDepartEvent;
+import burtis.common.events.simulation.BusStateEvent;
+import burtis.common.events.simulation.BusStopsListEvent;
+import burtis.common.events.simulation.BusStopsListRequestEvent;
+import burtis.common.events.simulation.ChangeReleasingFrequencyEvent;
+import burtis.common.events.simulation.SendBusEvent;
+import burtis.common.events.simulation.WithdrawBusEvent;
 
 /**
  * Provides default processing abilities for all events. Inheriting classes
@@ -22,10 +27,10 @@ import burtis.common.events.gui.StartSimulationEvent;
  * @author Amadeusz Sadowski
  *
  */
-public abstract class AbstractEventProcessor
+public abstract class AbstractEventHandler
 {
     /**
-     * Called in every process function in {@link AbstractEventProcessor}.
+     * Called in every process function in {@link AbstractEventHandler}.
      * @param event
      */
     public abstract void defaultHandle(SimulationEvent event);

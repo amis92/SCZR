@@ -7,8 +7,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Level;
 
 import burtis.common.constants.SimulationModuleConsts;
-import burtis.common.events.Passengers.WaitingPassengersEvent;
-import burtis.common.events.Simulation.WaitingPassengersRequestEvent;
+import burtis.common.events.passengers.WaitingPassengersEvent;
+import burtis.common.events.passengers.WaitingPassengersRequestEvent;
 import burtis.modules.simulation.Simulation;
 
 public class Bus

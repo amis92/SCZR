@@ -1,25 +1,25 @@
 package burtis.modules.simulation;
 
-import burtis.common.events.AbstractEventProcessor;
-import burtis.common.events.Passengers.BusDepartEvent;
-import burtis.common.events.Passengers.BusStopsListRequestEvent;
-import burtis.common.events.Passengers.WaitingPassengersEvent;
-import burtis.common.events.Simulation.BusStopsListEvent;
+import java.util.logging.Level;
+
+import burtis.common.events.AbstractEventHandler;
 import burtis.common.events.SimulationEvent;
-import burtis.common.events.Sync.TickEvent;
-import burtis.common.events.TerminateSimulationEvent;
-import burtis.common.events.busscheduler.ChangeReleasingFrequencyEvent;
+import burtis.common.events.flow.TerminateSimulationEvent;
+import burtis.common.events.flow.TickEvent;
+import burtis.common.events.passengers.WaitingPassengersEvent;
+import burtis.common.events.simulation.BusDepartEvent;
+import burtis.common.events.simulation.BusStopsListEvent;
+import burtis.common.events.simulation.BusStopsListRequestEvent;
+import burtis.common.events.simulation.ChangeReleasingFrequencyEvent;
 import burtis.modules.simulation.models.Bus;
 import burtis.modules.simulation.models.BusStop;
 import burtis.modules.simulation.models.Terminus;
-
-import java.util.logging.Level;
 
 /**
  *
  * @author Mikołaj
  */
-public class SimulationEventHandler extends AbstractEventProcessor {
+public class SimulationEventHandler extends AbstractEventHandler {
     
     private final Simulation sim = Simulation.getInstance();
 

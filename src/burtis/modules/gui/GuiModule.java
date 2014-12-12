@@ -10,9 +10,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.swing.SwingUtilities;
 
-import burtis.common.events.AbstractEventProcessor;
+import burtis.common.events.AbstractEventHandler;
+import burtis.common.events.MainMockupEvent;
 import burtis.common.events.SimulationEvent;
-import burtis.common.events.Passengers.MainMockupEvent;
 import burtis.modules.AbstractNetworkModule;
 import burtis.modules.gui.controller.Controller;
 import burtis.modules.gui.events.ProgramEvent;
@@ -100,7 +100,7 @@ public class GuiModule extends AbstractNetworkModule
      * @author Amadeusz Sadowski
      *
      */
-    private class EventHandler extends AbstractEventProcessor
+    private class EventHandler extends AbstractEventHandler
     {
         @Override
         public void process(MainMockupEvent event)

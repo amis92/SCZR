@@ -1,14 +1,14 @@
 package burtis.modules;
 
-import burtis.common.events.AbstractEventProcessor;
+import burtis.common.events.AbstractEventHandler;
 import burtis.common.events.SimulationEvent;
-import burtis.common.events.Sync.TickEvent;
+import burtis.common.events.flow.TickEvent;
 import burtis.modules.network.ModuleConfig;
 import burtis.modules.network.NetworkConfig;
 
 /**
  * Demoes how modules should be built using {@link AbstractNetworkModule} and
- * {@link AbstractEventProcessor} templates.
+ * {@link AbstractEventHandler} templates.
  * 
  * @author Amadeusz Sadowski
  *
@@ -42,7 +42,7 @@ public class DemoModule extends AbstractNetworkModule
         app.main();
     }
 
-    private class EventHandler extends AbstractEventProcessor
+    private class EventHandler extends AbstractEventHandler
     {
         @Override
         public void defaultHandle(SimulationEvent event)
