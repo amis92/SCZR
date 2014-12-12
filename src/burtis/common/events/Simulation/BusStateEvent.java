@@ -1,8 +1,8 @@
-package burtis.common.events.Simulation;
+package burtis.common.events.simulation;
 
 import java.util.List;
 
-import burtis.common.events.AbstractEventProcessor;
+import burtis.common.events.AbstractEventHandler;
 import burtis.common.events.SimulationEvent;
 import burtis.modules.simulation.models.Bus;
 
@@ -12,7 +12,7 @@ import burtis.modules.simulation.models.Bus;
  */
 public class BusStateEvent extends SimulationEvent
 {
-    private static final long serialVersionUID = 7441022056679823117L;
+    private static final long serialVersionUID = 1L;
 
     public static class BusInfo
     {
@@ -37,7 +37,7 @@ public class BusStateEvent extends SimulationEvent
     }
 
     @Override
-    public void visit(AbstractEventProcessor eventProcessor)
+    public void visit(AbstractEventHandler eventProcessor)
     {
         eventProcessor.process(this);
     }

@@ -7,7 +7,7 @@ import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import burtis.common.events.AbstractEventProcessor;
+import burtis.common.events.AbstractEventHandler;
 import burtis.common.events.SimulationEvent;
 import burtis.modules.network.ModuleConfig;
 import burtis.modules.network.client.ClientModule;
@@ -41,7 +41,7 @@ public abstract class AbstractNetworkModule
     /**
      * Must return handler for your implementation, before {@link #main} call.
      */
-    protected AbstractEventProcessor eventHandler = null;
+    protected AbstractEventHandler eventHandler = null;
     protected final ModuleConfig moduleConfig;
 
     /**

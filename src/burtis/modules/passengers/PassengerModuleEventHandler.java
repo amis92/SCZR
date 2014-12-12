@@ -5,26 +5,27 @@
  */
 package burtis.modules.passengers;
 
-import burtis.common.events.AbstractEventProcessor;
-import burtis.common.events.CycleCompletedEvent;
+import burtis.common.events.AbstractEventHandler;
 //import burtis.common.events.ModuleReadyEvent;
-import burtis.common.events.PassengerInfoRequestEvent;
-import burtis.common.events.Passengers.WaitingPassengersEvent;
-import burtis.common.events.Simulation.BusArrivesAtBusStopEvent;
-import burtis.common.events.Simulation.BusStopsListEvent;
-import burtis.common.events.Simulation.WaitingPassengersRequestEvent;
 import burtis.common.events.SimulationEvent;
-import burtis.common.events.Sync.TickEvent;
-import burtis.common.events.TerminateSimulationEvent;
-import burtis.common.events.gui.PassengerGenerationRateConfigurationEvent;
+import burtis.common.events.flow.CycleCompletedEvent;
+import burtis.common.events.flow.TerminateSimulationEvent;
+import burtis.common.events.flow.TickEvent;
+import burtis.common.events.passengers.PassengerGenerationRateConfigurationEvent;
+import burtis.common.events.passengers.PassengerInfoRequestEvent;
+import burtis.common.events.passengers.WaitingPassengersEvent;
+import burtis.common.events.passengers.WaitingPassengersRequestEvent;
+import burtis.common.events.simulation.BusArrivesAtBusStopEvent;
+import burtis.common.events.simulation.BusStopsListEvent;
 import burtis.modules.network.NetworkConfig;
+
 import java.util.logging.Level;
 
 /**
  *
  * @author Mikołaj
  */
-public class PassengerModuleEventHandler extends AbstractEventProcessor {
+public class PassengerModuleEventHandler extends AbstractEventHandler {
     
     private final PassengerModule pm = PassengerModule.getInstance();
 

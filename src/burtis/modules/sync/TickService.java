@@ -9,7 +9,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import burtis.common.events.SimulationEvent;
-import burtis.common.events.Sync.TickEvent;
+import burtis.common.events.flow.TickEvent;
 
 /**
  * Controls thread responsible for sending ticks.

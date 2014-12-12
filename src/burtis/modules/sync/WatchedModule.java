@@ -3,7 +3,7 @@ package burtis.modules.sync;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import burtis.common.events.CycleCompletedEvent;
+import burtis.common.events.flow.CycleCompletedEvent;
 import burtis.modules.network.ModuleConfig;
 
 /**

@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Logger;
 
-import burtis.common.events.TerminateSimulationEvent;
-import burtis.common.events.Sync.TickEvent;
+import burtis.common.events.flow.TerminateSimulationEvent;
+import burtis.common.events.flow.TickEvent;
 import burtis.modules.AbstractNetworkModule;
 import burtis.modules.network.ModuleConfig;
 import burtis.modules.network.NetworkConfig;

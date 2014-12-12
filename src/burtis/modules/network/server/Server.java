@@ -7,9 +7,9 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import burtis.common.events.AbstractEventProcessor;
+import burtis.common.events.AbstractEventHandler;
 import burtis.common.events.SimulationEvent;
-import burtis.common.events.TerminateSimulationEvent;
+import burtis.common.events.flow.TerminateSimulationEvent;
 import burtis.modules.network.ModuleConfig;
 import burtis.modules.network.NetworkConfig;
 import burtis.modules.network.server.impl.ServerSender;
@@ -25,7 +25,7 @@ import burtis.modules.network.server.impl.ServerSender;
  * @author Amadeusz Sadowski
  *
  */
-public class Server extends AbstractEventProcessor
+public class Server extends AbstractEventHandler
 {
     protected final static Logger logger = Logger.getLogger(Server.class
             .getName());

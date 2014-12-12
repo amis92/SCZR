@@ -1,9 +1,10 @@
 package burtis.modules.passengers;
 
-import burtis.common.events.Passengers.BusStopsListRequestEvent;
+import burtis.common.events.simulation.BusStopsListRequestEvent;
 import burtis.modules.AbstractNetworkModule;
 import burtis.modules.network.ModuleConfig;
 import burtis.modules.network.NetworkConfig;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 

@@ -2,13 +2,13 @@ package burtis.modules.sync;
 
 import java.util.logging.Level;
 
-import burtis.common.events.AbstractEventProcessor;
-import burtis.common.events.CycleCompletedEvent;
+import burtis.common.events.AbstractEventHandler;
 import burtis.common.events.SimulationEvent;
-import burtis.common.events.TerminateSimulationEvent;
-import burtis.common.events.gui.DoStepEvent;
-import burtis.common.events.gui.PauseSimulationEvent;
-import burtis.common.events.gui.StartSimulationEvent;
+import burtis.common.events.flow.CycleCompletedEvent;
+import burtis.common.events.flow.DoStepEvent;
+import burtis.common.events.flow.PauseSimulationEvent;
+import burtis.common.events.flow.StartSimulationEvent;
+import burtis.common.events.flow.TerminateSimulationEvent;
 
 import com.sun.istack.internal.logging.Logger;
 
@@ -18,7 +18,7 @@ import com.sun.istack.internal.logging.Logger;
  *
  * @author Mikołaj Sowiński
  */
-public class SyncEventHandler extends AbstractEventProcessor
+public class SyncEventHandler extends AbstractEventHandler
 {
     private final static Logger logger = Logger
             .getLogger(SynchronizationModule.class);
