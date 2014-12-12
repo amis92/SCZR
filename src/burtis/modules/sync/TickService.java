@@ -23,13 +23,15 @@ public class TickService
     private final LongSupplier iterationSupplier;
     private final Consumer<SimulationEvent> sender;
     private final String senderName;
+    private final WatchdogService watchdogService;
 
     public TickService(String senderName, LongSupplier iterationSupplier,
-            Consumer<SimulationEvent> sender)
+            Consumer<SimulationEvent> sender, WatchdogService watchdogService)
     {
         this.iterationSupplier = iterationSupplier;
         this.sender = sender;
         this.senderName = senderName;
+        this.watchdogService = watchdogService;
     }
 
     /**
@@ -67,6 +69,7 @@ public class TickService
 
     private void tick()
     {
+        watchdogService.acceptTick();
         long iteration = iterationSupplier.getAsLong();
         sender.accept(new TickEvent(senderName, iteration));
         logger.log(Level.INFO, "Sent tick, iteration: {0}", iteration);

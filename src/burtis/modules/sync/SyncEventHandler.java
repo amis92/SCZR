@@ -13,8 +13,10 @@ import burtis.common.events.gui.StartSimulationEvent;
 import com.sun.istack.internal.logging.Logger;
 
 /**
+ * Handles incoming events by calling appropriate {@link SynchronizationModule}
+ * methods.
  *
- * @author Mikołaj
+ * @author Mikołaj Sowiński
  */
 public class SyncEventHandler extends AbstractEventProcessor
 {
@@ -64,17 +66,7 @@ public class SyncEventHandler extends AbstractEventProcessor
     @Override
     public void process(CycleCompletedEvent event)
     {
-        // Being not in sync is unacceptable.
-        if (event.iteration() != syncModule.getIteration())
-        {
-            logger.severe("Error: Critical module '{0}' is out of sync.",
-                    new Object[] { event.sender() });
-            logger.severe("Shutting down sync module.");
-            syncModule.shutdown();
-        }
-        else
-        {
-            watchdogService.handleModuleResponded(event.sender());
-        }
+        watchdogService.handleModuleResponded(event.sender(),
+                event.iteration() == syncModule.getIteration());
     }
 }

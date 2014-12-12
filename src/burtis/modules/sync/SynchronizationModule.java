@@ -22,7 +22,7 @@ import burtis.modules.network.NetworkConfig;
  */
 public class SynchronizationModule extends AbstractNetworkModule
 {
-    private static final long INITIAL_PERIOD = 1000l;
+    private static final long INITIAL_PERIOD = 1000L;
     private static final Logger logger = Logger
             .getLogger(SynchronizationModule.class.getName());
 
@@ -88,11 +88,11 @@ public class SynchronizationModule extends AbstractNetworkModule
     /**
      * Number of iterations.
      */
-    private AtomicLong iteration = new AtomicLong(0);
+    private final AtomicLong iteration = new AtomicLong(0);
     /**
      * Ticking service.
      */
-    private TickService tickService;
+    private final TickService tickService;
     private final WatchdogService watchdogService;
 
     public SynchronizationModule(ModuleConfig config)
@@ -100,6 +100,8 @@ public class SynchronizationModule extends AbstractNetworkModule
         super(config);
         this.watchdogService = createWatchdogService(config, this::shutdown);
         this.eventHandler = new SyncEventHandler(this, watchdogService);
+        this.tickService = new TickService(moduleConfig.getModuleName(),
+                iteration::incrementAndGet, this::send, watchdogService);
     }
 
     public void doStep()
@@ -116,6 +118,7 @@ public class SynchronizationModule extends AbstractNetworkModule
 
     public void pauseSimulation()
     {
+        logger.info("Pausing simulation.");
         if (isRunning)
         {
             doPause();
@@ -128,6 +131,7 @@ public class SynchronizationModule extends AbstractNetworkModule
 
     public void startSimulation()
     {
+        logger.info("Starting simulation.");
         if (!isRunning)
         {
             isRunning = true;
@@ -141,17 +145,13 @@ public class SynchronizationModule extends AbstractNetworkModule
 
     private void doPause()
     {
-        logger.info("Pausing simulation.");
         isRunning = false;
         tickService.stop();
-        watchdogService.stopWatching();
     }
 
     @Override
     protected void init()
     {
-        tickService = new TickService(moduleConfig.getModuleName(),
-                iteration::incrementAndGet, this::send);
     }
 
     protected long nextIteration()
