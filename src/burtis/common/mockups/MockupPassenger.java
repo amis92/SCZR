@@ -4,16 +4,15 @@ import burtis.modules.passengers.Passenger;
 import java.io.Serializable;
 
 public class MockupPassenger implements Serializable{
-    private final int Id;
+    private int Id;
     private String depot; // origin
     private String destination;
-    private final long waitingTime;
+    private long waitingTime;
 
-    public MockupPassenger(MockupPassenger passenger) {
-        this.Id = passenger.getId();
-        this.destination = passenger.getDestination();
-        this.destination = passenger.getDepot();
-        this.waitingTime = passenger.waitingTime;
+    public MockupPassenger(Integer Id, String destination, String depot) {
+        this.Id = Id;
+        this.depot = depot;
+        this.destination = destination;
     }
     
     public MockupPassenger(Passenger passenger) {

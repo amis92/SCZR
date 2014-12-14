@@ -21,7 +21,7 @@ import burtis.modules.gui.events.ShowBusEvent;
 class AnimationPanel extends JPanel {
 	private final LinkedBlockingQueue<ProgramEvent> bQueue;
 	private ArrayList<Location> locationArray = new ArrayList<Location>();	
-    //private int squareX;
+    private int squareX;
     private int squareY = 0;
     private int squareW = 70;
     private int squareH = 40;
@@ -77,8 +77,8 @@ class AnimationPanel extends JPanel {
         for(Location l : locationArray) {
         	
         	g.setColor(Color.BLUE);
-        	if(l.stop == true) g.setColor(Color.RED);
-       	
+        	if(l.getStop() == true) g.setColor(Color.RED);
+        	
         	g.fillRect(l.getX(),l.getY(),squareW,squareH);
         	g.setColor(Color.BLACK);
         	g.drawRect(l.getX(),l.getY(),squareW,squareH);
@@ -87,8 +87,10 @@ class AnimationPanel extends JPanel {
     	}
     }
     
-    public void addBus(MockupBus tmp, Integer squareX) {
-    	locationArray.add(new Location(squareX, squareY, tmp.getId(), false));
+    public void addBus(MockupBus tmp) {
+        squareX = tmp.getLengthPassed();
+        
+    	locationArray.add(new Location(squareX / 100, squareY, tmp.getId(), false));
     	squareY += 50;
     }
     
@@ -108,5 +110,11 @@ class AnimationPanel extends JPanel {
     	public int getX() { return x;}
     	public int getY() { return y;}
     	public Integer getId() { return Id;}
+    	public Boolean getStop() { 
+    	    if(stop == true)
+    	        return true;
+    	    else
+    	        return false;
+    	}
     }
 }

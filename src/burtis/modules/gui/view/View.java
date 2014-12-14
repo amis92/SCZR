@@ -132,7 +132,7 @@ public class View {
 		}
 		
 		for(MockupBus bus : schedule) {
-		    animationPanel.addBus(new MockupBus(bus.getId()), bus.getLengthPassed());	
+		    animationPanel.addBus(new MockupBus(bus.getId()));	
 		}
 	}
 	

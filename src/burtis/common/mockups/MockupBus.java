@@ -22,15 +22,15 @@ public class MockupBus implements Serializable{
         this.oldBusState = MockupBusState.ON_BUS_STOP;
         this.busState = Bus.State.BUSSTOP;
     }
-    
+    /*
     public MockupBus(Bus bus) {
         this.Id = bus.getId();
         this.currentBusStop = bus.getCurrentBusStop().getName();
         this.lengthPassed = bus.getPosition()*100/Simulation.getInstance().getLineLength();
         this.busState = bus.getState();
-        if(this.busState == Bus.State.DEPOT || this.busState == Bus.State.TERMINUS)
+        //if(this.busState == Bus.State.DEPOT || this.busState == Bus.State.TERMINUS)
         
-    }
+    }*/
 
     public ArrayList<MockupPassenger> getPassengerList() {
         return passengerList;
@@ -43,11 +43,11 @@ public class MockupBus implements Serializable{
     public int getLengthPassed() {
         return lengthPassed;
     }
-
+/*
     public MockupBusState getState(){
         return busState;
     }
-
+*/
 	public Integer getId() {
 		// TODO Auto-generated method stub
 		return Id;

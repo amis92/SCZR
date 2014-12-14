@@ -70,7 +70,7 @@ public abstract class AbstractNetworkModule
         return false;
     }
 
-    private void closeModule()
+    protected void closeModule()
     {
         client.close();
         isRunning = false;

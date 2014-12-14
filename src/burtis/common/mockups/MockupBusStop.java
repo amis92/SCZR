@@ -18,8 +18,7 @@ public class MockupBusStop {
 
     public ArrayList<MockupPassenger> getPassengerList()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return passengerList;
     }
 
     public void setPassengerList(ArrayList<MockupPassenger> passengerList)
