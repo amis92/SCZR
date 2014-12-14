@@ -8,6 +8,7 @@ import burtis.common.constants.SimulationModuleConsts;
 import burtis.common.events.AbstractEventHandler;
 import burtis.common.events.MainMockupEvent;
 import burtis.common.events.SimulationEvent;
+import burtis.common.events.flow.ModuleReadyEvent;
 import burtis.common.events.simulation.BusStopsListEvent;
 import burtis.common.events.simulation.BusStopsListRequestEvent;
 import burtis.common.events.simulation.ChangeReleasingFrequencyEvent;
@@ -140,6 +141,7 @@ public class BusScheduler extends AbstractEventHandler
         event = new ChangeReleasingFrequencyEvent(moduleName, receiverNames,
                 newFrequency);
         sender.accept(event);
+        sender.accept(new ModuleReadyEvent(moduleName));
     }
 
     /**

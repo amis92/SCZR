@@ -14,6 +14,7 @@ import javax.swing.UIManager;
 import burtis.common.events.AbstractEventHandler;
 import burtis.common.events.MainMockupEvent;
 import burtis.common.events.SimulationEvent;
+import burtis.common.events.flow.ModuleReadyEvent;
 import burtis.modules.AbstractNetworkModule;
 import burtis.modules.gui.controller.ActionExecutor;
 import burtis.modules.gui.controller.Controller;
@@ -117,6 +118,7 @@ public class GuiModule extends AbstractNetworkModule
         public void process(MainMockupEvent event)
         {
             view.refresh(event.getMainMockup());
+            send(new ModuleReadyEvent(moduleConfig.getModuleName()));
         }
 
         @Override
