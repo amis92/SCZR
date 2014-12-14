@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
 import burtis.common.events.AbstractEventHandler;
 import burtis.common.events.MainMockupEvent;
@@ -90,6 +91,15 @@ public class GuiModule extends AbstractNetworkModule
 
     public static void main(String[] args)
     {
+        try
+        {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        }
+        catch (Exception e)
+        {
+            // we can live without system L&F
+            logger.info("Failed to set System L&F");
+        }
         NetworkConfig config = NetworkConfig.defaultConfig();
         GuiModule guiModule = new GuiModule(config);
         SwingUtilities.invokeLater(guiModule::init);
