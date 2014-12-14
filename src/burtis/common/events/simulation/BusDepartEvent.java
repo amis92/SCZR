@@ -4,7 +4,8 @@ import burtis.common.events.AbstractEventHandler;
 import burtis.common.events.SimulationEvent;
 
 /**
- *
+ * Event sent when bus departs from the bus stop.
+ * 
  * @author Mikołaj Sowiński
  */
 public class BusDepartEvent extends SimulationEvent

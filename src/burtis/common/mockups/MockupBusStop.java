@@ -14,6 +14,11 @@ public class MockupBusStop
         this.busStopName = busStopName;
     }
 
+    public MockupBusStop(ArrayList<MockupPassenger> passengerList, String busStopName) {
+        this.passengerList = passengerList;
+        this.busStopName = busStopName;
+    }
+    
     public List<MockupPassenger> getPassengers()
     {
         return passengerList;

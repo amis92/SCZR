@@ -13,6 +13,7 @@ import burtis.common.events.passengers.WaitingPassengersEvent;
 import burtis.common.events.passengers.WaitingPassengersRequestEvent;
 import burtis.common.events.simulation.BusArrivesAtBusStopEvent;
 import burtis.common.events.simulation.BusDepartEvent;
+import burtis.common.events.simulation.BusMockupsEvent;
 import burtis.common.events.simulation.BusStateEvent;
 import burtis.common.events.simulation.BusStopsListEvent;
 import burtis.common.events.simulation.BusStopsListRequestEvent;
@@ -139,4 +140,10 @@ public abstract class AbstractEventHandler
     {
         defaultHandle(event);
     }
+    
+    public void process(BusMockupsEvent event)
+    {
+        defaultHandle(event);
+    }
+    
 }

@@ -48,6 +48,14 @@ public class BusStop {
         return name;
     }
 
+    public Queue<Passenger> getPassengerQueue() {
+        return passengerQueue;
+    }
+
+    public static List<BusStop> getBusStops() {
+        return busStops;
+    }
+
     @Override
     public String toString() {
         return "BusStop{" + "id=" + id + ", name=" + name + '}';

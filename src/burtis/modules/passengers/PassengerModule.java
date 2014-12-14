@@ -1,10 +1,15 @@
 package burtis.modules.passengers;
 
 import burtis.common.events.simulation.BusStopsListRequestEvent;
+import burtis.common.mockups.Mockup;
 import burtis.modules.AbstractNetworkModule;
 import burtis.modules.network.ModuleConfig;
 import burtis.modules.network.NetworkConfig;
-
+import burtis.common.mockups.MockupBus;
+import burtis.common.mockups.MockupBusStop;
+import burtis.common.mockups.MockupPassenger;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -24,6 +29,12 @@ public class PassengerModule extends AbstractNetworkModule {
      * Positive value mens in cycle, negative in between.
      */
     protected static long currentCycle;
+    
+    /**
+     * List of bus mockups for the current cycle.
+     * Delivered by {@link Simulation} using {@link BusMockupsEvent}.
+     */
+    protected static List<MockupBus> busMockups;    
     
     /**
      * State of the module.
@@ -71,6 +82,37 @@ public class PassengerModule extends AbstractNetworkModule {
         PassengerModule pm = PassengerModule.getInstance();
         pm.eventHandler = new PassengerModuleEventHandler();
         pm.main();
+    }
+    
+    public static Mockup getMockup() {
+       
+        ArrayList<MockupBusStop> mockupBusStopArray = new ArrayList<>();
+        
+        // Add passengers to buses
+        for(MockupBus busMockup : busMockups) {
+            
+            ArrayList<MockupPassenger> passengerList = new ArrayList<>();
+            
+            for(Passenger passenger : Bus.getBus(busMockup.getId()).getPassengers()) {
+                passengerList.add(new MockupPassenger(passenger));
+            }
+            
+            busMockup.setPassengerList(passengerList);
+        }
+        
+        // Create MockupBusStop list
+        for(BusStop busStop : BusStop.getBusStops()) {
+            
+            ArrayList<MockupPassenger> passengerList  = new ArrayList<>();
+            
+            for(Passenger passenger : busStop.getPassengerQueue()) {
+                passengerList.add(new MockupPassenger(passenger));
+            }
+            
+            mockupBusStopArray.add(new MockupBusStop(passengerList, busStop.getName()));
+        }
+        
+        return new Mockup((ArrayList<MockupBus>) busMockups, mockupBusStopArray, currentCycle);
     }
     
 }

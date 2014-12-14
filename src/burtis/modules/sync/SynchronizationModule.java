@@ -12,8 +12,8 @@ import burtis.modules.network.ModuleConfig;
 import burtis.modules.network.NetworkConfig;
 
 /**
- * Synchronization source for all time-dependent modules along with
- * communication server.
+ * Synchronisation source for all time-dependent modules along with a module
+ * failure controller.
  * 
  * Sends {@link TickEvent} according to the internal state.
  * 
@@ -23,6 +23,10 @@ import burtis.modules.network.NetworkConfig;
 public class SynchronizationModule extends AbstractNetworkModule
 {
     private static final long INITIAL_PERIOD = 1000L;
+    
+    /**
+     * Synchronisation module logger.
+     */
     private static final Logger logger = Logger
             .getLogger(SynchronizationModule.class.getName());
 

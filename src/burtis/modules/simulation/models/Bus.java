@@ -9,6 +9,7 @@ import java.util.logging.Level;
 import burtis.common.constants.SimulationModuleConsts;
 import burtis.common.events.passengers.WaitingPassengersEvent;
 import burtis.common.events.passengers.WaitingPassengersRequestEvent;
+import burtis.common.mockups.MockupBus;
 import burtis.modules.simulation.Simulation;
 
 public class Bus
@@ -275,15 +276,6 @@ public class Bus
                 calculatePosition(bus);
             }
             
-//            // Terminus case
-//            else if(bus.getState() == Bus.State.TERMINUS) {
-//                
-//                // Check if it is time to go...?
-//                if(Simulation.getCurrentCycle() >= bus.getStartAt()) {
-//                    bus.setState(Bus.State.RUNNING);
-//                    calculatePosition(bus);
-//                }
-//            }
         }
     }
     
@@ -443,29 +435,31 @@ public class Bus
     public void sendFromTerminus() {
         sendFromTerminus(id);
     }
-    
-    /**
-     * Departs bus of given id.
-     * 
-     * @param busId bus id
-     */
-//    public static void departBus(int busId) {
-//        Bus bus = getBusById(busId);
-//        if(bus != null) {
-//            bus.depart();
-//        }
-//        else {
-//            Simulation.logger.log(Level.WARNING, "No such bus {0}", busId);
-//        }
-//    }
-    
+        
      /**
      * Adds query result to the results queue.
      * 
-     * @param event WaitingPassengersEvent
+     * @param event {@link WaitingPassengersEvent}
      */
     public static void addQueryResult(WaitingPassengersEvent event) {
         passengerQueryResults.add(event);
+    }
+    
+    /**
+     * Generates list of {@link MockupBus}.
+     * @return
+     *      - list of {@link MockupBus}
+     */
+    public static List<MockupBus> getMockups() {
+        
+        List<MockupBus> mockups = new ArrayList<>();
+        
+        for(Bus bus : buses) {
+            mockups.add(new MockupBus(bus, null));
+        }
+        
+        return mockups;
+        
     }
 
 }

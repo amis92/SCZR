@@ -16,7 +16,8 @@ import burtis.modules.simulation.models.BusStop;
 import burtis.modules.simulation.models.Terminus;
 
 /**
- *
+ * Event handler for simulation module.
+ * 
  * @author Mikołaj
  */
 public class SimulationEventHandler extends AbstractEventHandler {
@@ -56,9 +57,6 @@ public class SimulationEventHandler extends AbstractEventHandler {
         Bus.updatePositions();
         
         
-
-// Send bus state
-        // Send cycle completed
     }
     
     @Override

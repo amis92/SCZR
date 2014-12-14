@@ -25,15 +25,6 @@ public class MainMockupEvent extends SimulationEvent
     @Override
     public void visit(AbstractEventHandler eventProcessor)
     {
-        throw new UnsupportedOperationException("Not supported yet."); // To
-                                                                       // change
-                                                                       // body
-                                                                       // of
-                                                                       // generated
-                                                                       // methods,
-                                                                       // choose
-                                                                       // Tools
-                                                                       // |
-                                                                       // Templates.
+        eventProcessor.process(this);
     }
 }
