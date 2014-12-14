@@ -12,6 +12,7 @@ import burtis.common.mockups.MockupPassenger;
 
 class BusStopInfoPanel extends JPanel
 {
+    private static final long serialVersionUID = 1L;
     private JTable table;
     private ArrayList<MockupPassenger> passengerList;
     private JLabel title = new JLabel();
@@ -30,13 +31,11 @@ class BusStopInfoPanel extends JPanel
 
     public void setCurrentBusStop(String s)
     {
-        this.passengerList = passengerList;
         title.setText("Bus Stop Name: " + s);
     }
 
     public void setCurrentBus(Integer i)
     {
-        this.passengerList = passengerList;
         title.setText("Bus Id: " + i.toString());
         /*
          * for(MockupPassenger mp : passengerList) {

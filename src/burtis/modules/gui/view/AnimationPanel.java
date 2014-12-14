@@ -52,7 +52,6 @@ class AnimationPanel extends JPanel
                     && (l.getY() + squareH >= y))
             {
                 tmp = l;
-                System.out.println("Bus " + tmp.getId());
             }
         }
         try

@@ -153,7 +153,8 @@ public class View
         }
         catch (InterruptedException e1)
         {
-            logger.log(Level.WARNING, "Couldn't put event in queue", e1);
+            logger.log(Level.WARNING,
+                    "Couldn't put event in queue: " + e.getClass(), e1);
         }
     }
 }

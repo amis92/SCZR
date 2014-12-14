@@ -3,11 +3,12 @@ package burtis.modules.gui.controller;
 import burtis.modules.gui.events.ProgramEvent;
 
 /**
- * interfejs definiujacy odpowiedz kontorlera na zapytanie plynace z modelu 
- * aby z niego skorzystac nalezy zdefiniowac funkcje go
+ * Interfejs definiujacy odpowiedź kontrolera na zapytanie płynące z modelu.
+ * 
  * @version 1.0
  */
 @FunctionalInterface
-public interface ProgramAction {
-	public void go(ProgramEvent e);
+public interface ProgramAction
+{
+    public void go(ProgramEvent e);
 }
