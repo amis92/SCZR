@@ -11,9 +11,9 @@ public class DoStepEvent extends SimulationEvent
 {
     private static final long serialVersionUID = 1L;
 
-    public DoStepEvent(String sender)
+    public DoStepEvent(String sender, String[] recipients)
     {
-        super(sender);
+        super(sender, recipients);
     }
 
     public void visit(AbstractEventHandler eventProcessor)

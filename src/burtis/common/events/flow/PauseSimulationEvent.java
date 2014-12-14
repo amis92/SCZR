@@ -11,9 +11,9 @@ public class PauseSimulationEvent extends SimulationEvent
 {
     private static final long serialVersionUID = 1L;
 
-    public PauseSimulationEvent(String sender)
+    public PauseSimulationEvent(String sender, String[] recipients)
     {
-        super(sender);
+        super(sender, recipients);
     }
 
     public void visit(AbstractEventHandler eventProcessor)

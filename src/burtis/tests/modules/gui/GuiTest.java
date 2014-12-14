@@ -7,9 +7,13 @@ import burtis.common.mockups.Mockup;
 import burtis.common.mockups.MockupBus;
 import burtis.common.mockups.MockupBusStop;
 import burtis.common.mockups.MockupPassenger;
+import burtis.modules.gui.controller.ActionExecutor;
 import burtis.modules.gui.controller.Controller;
 import burtis.modules.gui.events.ProgramEvent;
 import burtis.modules.gui.view.View;
+import burtis.modules.network.ModuleConfig;
+import burtis.modules.network.NetworkConfig;
+import burtis.modules.network.client.ClientModule;
 
 /**
  * Runs GUI with some example data. No network connection.
@@ -27,9 +31,10 @@ public class GuiTest
     {
         bQueue = new LinkedBlockingQueue<ProgramEvent>();
         view = new View(bQueue, null);
-        controller = new Controller(view, bQueue, (e) ->
-        {
-        });
+        NetworkConfig netConfig = NetworkConfig.defaultConfig();
+        ModuleConfig config = netConfig.getModuleConfigs().get(NetworkConfig.GUI_MODULE);
+        controller = new Controller(view, bQueue, new ActionExecutor(
+                new ClientModule(config), netConfig));
         try
         {
             ArrayList<MockupBus> buses = new ArrayList<MockupBus>();

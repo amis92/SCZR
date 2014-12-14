@@ -14,10 +14,10 @@ import burtis.common.events.AbstractEventHandler;
 import burtis.common.events.MainMockupEvent;
 import burtis.common.events.SimulationEvent;
 import burtis.modules.AbstractNetworkModule;
+import burtis.modules.gui.controller.ActionExecutor;
 import burtis.modules.gui.controller.Controller;
 import burtis.modules.gui.events.ProgramEvent;
 import burtis.modules.gui.view.View;
-import burtis.modules.network.ModuleConfig;
 import burtis.modules.network.NetworkConfig;
 
 import com.sun.istack.internal.logging.Logger;
@@ -34,10 +34,12 @@ public class GuiModule extends AbstractNetworkModule
     private final LinkedBlockingQueue<ProgramEvent> queue = new LinkedBlockingQueue<ProgramEvent>();
     private View view;
     private Controller controller;
+    private final ActionExecutor actionExecutor;
 
-    public GuiModule(ModuleConfig config)
+    public GuiModule(NetworkConfig config)
     {
-        super(config);
+        super(config.getModuleConfigs().get(NetworkConfig.GUI_MODULE));
+        actionExecutor = new ActionExecutor(this.client, config);
     }
 
     /**
@@ -49,7 +51,7 @@ public class GuiModule extends AbstractNetworkModule
     {
         createView();
         eventHandler = new EventHandler();
-        controller = new Controller(view, queue, this::send);
+        controller = new Controller(view, queue, actionExecutor);
         controller.start();
         try
         {
@@ -88,10 +90,9 @@ public class GuiModule extends AbstractNetworkModule
 
     public static void main(String[] args)
     {
-        ModuleConfig config = NetworkConfig.defaultConfig().getModuleConfigs()
-                .get(NetworkConfig.GUI_MODULE);
+        NetworkConfig config = NetworkConfig.defaultConfig();
         GuiModule guiModule = new GuiModule(config);
-        SwingUtilities.invokeLater(() -> guiModule.init());
+        SwingUtilities.invokeLater(guiModule::init);
     }
 
     /**

@@ -26,7 +26,7 @@ import burtis.modules.network.client.ClientModule;
  */
 public abstract class AbstractNetworkModule
 {
-    private final ExecutorService handlerExecutor = Executors
+    private final ExecutorService listenerExecutor = Executors
             .newSingleThreadExecutor();
     /**
      * Controls listener loop.
@@ -36,8 +36,8 @@ public abstract class AbstractNetworkModule
      * Controls loop checking for input.
      */
     private boolean isShutdownDemanded = false;
-    private BlockingQueue<SimulationEvent> queue;
-    protected ClientModule client;
+    private final BlockingQueue<SimulationEvent> queue;
+    protected final ClientModule client;
     /**
      * Must return handler for your implementation, before {@link #main} call.
      */
@@ -52,6 +52,8 @@ public abstract class AbstractNetworkModule
     protected AbstractNetworkModule(ModuleConfig config)
     {
         this.moduleConfig = config;
+        client = new ClientModule(moduleConfig);
+        queue = client.getIncomingQueue();
     }
 
     /**
@@ -86,16 +88,13 @@ public abstract class AbstractNetworkModule
     {
         client.close();
         isRunning = false;
-        handlerExecutor.shutdownNow();
+        listenerExecutor.shutdownNow();
     }
 
     protected void initializeModule() throws IOException
     {
-        client = new ClientModule(moduleConfig);
-        queue = client.getIncomingQueue();
-        handlerExecutor.execute(this::listenOnClient);
+        listenerExecutor.execute(this::listenOnClient);
         client.connect();
-        client.getIncomingQueue();
     }
 
     private void listenOnClient()
@@ -162,7 +161,7 @@ public abstract class AbstractNetworkModule
      * Called automatically at the end of {@link #main}. It's guaranteed to be
      * called. Use it to release used resources.
      * 
-     * It doesn't interrupt {@link #main()}. Don't this manually.
+     * It doesn't interrupt {@link #main()}. Don't call this manually, if using 'main'.
      */
     protected abstract void terminate();
 }
