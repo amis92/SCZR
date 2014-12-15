@@ -4,6 +4,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import burtis.common.constants.SimulationModuleConsts;
+import burtis.common.events.SimulationEvent;
+import burtis.common.events.flow.CycleCompletedEvent;
+import burtis.common.events.passengers.WaitingPassengersEvent;
 import burtis.common.events.simulation.BusMockupsEvent;
 import burtis.common.mockups.MockupBus;
 import burtis.modules.AbstractNetworkModule;
@@ -12,6 +15,7 @@ import burtis.modules.network.NetworkConfig;
 import burtis.modules.passengers.PassengerModule;
 import burtis.modules.simulation.models.Bus;
 import burtis.modules.simulation.models.BusStop;
+import burtis.modules.simulation.models.Depot;
 import burtis.modules.simulation.models.Terminus;
 
 /**
@@ -34,7 +38,7 @@ public class Simulation extends AbstractNetworkModule
      * Current cycle.
      * Positive value mens in cycle, negative in between.
      */
-    protected static long currentCycle;
+    private static long currentCycle;
     
     private int lineLength = 0;
 
@@ -53,6 +57,16 @@ public class Simulation extends AbstractNetworkModule
     public ModuleConfig getModuleConfig() {
         return moduleConfig;
     }
+
+    public static long getCurrentCycle() {
+        return currentCycle;
+    }
+
+    public static void setCurrentCycle(long currentCycle) {
+        Simulation.currentCycle = currentCycle;
+    }
+    
+    
     
     /**
      * Sends list of bus mockups ({@link MockupBus} to the {@link PassengerModule}.
@@ -66,6 +80,16 @@ public class Simulation extends AbstractNetworkModule
     }
     
     /**
+     * Sends CycleCompletedEvent and zeros currentCycle variable.
+     */
+    public void sendCycleCompleted() {
+        send(new CycleCompletedEvent(
+                moduleConfig.getModuleName(),
+                currentCycle));
+        currentCycle = 0;
+    }
+    
+    /**
      * Creates a new simulation.
      */
     private Simulation(ModuleConfig config) {
@@ -75,11 +99,7 @@ public class Simulation extends AbstractNetworkModule
  
     @Override
     protected void init() {
-        
-        for(int i=0; i< SimulationModuleConsts.NUMBER_OF_BUSES; i++) {
-            Bus.add(SimulationModuleConsts.BUS_CAPACITY);
-        }
-        
+                
         // Create bus stops
         BusStop.add(new Terminus(0,"Bielańska"));
         BusStop.add(30, "Plac Zamkowy");
@@ -93,8 +113,37 @@ public class Simulation extends AbstractNetworkModule
         BusStop.add(270, "Rakowiecka");
         BusStop.add(new Terminus(300,"Bielańska"));
         
+        Bus bus;
+        for(int i=0; i< SimulationModuleConsts.NUMBER_OF_BUSES; i++) {
+            bus = Bus.add(SimulationModuleConsts.BUS_CAPACITY);
+            Depot.putBus(bus);
+        }
+        
         lineLength = 300;
         
+    }
+    
+    /**
+     * Searches incoming event queue for WaitingPassengersEvent.
+     * Event handler can not be used here as main thread is blocked in serial
+     * execution of other event handler.
+     * @return WaitingPassengersEvent or null if none is found
+     */
+    public WaitingPassengersEvent getWaitingPassengersEvent() {
+        WaitingPassengersEvent waitingPassengersEvent;
+        if(client.getIncomingQueue().size() > 0) {
+            for(SimulationEvent event : client.getIncomingQueue()) {
+                if(event instanceof WaitingPassengersEvent) {
+                    waitingPassengersEvent = (WaitingPassengersEvent)event;
+                    client.getIncomingQueue().remove(event);
+                    return waitingPassengersEvent;
+                }
+            }
+            return null;
+        }
+        else {
+            return null;
+        }
     }
 
     @Override

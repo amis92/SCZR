@@ -45,17 +45,21 @@ public class SimulationEventHandler extends AbstractEventHandler {
     
     @Override
     public void process(TickEvent event) {
+        
         Simulation.getInstance().getLogger().log(Level.INFO, "Tick received, iteration {0}", event.iteration());
-        if(sim.currentCycle > 0 && event.iteration() != sim.currentCycle) {
+        
+        if(Simulation.getCurrentCycle() > 0 && event.iteration() != Simulation.getCurrentCycle()) {
             Simulation.getInstance().getLogger().log(Level.SEVERE, 
                     "Tick received before completion of cycle. Terminating.");
-            sim.terminate();
+            sim.shutdown();
         }
 
-        sim.currentCycle = event.iteration();
+        Simulation.setCurrentCycle(event.iteration());
         Terminus.departBus();
         Bus.updatePositions();
         
+        sim.sendBusMockups();
+        sim.sendCycleCompleted();
         
     }
     

@@ -143,5 +143,22 @@ public class BusStop
                 bus.getId(), 
                 busStop.getId()));
     }
+    
+    /**
+     * Returns bus stop closest to the given position.
+     * If position is larger than the furthest bus stop, a final terminus is returned.
+     * @param position searched position
+     * @return closes bus stop
+     */
+    public static BusStop getClosestBusStop(int position) {
+        
+        for(BusStop busStop : busStops) {
+            if(busStop.getPosition() > position) {
+                return busStop;
+            }
+        }
+        return busStops.get(busStops.size()-1);
+        
+    }
 
 }

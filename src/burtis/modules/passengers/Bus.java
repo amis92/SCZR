@@ -3,6 +3,7 @@ package burtis.modules.passengers;
 import burtis.common.constants.SimulationModuleConsts;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 /**
  * Representation of bus in passengers module.
@@ -82,7 +83,7 @@ public class Bus {
         for(Bus bus : buses) {
             if(bus.getId() == id) return bus;
         }
-        
+        PassengerModule.getInstance().getLogger().log(Level.SEVERE, "Bus not found {0}", id);
         return null;
     }
     

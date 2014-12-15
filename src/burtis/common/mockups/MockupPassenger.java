@@ -47,4 +47,8 @@ public class MockupPassenger implements Serializable
     {
         return waitingTime;
     }
+    
+    public void print() {
+        System.out.println("| * " + Id + " from: " + origin + " to: " + destination);
+    }
 }

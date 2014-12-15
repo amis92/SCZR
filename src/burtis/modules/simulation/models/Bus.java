@@ -11,6 +11,7 @@ import burtis.common.events.passengers.WaitingPassengersEvent;
 import burtis.common.events.passengers.WaitingPassengersRequestEvent;
 import burtis.common.mockups.MockupBus;
 import burtis.modules.simulation.Simulation;
+import java.util.logging.Logger;
 
 public class Bus
 {
@@ -234,6 +235,8 @@ public class Bus
     public void depart(BusStop nextBusStop) {
         state = State.RUNNING;
         this.nextBusStop = nextBusStop;
+        this.currentBusStop = null;
+        this.closestBusStop = BusStop.getClosestBusStop(position);
     }
     
     ////////////////////////////////
@@ -255,6 +258,7 @@ public class Bus
     
     /**
      * Adds new bus of given capacity.
+     * New buses are created in a depot state.
      * @param capacity bus capacity
      * @return newly created bus
      */
@@ -317,16 +321,19 @@ public class Bus
             
             // If no one wanted to stop here maybe someone is waiting ...
             else {
-                // It blocks! - If anyone is waiting stay at the bus stop.
-                if(queryForWaitingPassengers(bus.getClosestBusStop())) {
-                    bus.setState(Bus.State.BUSSTOP);
-                    bus.currentBusStop = closestBusStop;
-                    bus.setPosition(closestBusStop.getPosition());
-                    BusStop.enqueueBus(bus, closestBusStop);
-                }
-                // If noone is waiting, ommit bus stop
-                else {
-                    bus.setPosition(bus.getPosition() + busSpeed);
+                // If there is any place left
+                if(bus.numberOfPassengers < bus.capacity) {
+                    // It blocks! - If anyone is waiting stay at the bus stop.
+                    if(queryForWaitingPassengers(bus.getClosestBusStop())) {
+                        bus.setState(Bus.State.BUSSTOP);
+                        bus.currentBusStop = closestBusStop;
+                        bus.setPosition(closestBusStop.getPosition());
+                        BusStop.enqueueBus(bus, closestBusStop);
+                    }
+                    // If noone is waiting, ommit bus stop
+                    else {
+                        bus.setPosition(bus.getPosition() + busSpeed);
+                    }
                 }
             }
         }
@@ -348,10 +355,17 @@ public class Bus
                 Simulation.getInstance().getModuleConfig().getModuleName(),
                 busStop.getId()));
         
-        WaitingPassengersEvent event = passengerQueryResults.poll();
+        Simulation.getInstance().getLogger().log(Level.INFO, "Waiting for number of waiting passengers for bus stop {0}", busStop.getName());
+        
+        WaitingPassengersEvent event;
+        while(true) {
+            event = Simulation.getInstance().getWaitingPassengersEvent();
+            if(event != null) {
+                break;
+            }
+        }
         
         return event.getWaitingPassengers() > 0;
-   
     }
         
     /**
@@ -385,10 +399,9 @@ public class Bus
                         Level.WARNING, "Bus {0} is not in a depot. However, it was to be sent from the depot...", bus.id);
             }
             else {
-                bus.setState(State.RUNNING);
-                bus.currentBusStop = null;
                 bus.cycle = 0;
                 bus.setPosition(0);
+                bus.depart(null);
             }
         }
         else {
@@ -417,11 +430,9 @@ public class Bus
                         Level.WARNING, "Bus {0} is not in at the terminus. However, it was to be sent from the terminus...", bus.id);
             }
             else {
-                bus.setState(State.RUNNING);
                 bus.cycle++;
                 bus.setPosition(0);
-                bus.currentBusStop = null;
-                //bus.setStartAt(Simulation.getCurrentCycle()+1);
+                bus.depart(null);
             }
         }
         else {

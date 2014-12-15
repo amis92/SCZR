@@ -30,15 +30,17 @@ public class MockupBus implements Serializable
     public MockupBus(Bus bus, List<Passenger> passengerList)
     {
         this.Id = bus.getId();
-        this.currentBusStop = bus.getCurrentBusStop().getName();
+        this.currentBusStop = (bus.getCurrentBusStop() == null) ? null : bus.getCurrentBusStop().getName();
         this.lengthPassed = bus.getPosition() * 100
                 / Simulation.getInstance().getLineLength();
         this.busState = bus.getState();
         this.passengerList = new ArrayList<MockupPassenger>(
                 bus.getNumberOfPassengers());
-        for (Passenger passenger : passengerList)
-        {
-            this.passengerList.add(new MockupPassenger(passenger));
+        if(this.passengerList.size() > 0) {
+            for (Passenger passenger : passengerList)
+            {
+                this.passengerList.add(new MockupPassenger(passenger));
+            }
         }
     }
 
@@ -69,5 +71,15 @@ public class MockupBus implements Serializable
     public void setPassengerList(ArrayList<MockupPassenger> passengerList)
     {
         this.passengerList = passengerList;
+    }
+    
+    public void print() {
+        System.out.println("| Bus: " + Id + " pos: " + lengthPassed + " state: " + busState + " currentBS: " + currentBusStop);
+        if(passengerList.size() > 0) {
+            System.out.println("| Passengers:\n-------------");
+            for(MockupPassenger passengerMockup : passengerList) {
+                passengerMockup.print();
+            }
+        }
     }
 }

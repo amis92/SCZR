@@ -1,10 +1,12 @@
 package burtis.common.mockups;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MockupBusStop
+public class MockupBusStop implements Serializable
 {
+    private static final long serialVersionUID = 1L;
     private ArrayList<MockupPassenger> passengerList;
     private final String busStopName;
 
@@ -43,4 +45,15 @@ public class MockupBusStop
     {
         return passengerList.size();
     }
+    
+    public void print() {
+        System.out.println("| Bus stop: " + busStopName);
+        if(passengerList.size() > 0) {
+            System.out.println("| Passengers:\n-------------");
+            for(MockupPassenger passengerMockup : passengerList) {
+                passengerMockup.print();
+            }
+        }
+    }
+    
 }

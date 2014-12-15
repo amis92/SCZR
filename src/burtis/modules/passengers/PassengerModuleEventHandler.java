@@ -49,30 +49,25 @@ public class PassengerModuleEventHandler extends AbstractEventHandler {
     }
             
     @Override
-    public void process(PassengerInfoRequestEvent event) {
+    public void process(WaitingPassengersRequestEvent event) {
         
         // Only in RUNNING state!
         if(pm.state == PassengerModule.State.INIT) return;
         
-        if(event instanceof WaitingPassengersRequestEvent) {
-            int busStopId = ((WaitingPassengersRequestEvent)event).getBusStopId();
-            int waitingPassengers = BusStop.waitingPassengers(busStopId);
-            pm.send(new WaitingPassengersEvent(
-                    pm.getModuleConfig().getModuleName(),
-                    busStopId,
-                    waitingPassengers));
-        }
+        int busStopId = ((WaitingPassengersRequestEvent)event).getBusStopId();
+        int waitingPassengers = BusStop.waitingPassengers(busStopId);
+        pm.send(new WaitingPassengersEvent(
+                pm.getModuleConfig().getModuleName(),
+                busStopId,
+                waitingPassengers));
         
-        // Unknown event handler.
-        else {
-            pm.getLogger().log(Level.WARNING, "Unknown event, type: {0}. Event igored.",
-                    event.getClass().getSimpleName());
-        }
         
     }
     
     @Override
     public void process(TickEvent event) {
+        
+        PassengerModule.getInstance().getLogger().log(Level.INFO, "Tick received, iteration {0}", event.iteration());
         
         // Only in RUNNING state!
         if(pm.state == PassengerModule.State.INIT) return;
@@ -117,9 +112,13 @@ public class PassengerModuleEventHandler extends AbstractEventHandler {
                 });
             
             // Send mockup to the gui module
-            pm.send(new MainMockupEvent(
+            MainMockupEvent mockupEvent = new MainMockupEvent(
                     pm.getModuleConfig().getModuleName(),
-                    PassengerModule.getMockup()));
+                    PassengerModule.getMockup());
+            mockupEvent.getMainMockup().print();
+            pm.send(mockupEvent);
+            
+            pm.sendCycleCompleted();
         
             pm.currentCycle = -1;
             pm.busMockups = null;
