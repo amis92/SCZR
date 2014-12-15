@@ -55,7 +55,7 @@ public class View
             WindowListener exitListener)
     {
         this.bQueue = bQueue;
-        JFrame.setDefaultLookAndFeelDecorated(true);
+        //JFrame.setDefaultLookAndFeelDecorated(true);
         frame = new JFrame();
         if (exitListener == null)
         {
