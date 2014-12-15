@@ -1,36 +1,50 @@
 package burtis.common.mockups;
 
-import burtis.modules.passengers.Passenger;
 import java.io.Serializable;
 
-public class MockupPassenger implements Serializable{
+import burtis.modules.passengers.Passenger;
+
+public class MockupPassenger implements Serializable
+{
+    private static final long serialVersionUID = 6872262177092264743L;
     private int Id;
-    private String depot; // origin
+    private String origin;
     private String destination;
     private long waitingTime;
 
-    public MockupPassenger(Integer Id, String destination, String depot) {
+    public MockupPassenger(Integer Id, String origin, String destination)
+    {
         this.Id = Id;
-        this.depot = depot;
         this.destination = destination;
+        this.origin = origin;
+        this.waitingTime = 0;
     }
-    
-    public MockupPassenger(Passenger passenger) {
+
+    public MockupPassenger(Passenger passenger)
+    {
         this.Id = passenger.getId();
-        this.depot = passenger.getOrigin().getName();
+        this.origin = passenger.getOrigin().getName();
         this.destination = passenger.getDestination().getName();
         this.waitingTime = passenger.getWaitingTime();
     }
 
-    public int getId() {
+    public int getId()
+    {
         return Id;
     }
 
-    public String getDestination() {
+    public String getDestination()
+    {
         return destination;
     }
-    
-    public String getDepot() {
-        return depot;
+
+    public String getDepot()
+    {
+        return origin;
+    }
+
+    public long getWaitingTime()
+    {
+        return waitingTime;
     }
 }

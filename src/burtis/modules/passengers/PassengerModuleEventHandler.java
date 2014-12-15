@@ -5,26 +5,28 @@
  */
 package burtis.modules.passengers;
 
-import burtis.common.events.AbstractEventProcessor;
-import burtis.common.events.CycleCompletedEvent;
-//import burtis.common.events.ModuleReadyEvent;
-import burtis.common.events.PassengerInfoRequestEvent;
-import burtis.common.events.Passengers.WaitingPassengersEvent;
-import burtis.common.events.Simulation.BusArrivesAtBusStopEvent;
-import burtis.common.events.Simulation.BusStopsListEvent;
-import burtis.common.events.Simulation.WaitingPassengersRequestEvent;
-import burtis.common.events.SimulationEvent;
-import burtis.common.events.Sync.TickEvent;
-import burtis.common.events.TerminateSimulationEvent;
-import burtis.common.events.gui.PassengerGenerationRateConfigurationEvent;
-import burtis.modules.network.NetworkConfig;
 import java.util.logging.Level;
+
+import burtis.common.events.AbstractEventHandler;
+import burtis.common.events.MainMockupEvent;
+import burtis.common.events.SimulationEvent;
+import burtis.common.events.Passengers.PassengerGenerationRateConfigurationEvent;
+import burtis.common.events.Passengers.PassengerInfoRequestEvent;
+import burtis.common.events.Passengers.WaitingPassengersEvent;
+import burtis.common.events.Passengers.WaitingPassengersRequestEvent;
+import burtis.common.events.Simulator.BusArrivesAtBusStopEvent;
+import burtis.common.events.Simulator.BusMockupsEvent;
+import burtis.common.events.Simulator.BusStopsListEvent;
+import burtis.common.events.flow.CycleCompletedEvent;
+import burtis.common.events.flow.TerminateSimulationEvent;
+import burtis.common.events.flow.TickEvent;
+import burtis.modules.network.NetworkConfig;
 
 /**
  *
  * @author Mikołaj
  */
-public class PassengerModuleEventHandler extends AbstractEventProcessor {
+public class PassengerModuleEventHandler extends AbstractEventHandler {
     
     private final PassengerModule pm = PassengerModule.getInstance();
 
@@ -94,7 +96,13 @@ public class PassengerModuleEventHandler extends AbstractEventProcessor {
 
             // Check if it corresonds to the right cycle (not -> kill).
             if(event.iteration() != pm.currentCycle) {
-                pm.getLogger().log(Level.SEVERE, "Incorrect cycle number. Terminating.");
+                pm.getLogger().log(Level.SEVERE, "Incorrect cycle number(CycleCompletedEvent). Terminating.");
+                pm.terminate();
+            }
+            
+            // Check if there are bus mockups available
+            if(pm.busMockups == null) {
+                pm.getLogger().log(Level.SEVERE, "No bus mockups are available. Terminating.");
                 pm.terminate();
             }
 
@@ -105,8 +113,17 @@ public class PassengerModuleEventHandler extends AbstractEventProcessor {
                 .forEach((SimulationEvent eventt) -> {
                     pm.send(eventt);
                 });
+            
+            // Send mockup to the gui module
+            pm.send(new MainMockupEvent(
+                    pm.getModuleConfig().getModuleName(),
+                    PassengerModule.getMockup()));
         
             pm.currentCycle = -1;
+            pm.busMockups = null;
+            
+           
+            
         }
     
         
@@ -145,6 +162,17 @@ public class PassengerModuleEventHandler extends AbstractEventProcessor {
         //pm.send(new ModuleReadyEvent(pm.getModuleConfig().getModuleName()));
         pm.state = PassengerModule.State.RUNNING;
         BusStop.printBusStopsList();
+    }
+    
+    @Override
+    public void process(BusMockupsEvent event) {
+        
+        if(event.iteration() != pm.currentCycle) {
+            pm.getLogger().log(Level.SEVERE, "Incorrect cycle number (BusMockupEvent). Terminating.");
+            pm.terminate();
+        }
+        
+        PassengerModule.busMockups = event.getBusMockups();
     }
     
     

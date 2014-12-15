@@ -16,10 +16,6 @@ import burtis.modules.network.AbstractSocketService;
  * be retrieved. Thread-safety: each action on Socket is done in Locked block.
  * 
  * @author Amadeusz Sadowski
- *
- * @param <T>
- *            Received objects are cast to this type, and then consumed by
- *            provided Consumer.
  */
 class ClientSocketService extends AbstractSocketService
 {

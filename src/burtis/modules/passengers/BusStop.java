@@ -1,13 +1,13 @@
 package burtis.modules.passengers;
 
-import burtis.common.events.Simulation.BusStopsListEvent;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Queue;
 import java.util.Random;
 import java.util.logging.Level;
+
+import burtis.common.events.Simulator.BusStopsListEvent;
 
 /**
  * Representation of bus stop in passengers module.
@@ -45,6 +45,14 @@ public class BusStop {
 
     public String getName() {
         return name;
+    }
+
+    public Queue<Passenger> getPassengerQueue() {
+        return passengerQueue;
+    }
+
+    public static List<BusStop> getBusStops() {
+        return busStops;
     }
 
     @Override

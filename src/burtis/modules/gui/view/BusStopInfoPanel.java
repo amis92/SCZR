@@ -1,10 +1,7 @@
 package burtis.modules.gui.view;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.GridLayout;
 import java.util.ArrayList;
-import java.util.Vector;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -13,26 +10,24 @@ import javax.swing.JTable;
 
 import burtis.common.mockups.MockupPassenger;
 
-public class BusStopInfoPanel extends JPanel {
-	private JTable table;
-	private ArrayList<MockupPassenger> passengerList;
-	private JLabel title = new JLabel();
-	
-    String[] columnNames = {"Id",
-            				"Depot",
-            				"Destination"};
-
+class BusStopInfoPanel extends JPanel
+{
+    private static final long serialVersionUID = 1L;
+    private JTable table;
+    private ArrayList<MockupPassenger> passengerList;
+    private JLabel title = new JLabel();
+    String[] columnNames = { "Id", "Depot", "Destination" };
     Object[][] data = new Object[30][3];
-    
-	public BusStopInfoPanel() {
-		setLayout(new BorderLayout());	
 
-		add(title, BorderLayout.PAGE_START);
-		table = new JTable(data, columnNames);
-		table.setEnabled(false);
-		JScrollPane scrollPane = new JScrollPane(table);
-	    add(scrollPane, BorderLayout.CENTER);
-	}
+    public BusStopInfoPanel()
+    {
+        setLayout(new BorderLayout());
+        add(title, BorderLayout.PAGE_START);
+        table = new JTable(data, columnNames);
+        table.setEnabled(false);
+        JScrollPane scrollPane = new JScrollPane(table);
+        add(scrollPane, BorderLayout.CENTER);
+    }
 
 	public void setCurrentBusStop(String s) {
 	    this.passengerList = passengerList;

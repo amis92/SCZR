@@ -1,9 +1,10 @@
 package burtis.modules.passengers;
 
-import burtis.common.events.Passengers.BusDepartEvent;
-import burtis.common.events.SimulationEvent;
 import java.util.ArrayList;
 import java.util.List;
+
+import burtis.common.events.SimulationEvent;
+import burtis.common.events.Simulator.BusDepartEvent;
 
 /**
  * Holds events to be sent at the end of the iteration.

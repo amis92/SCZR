@@ -1,15 +1,18 @@
 package burtis.modules.simulation;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import burtis.common.constants.SimulationModuleConsts;
+import burtis.common.events.Simulator.BusMockupsEvent;
+import burtis.common.mockups.MockupBus;
 import burtis.modules.AbstractNetworkModule;
 import burtis.modules.network.ModuleConfig;
 import burtis.modules.network.NetworkConfig;
+import burtis.modules.passengers.PassengerModule;
 import burtis.modules.simulation.models.Bus;
 import burtis.modules.simulation.models.BusStop;
 import burtis.modules.simulation.models.Terminus;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Simulation module.
@@ -38,9 +41,7 @@ public class Simulation extends AbstractNetworkModule
     public int getLineLength() {
         return lineLength;
     }
-    
-    
-    
+       
     public Logger getLogger() {
         return logger;
     }
@@ -54,6 +55,17 @@ public class Simulation extends AbstractNetworkModule
     }
     
     /**
+     * Sends list of bus mockups ({@link MockupBus} to the {@link PassengerModule}.
+     */
+    public void sendBusMockups() {
+        send(new BusMockupsEvent(
+                moduleConfig.getModuleName(),
+                new String[] { NetworkConfig.defaultConfig().getModuleConfigs().get(NetworkConfig.PSNGR_MODULE).getModuleName() }, 
+                Bus.getMockups(),
+                currentCycle));
+    }
+    
+    /**
      * Creates a new simulation.
      */
     private Simulation(ModuleConfig config) {
@@ -61,16 +73,6 @@ public class Simulation extends AbstractNetworkModule
         logger = Logger.getLogger(moduleConfig.getModuleName());
     }
  
-    /**
-     * @param args
-     */
-    public static void main(String[] args)
-    {
-        Simulation app = Simulation.getInstance();
-        app.eventHandler = new SimulationEventHandler();
-        app.main();
-    }
-
     @Override
     protected void init() {
         
@@ -98,9 +100,19 @@ public class Simulation extends AbstractNetworkModule
     @Override
     protected void terminate() {
         logger.log(Level.INFO, "Terminating module...");
-        closeModule();
     }
 
-   
+    /**
+     * Main method for application.
+     * 
+     * @param args
+     *            No parameters are expected.
+     */
+    public static void main(String[] args)
+    {
+        Simulation app = Simulation.getInstance();
+        app.eventHandler = new SimulationEventHandler();
+        app.main();
+    }
 
 }

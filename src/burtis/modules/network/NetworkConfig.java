@@ -42,7 +42,7 @@ public class NetworkConfig
         syncOptions.put("moduleResponseTimeout", 1000);
                 
         List<ModuleConfig> configs = new ArrayList<ModuleConfig>(5);
-        configs.add(new ModuleConfig(guiName,   serverAddress, 8121, true, null));
+        configs.add(new ModuleConfig(guiName,   serverAddress, 8121, false, null));
         configs.add(new ModuleConfig(syncName,  serverAddress, 8122, true, syncOptions));
         configs.add(new ModuleConfig(busName,   serverAddress, 8123, false, null));
         configs.add(new ModuleConfig(psgrName,  serverAddress, 8124, false, null));

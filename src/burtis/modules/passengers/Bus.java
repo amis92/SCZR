@@ -2,9 +2,7 @@ package burtis.modules.passengers;
 
 import burtis.common.constants.SimulationModuleConsts;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 
 /**
  * Representation of bus in passengers module.
@@ -56,9 +54,6 @@ public class Bus {
         buses.add(bus);
         return bus;
     }
-    
-    
-    
 
     @Override
     public String toString() {
@@ -82,10 +77,7 @@ public class Bus {
         passengers.clear();
         state = State.RUNNING;
     }
-    
-    
-    
-    
+       
     public static Bus getBus(int id) {
         for(Bus bus : buses) {
             if(bus.getId() == id) return bus;
@@ -93,6 +85,8 @@ public class Bus {
         
         return null;
     }
+    
+    
     
     
     

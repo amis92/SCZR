@@ -7,7 +7,7 @@ import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import burtis.common.events.AbstractEventProcessor;
+import burtis.common.events.AbstractEventHandler;
 import burtis.common.events.SimulationEvent;
 import burtis.modules.network.ModuleConfig;
 import burtis.modules.network.client.ClientModule;
@@ -26,18 +26,22 @@ import burtis.modules.network.client.ClientModule;
  */
 public abstract class AbstractNetworkModule
 {
-    private final ExecutorService handlerExecutor = Executors
+    private final ExecutorService listenerExecutor = Executors
             .newSingleThreadExecutor();
-    private boolean isRunning = true;
-    private BlockingQueue<SimulationEvent> queue;
-    protected ClientModule client;
-    protected AbstractEventProcessor eventHandler = null;
     /**
-     * Must return configuration for your implementation, even before
-     * {@link #init()} call.
-     * 
-     * @return
+     * Controls listener loop.
      */
+    private boolean isRunning = true;
+    /**
+     * Controls loop checking for input.
+     */
+    private boolean isShutdownDemanded = false;
+    private final BlockingQueue<SimulationEvent> queue;
+    protected final ClientModule client;
+    /**
+     * Must return handler for your implementation, before {@link #main} call.
+     */
+    protected AbstractEventHandler eventHandler = null;
     protected final ModuleConfig moduleConfig;
 
     /**
@@ -48,6 +52,16 @@ public abstract class AbstractNetworkModule
     protected AbstractNetworkModule(ModuleConfig config)
     {
         this.moduleConfig = config;
+        client = new ClientModule(moduleConfig);
+        queue = client.getIncomingQueue();
+    }
+
+    /**
+     * Interrupts main method. In effect, {@link #terminate()} will be called.
+     */
+    public void shutdown()
+    {
+        isShutdownDemanded = true;
     }
 
     public void send(SimulationEvent event)
@@ -74,18 +88,13 @@ public abstract class AbstractNetworkModule
     {
         client.close();
         isRunning = false;
-        handlerExecutor.shutdownNow();
-        terminate();
+        listenerExecutor.shutdownNow();
     }
 
-    private void initializeModule() throws IOException
+    protected void initializeModule() throws IOException
     {
-        client = new ClientModule(moduleConfig);
-        queue = client.getIncomingQueue();
-        handlerExecutor.execute(this::listenOnClient);
+        listenerExecutor.execute(this::listenOnClient);
         client.connect();
-        client.getIncomingQueue();
-        init();
     }
 
     private void listenOnClient()
@@ -105,6 +114,10 @@ public abstract class AbstractNetworkModule
         }
     }
 
+    /**
+     * Called at the beginning of {@link #main}. The module is already connected
+     * and {@link #send(SimulationEvent)} works.
+     */
     protected abstract void init();
 
     /**
@@ -126,6 +139,7 @@ public abstract class AbstractNetworkModule
         try
         {
             initializeModule();
+            init();
         }
         catch (IOException ex)
         {
@@ -135,12 +149,19 @@ public abstract class AbstractNetworkModule
         }
         System.out.println("Naciśnij enter any zakończyć.");
         boolean isInputAvailable = false;
-        while (!isInputAvailable)
+        while (!isInputAvailable && !isShutdownDemanded)
         {
             isInputAvailable = checkInputAndSleep();
         }
+        terminate();
         closeModule();
     }
 
+    /**
+     * Called automatically at the end of {@link #main}. It's guaranteed to be
+     * called. Use it to release used resources.
+     * 
+     * It doesn't interrupt {@link #main()}. Don't call this manually, if using 'main'.
+     */
     protected abstract void terminate();
 }
