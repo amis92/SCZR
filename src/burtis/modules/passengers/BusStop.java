@@ -33,6 +33,11 @@ public class BusStop {
         this.name = name;
     }
     
+    /**
+     * Adds list of bus stops to the list of available bus stops.
+     * 
+     * @param busStopsList list of bus stops to be added
+     */
     public static void add(List<BusStopsListEvent.BusStop> busStopsList) {
         for(BusStopsListEvent.BusStop busStop: busStopsList) {
             busStops.add(new BusStop(busStop.busStopId, busStop.busStopName));
@@ -60,28 +65,48 @@ public class BusStop {
         return "BusStop{" + "id=" + id + ", name=" + name + '}';
     }
     
+    /**
+     * Puts bus to the FIFO queue of buses waiting at the bus stop.
+     * After adding {@link BusStop#nextBus() } is called.
+     * @param bus Bus to be enqueued
+     */
     public void enqueueBus(Bus bus) {
         busQueue.add(bus);
         PassengerModule.getInstance().getLogger().log(Level.INFO, "{0} arrived at {1}", new Object[]{bus, this});
+        nextBus();
     }
     
+    /**
+     * Puts passenger to the FIFO queue of passengers waiting at the bus stop.
+     * 
+     * @param passenger passenger to be queued
+     */
     public void enqueuePassenger(Passenger passenger) {
         passengerQueue.add(passenger);
         PassengerModule.getInstance().getLogger().log(Level.INFO, "{0} generated at {1}", new Object[]{passenger, this});
     }
     
+    /**
+     * Empties bus stop and calls {@link BusStop#nextBus() }.
+     */
     public void departBus() {
         busAtBusStop = null;
+        nextBus();
     }
     
     public Bus getCurrentBus() {
         return busAtBusStop;
     }
     
+    /**
+     * If bus stop is empty takes next bus from the queue and creates transaction 
+     */
     public void nextBus() {
-        busAtBusStop = busQueue.poll();
-        if(busAtBusStop != null) {
-            Transaction.newTransaction(busAtBusStop, this);
+        if(busAtBusStop == null) {
+            busAtBusStop = busQueue.poll();
+            if(busAtBusStop != null) {
+                Transaction.newTransaction(busAtBusStop, this);
+            }
         }
     }
     
@@ -96,7 +121,7 @@ public class BusStop {
         
         return null;
     }
-    
+        
     /**
      * Returns random bus stop, except last one.
      * 
