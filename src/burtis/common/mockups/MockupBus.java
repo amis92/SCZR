@@ -64,9 +64,10 @@ public class MockupBus implements Serializable
         return busState;
     }
 
-	public Integer getId() {
-		return Id;
-	}
+    public Integer getId()
+    {
+        return Id;
+    }
 
     public void setPassengerList(ArrayList<MockupPassenger> passengerList)
     {

@@ -10,9 +10,10 @@ public final class Mockup implements Serializable
     private ArrayList<MockupBus> schedule = new ArrayList<MockupBus>();
     private ArrayList<MockupBusStop> busStops = new ArrayList<MockupBusStop>();
     private long currentTime;
-    private int minPassengerGenerationTime;
-    private int maxPassengerGenerationTime;
 
+    // private int minPassengerGenerationTime;
+    // private int maxPassengerGenerationTime;
+    
     public Mockup(final ArrayList<MockupBus> mockupBusArray,
             final ArrayList<MockupBusStop> mockupBusStopArray, long currentTime)
     {
@@ -51,21 +52,24 @@ public final class Mockup implements Serializable
     {
         return currentTime;
     }
-    
-    public void print() {
-        if(schedule.size() > 0) {
+
+    public void print()
+    {
+        if (schedule.size() > 0)
+        {
             System.out.println("Bus Mockups:\n===========");
-            for(MockupBus busMockup : schedule) {
+            for (MockupBus busMockup : schedule)
+            {
                 busMockup.print();
             }
         }
-        
-        if(busStops.size() > 0) {
+        if (busStops.size() > 0)
+        {
             System.out.println("Bus Stops:\n===========");
-            for(MockupBusStop busStopMockup : busStops) {
+            for (MockupBusStop busStopMockup : busStops)
+            {
                 busStopMockup.print();
             }
         }
-            
     }
 }

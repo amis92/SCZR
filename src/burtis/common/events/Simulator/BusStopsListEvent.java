@@ -1,4 +1,4 @@
-package burtis.common.events.simulation;
+package burtis.common.events.Simulator;
 
 import java.io.Serializable;
 import java.util.List;

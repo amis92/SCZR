@@ -3,8 +3,8 @@ package burtis.modules.simulation.models;
 import java.util.LinkedList;
 import java.util.List;
 
-import burtis.common.events.simulation.BusArrivesAtBusStopEvent;
-import burtis.common.events.simulation.BusStopsListEvent;
+import burtis.common.events.Simulator.BusArrivesAtBusStopEvent;
+import burtis.common.events.Simulator.BusStopsListEvent;
 import burtis.modules.simulation.Simulation;
 
 public class BusStop
@@ -67,27 +67,7 @@ public class BusStop
         busStops.add(busStop);
         return busStop;
     }
-    
-//    public static void addTerminus(name) {
-//        if(!hasTerminus()) {
-//            busStops.add(new Terminus(name));
-//        }
-//    }
-    
-    /**
-     * TO BE DELETED
-     * 
-     * Checks if line already has terminus.
-     * @return has terminus
-     */
-    private static boolean hasTerminus() {
-        for(BusStop busStop : busStops) {
-            if(busStop instanceof Terminus) {
-                return true;
-            }
-        }
-        return false;
-    }
+
         
     /**
      * Returns list of bus stops ready to be sent to the passenger module.

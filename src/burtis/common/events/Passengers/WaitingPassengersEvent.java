@@ -1,4 +1,4 @@
-package burtis.common.events.passengers;
+package burtis.common.events.Passengers;
 
 import burtis.common.events.AbstractEventHandler;
 import burtis.common.events.SimulationEvent;

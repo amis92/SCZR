@@ -4,13 +4,13 @@ import java.util.logging.Level;
 
 import burtis.common.events.AbstractEventHandler;
 import burtis.common.events.SimulationEvent;
+import burtis.common.events.Passengers.WaitingPassengersEvent;
+import burtis.common.events.Simulator.BusDepartEvent;
+import burtis.common.events.Simulator.BusStopsListEvent;
+import burtis.common.events.Simulator.BusStopsListRequestEvent;
+import burtis.common.events.Simulator.ChangeReleasingFrequencyEvent;
 import burtis.common.events.flow.TerminateSimulationEvent;
 import burtis.common.events.flow.TickEvent;
-import burtis.common.events.passengers.WaitingPassengersEvent;
-import burtis.common.events.simulation.BusDepartEvent;
-import burtis.common.events.simulation.BusStopsListEvent;
-import burtis.common.events.simulation.BusStopsListRequestEvent;
-import burtis.common.events.simulation.ChangeReleasingFrequencyEvent;
 import burtis.modules.simulation.models.Bus;
 import burtis.modules.simulation.models.BusStop;
 import burtis.modules.simulation.models.Terminus;

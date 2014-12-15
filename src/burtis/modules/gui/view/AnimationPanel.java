@@ -20,7 +20,7 @@ class AnimationPanel extends JPanel
     private static final long serialVersionUID = 1L;
     private final LinkedBlockingQueue<ProgramEvent> bQueue;
     private ArrayList<Location> locationArray = new ArrayList<Location>();
-    // private int squareX;
+    private int squareX;
     private int squareY = 0;
     private int squareW = 70;
     private int squareH = 40;
@@ -74,53 +74,48 @@ class AnimationPanel extends JPanel
     {
         super.paintComponent(g);
         // Draw Text
-        // g.drawString("This is my custom Panel!",10,20);
-        for (Location l : locationArray)
-        {
-            g.setColor(Color.BLUE);
-            if (l.stop == true)
-                g.setColor(Color.RED);
-            g.fillRect(l.getX(), l.getY(), squareW, squareH);
-            g.setColor(Color.BLACK);
-            g.drawRect(l.getX(), l.getY(), squareW, squareH);
-            g.drawString("Bus " + l.getId(), l.getX() + 18, l.getY() + 24);
-        }
+        
+        for(Location l : locationArray) {
+        	
+        	g.setColor(Color.BLUE);
+        	if(l.getStop() == true) g.setColor(Color.RED);
+        	
+        	g.fillRect(l.getX(),l.getY(),squareW,squareH);
+        	g.setColor(Color.BLACK);
+        	g.drawRect(l.getX(),l.getY(),squareW,squareH);
+        	
+        	g.drawString("Bus " + l.getId(),l.getX()+18,l.getY()+24);
+    	}
     }
-
-    public void addBus(MockupBus tmp, Integer squareX)
-    {
-        locationArray.add(new Location(squareX, squareY, tmp.getId(), false));
-        squareY += 50;
+    
+    public void addBus(MockupBus tmp) {
+        squareX = tmp.getLengthPassed();
+        
+    	locationArray.add(new Location(squareX / 100, squareY, tmp.getId(), false));
+    	squareY += 50;
     }
-
-    class Location
-    {
-        private int x;
-        private int y;
-        private Integer Id;
-        private Boolean stop;
-
-        Location(int x, int y, Integer Id, Boolean stop)
-        {
-            this.x = x;
-            this.y = y;
-            this.Id = Id;
-            this.stop = stop;
-        }
-
-        public int getX()
-        {
-            return x;
-        }
-
-        public int getY()
-        {
-            return y;
-        }
-
-        public Integer getId()
-        {
-            return Id;
-        }
+    
+    class Location {
+    	private int x;
+    	private int y;
+    	private Integer Id;
+    	private Boolean stop;
+    	
+    	Location(int x, int y, Integer Id, Boolean stop) {
+    		this.x = x;
+    		this.y = y;
+    		this.Id = Id;
+    		this.stop = stop;
+    	}
+    	
+    	public int getX() { return x;}
+    	public int getY() { return y;}
+    	public Integer getId() { return Id;}
+    	public Boolean getStop() { 
+    	    if(stop == true)
+    	        return true;
+    	    else
+    	        return false;
+    	}
     }
 }

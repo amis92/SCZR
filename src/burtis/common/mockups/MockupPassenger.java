@@ -10,7 +10,7 @@ public class MockupPassenger implements Serializable
     private int Id;
     private String origin;
     private String destination;
-    private final long waitingTime;
+    private long waitingTime;
 
     public MockupPassenger(Integer Id, String origin, String destination)
     {

@@ -1,5 +1,18 @@
 package burtis.common.events;
 
+import burtis.common.events.Passengers.PassengerGenerationRateConfigurationEvent;
+import burtis.common.events.Passengers.PassengerInfoRequestEvent;
+import burtis.common.events.Passengers.WaitingPassengersEvent;
+import burtis.common.events.Passengers.WaitingPassengersRequestEvent;
+import burtis.common.events.Simulator.BusArrivesAtBusStopEvent;
+import burtis.common.events.Simulator.BusDepartEvent;
+import burtis.common.events.Simulator.BusMockupsEvent;
+import burtis.common.events.Simulator.BusStateEvent;
+import burtis.common.events.Simulator.BusStopsListEvent;
+import burtis.common.events.Simulator.BusStopsListRequestEvent;
+import burtis.common.events.Simulator.ChangeReleasingFrequencyEvent;
+import burtis.common.events.Simulator.SendBusEvent;
+import burtis.common.events.Simulator.WithdrawBusEvent;
 import burtis.common.events.flow.CycleCompletedEvent;
 import burtis.common.events.flow.DoStepEvent;
 import burtis.common.events.flow.ModuleReadyEvent;
@@ -7,19 +20,6 @@ import burtis.common.events.flow.PauseSimulationEvent;
 import burtis.common.events.flow.StartSimulationEvent;
 import burtis.common.events.flow.TerminateSimulationEvent;
 import burtis.common.events.flow.TickEvent;
-import burtis.common.events.passengers.PassengerGenerationRateConfigurationEvent;
-import burtis.common.events.passengers.PassengerInfoRequestEvent;
-import burtis.common.events.passengers.WaitingPassengersEvent;
-import burtis.common.events.passengers.WaitingPassengersRequestEvent;
-import burtis.common.events.simulation.BusArrivesAtBusStopEvent;
-import burtis.common.events.simulation.BusDepartEvent;
-import burtis.common.events.simulation.BusMockupsEvent;
-import burtis.common.events.simulation.BusStateEvent;
-import burtis.common.events.simulation.BusStopsListEvent;
-import burtis.common.events.simulation.BusStopsListRequestEvent;
-import burtis.common.events.simulation.ChangeReleasingFrequencyEvent;
-import burtis.common.events.simulation.SendBusEvent;
-import burtis.common.events.simulation.WithdrawBusEvent;
 
 /**
  * Provides default processing abilities for all events. Inheriting classes

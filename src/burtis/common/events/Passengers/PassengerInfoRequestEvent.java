@@ -1,26 +1,21 @@
-package burtis.common.events.simulation;
+package burtis.common.events.Passengers;
 
 import burtis.common.events.AbstractEventHandler;
 import burtis.common.events.SimulationEvent;
 
 /**
- *
+ * Superclass for all passenger info requests that are sent by a simulation
+ * module during its iteration.
+ * 
  * @author Mikołaj Sowiński
  */
-public class SendBusEvent extends SimulationEvent
+public class PassengerInfoRequestEvent extends SimulationEvent
 {
     private static final long serialVersionUID = 1L;
-    private final int busId;
 
-    public SendBusEvent(String sender, String[] recipients, int busId)
+    public PassengerInfoRequestEvent(String sender)
     {
-        super(sender, recipients);
-        this.busId = busId;
-    }
-
-    public int busId()
-    {
-        return busId;
+        super(sender);
     }
 
     public void visit(AbstractEventHandler eventProcessor)
