@@ -16,6 +16,6 @@ public class SimulationModuleConsts {
     public static final int BUS_SPEED = 3;
     public static final int BUS_START_INTERVAL = 300;
     public static final int BUS_MAX_CYCLES = 4;
-    public static final int TERMINUS_RELEASING_FREQUENCY = 150;
+    public static final int TERMINUS_RELEASING_FREQUENCY = 20;
     
 }

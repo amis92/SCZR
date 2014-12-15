@@ -93,7 +93,7 @@ public class Passenger {
           
     public static void generatePassengers() {
         if(generationCycle == 0) {
-            generationCycle = generationCycleLength;
+            generationCycle = generationCycleLength-1;
             BusStop busStop;
             Passenger passenger;
             for(int i=0; i<passengersPerCycle; i++) {

@@ -99,7 +99,7 @@ public class BusStop {
     }
     
     /**
-     * Returns random bus stop excluding last one.
+     * Returns random bus stop, except last one.
      * 
      * @return random bus stop
      */
@@ -117,8 +117,7 @@ public class BusStop {
      */
     public static BusStop getRandomNextBusStop(BusStop origin) {
         int originIndex = busStops.indexOf(origin);
-        int nextBusStopIndex = randomGenerator.nextInt(busStops.size()-1-originIndex);
-        nextBusStopIndex+=originIndex;
+        int nextBusStopIndex = randomGenerator.nextInt(busStops.size()-originIndex-1) +originIndex +1;
         return busStops.get(nextBusStopIndex);
     }
     

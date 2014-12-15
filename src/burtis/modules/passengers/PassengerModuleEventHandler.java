@@ -108,6 +108,7 @@ public class PassengerModuleEventHandler extends AbstractEventHandler {
             // Send all event that are to be sent.
             EventBuilder.getEvents(pm.getModuleConfig().getModuleName())
                 .forEach((SimulationEvent eventt) -> {
+                    System.out.println("Sending bus depart event");
                     pm.send(eventt);
                 });
             
