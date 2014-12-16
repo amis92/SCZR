@@ -30,21 +30,31 @@ public class View
 {
     private final static Logger logger = Logger.getLogger(View.class.getName());
     private final AnimationPanel animationPanel;
-    /** Kolejka, do ktorej wrzucamy obiekty odpowiadajace eventom */
+    
+    /** 
+     * Kolejka, do ktorej wrzucamy obiekty odpowiadajace eventom 
+     */
     private final LinkedBlockingQueue<ProgramEvent> bQueue;
+    
+    /**
+     * Panel informacyjny z przyciskami aktywującymi wyświetlenei informacji o przystanku
+     */
     private final BusStopInfoPanel busStopInfoPanel = new BusStopInfoPanel();
+    
+    /**
+     * List Mockupów z przystankami
+     */
     private List<MockupBusStop> busStops;
+    
     private final JPanel buttonPanel = new JPanel(new FlowLayout());
     private final JButton connectButton = new JButton("Connect");
     private long currentTime = 0;
-    // private final JPanel dataPanel = new JPanel();
     private final JFrame frame;
     private final JButton goButton = new JButton("Go");
     private final JPanel mainPanel = new JPanel(new BorderLayout());
     private List<MockupBus> schedule;
     private final JScrollPane scrollPane = new JScrollPane();
     private final JSplitPane splitPaneHorizontal;
-    // private JSplitPane splitPaneVertical;
     private final JButton stepButton = new JButton("Step");
     private final JButton stopButton = new JButton("Stop");
     private final JLabel timeLabel = new JLabel(Long.toString(currentTime));
@@ -93,12 +103,19 @@ public class View
         frame.add(toolbar, BorderLayout.PAGE_START);
     }
 
+    /**
+     * Metoda odpowiada za jednorazowe odświeżenie gui bazując na Mockupie z argumentu
+     * (absolutely no magic, really)
+     * 
+     * @param mockup
+     */
     public void refresh(Mockup mockup)
     {
         schedule = mockup.getBuses();
         busStops = mockup.getBusStops();
         currentTime = mockup.getCurrentTime();
         timeLabel.setText(Long.toString(currentTime));
+        
         for (MockupBusStop mbs : busStops)
         {
             String stationName = mbs.getName();
@@ -107,12 +124,18 @@ public class View
                     this::onBusStationClicked);
             buttonPanel.add(tmpBusStationButton);
         }
+        
         for (MockupBus bus : schedule)
         {
-            animationPanel.addBus(new MockupBus(bus.getId()));
+            animationPanel.addBus(bus);
         }
     }
 
+    /**
+     * Metoda operuje na Panelu informacji i wyświetlna dane
+     * 
+     * @param e
+     */
     public void updateBusInfoPanel(Integer i)
     {
         for (MockupBus bus : schedule)
@@ -125,6 +148,11 @@ public class View
         }
     }
 
+    /**
+     * Metoda operuje na Panelu informacji i wyświetlna dane
+     * 
+     * @param e
+     */
     public void updateBusStopInfoPanel(String s)
     {
         for (MockupBusStop busStop : busStops)
@@ -137,13 +165,23 @@ public class View
             }
         }
     }
-
+    
+    /**
+     * Metoda operuje na Panelu informacji i wyświetlna dane
+     * 
+     * @param e
+     */
     private void onBusStationClicked(ActionEvent e)
     {
         String s = ((JButton) e.getSource()).getText();
         busStopInfoPanel.setCurrentBusStop(s);
     }
 
+    /**
+     * Metoda pozwalająca na włożenie obiektu odpowiadającego za zdarzenie do kolejki akcji do wykonania
+     * 
+     * @param e
+     */
     private void putInQueue(ProgramEvent e)
     {
         try

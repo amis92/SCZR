@@ -27,7 +27,7 @@ import com.sun.istack.internal.logging.Logger;
 /**
  * Initializes GUI with network connection.
  * 
- * @author Rafał
+ * @author Amadeusz Sadowski
  *
  */
 public class GuiModule extends AbstractNetworkModule

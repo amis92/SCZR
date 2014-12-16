@@ -26,7 +26,7 @@ class BusStationButton extends JPanel
         super(new FlowLayout());
         this.bQueue = bQueue;
         this.stationName = stationName;
-        ImageIcon icon = new ImageIcon("bus_stop.png"); // try / catch
+        ImageIcon icon = new ImageIcon("bus_stop.png");
         button = new JButton(stationName, icon);
         button.addMouseListener(new MouseAdapter() {
             @Override
@@ -39,15 +39,12 @@ class BusStationButton extends JPanel
                 }
                 catch (InterruptedException e)
                 {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
-                // Object data[][] = {{}};
-                // data[0][1] = "wefwf";
             }
         });
         add(button);
-        button.setToolTipText("Oczekuje: 24");
+        // button.setToolTipText("Oczekuje: ");
     }
 
     public JButton getButton()

@@ -20,7 +20,6 @@ class AnimationPanel extends JPanel
     private static final long serialVersionUID = 1L;
     private final LinkedBlockingQueue<ProgramEvent> bQueue;
     private ArrayList<Location> locationArray = new ArrayList<Location>();
-    private int squareX;
     private int squareY = 0;
     private int squareW = 70;
     private int squareH = 40;
@@ -42,7 +41,15 @@ class AnimationPanel extends JPanel
             }
         });
     }
-
+    
+    /**
+     * W tej metodzie sprawdzamy czy w klikniętym pukncie znajduje się autobus.
+     * Robimy poprzez sprawdzenie czy punkt znajduje się w obszarze, w którym na grafice umieszczony jest autobus
+     * Jeśli tak dodajemy odpowiednie zdarzenie do kolejki
+     * 
+     * @param x
+     * @param y
+     */
     private void clickSquare(int x, int y)
     {
         Location tmp = null;
@@ -73,28 +80,33 @@ class AnimationPanel extends JPanel
     public void paintComponent(Graphics g)
     {
         super.paintComponent(g);
-        // Draw Text
         
         for(Location l : locationArray) {
-        	
-        	g.setColor(Color.BLUE);
-        	if(l.getStop() == true) g.setColor(Color.RED);
+        	    
+        	g.setColor(Color.BLUE);                            // Jeśli autobus nie zatrzymał się na przystanku ma kolor niebieski
+        	if(l.getStop() == true) g.setColor(Color.RED);     // Jeśli nie ma kolor czerwony
         	
         	g.fillRect(l.getX(),l.getY(),squareW,squareH);
         	g.setColor(Color.BLACK);
         	g.drawRect(l.getX(),l.getY(),squareW,squareH);
         	
-        	g.drawString("Bus " + l.getId(),l.getX()+18,l.getY()+24);
+        	g.drawString("Bus " + l.getId(),l.getX()+18,l.getY()+24);  // numer autobusu
     	}
     }
     
     public void addBus(MockupBus tmp) {
-        squareX = tmp.getLengthPassed();
-        
-    	locationArray.add(new Location(squareX / 100, squareY, tmp.getId(), false));
+        System.out.println(tmp.getLengthPassed());
+    	locationArray.add(new Location(tmp.getLengthPassed() * (getParent().getWidth() / 100), 
+    	        squareY, tmp.getId(), false));
     	squareY += 50;
     }
     
+    /**
+     * Klasa odpowiadająca lokalizacji autobusu na grafice
+     * 
+     * @author vanqyard
+     *
+     */
     class Location {
     	private int x;
     	private int y;
@@ -111,6 +123,8 @@ class AnimationPanel extends JPanel
     	public int getX() { return x;}
     	public int getY() { return y;}
     	public Integer getId() { return Id;}
+    	
+    	// Jeśli autobus zatrzymał się na przystanku ma kolor czerwony, jeśli nie - niebieski
     	public Boolean getStop() { 
     	    if(stop == true)
     	        return true;

@@ -13,20 +13,29 @@ public class MockupBus implements Serializable
     private static final long serialVersionUID = 3835208126228698973L;
     private ArrayList<MockupPassenger> passengerList;
     private final String currentBusStop;
-    private final int lengthPassed; // Posiiton in % of total line length 0..100
+    private int lengthPassed; // Posiiton in % of total line length 0..100
     private final Integer Id;
     private final Bus.State busState;
 
     public MockupBus(Integer Id)
     {
         this.passengerList = new ArrayList<MockupPassenger>();
-        this.currentBusStop = null; // bus.getCurrentBusStop().getNAME();
-        this.lengthPassed = 0; // bus.getCurrentBusStop().getRoute().getLength()
-                               // - bus.getToNextStop().getValue();
+        this.currentBusStop = null;
+        this.lengthPassed = 0;
         this.Id = Id;
+        
         this.busState = Bus.State.BUSSTOP;
     }
 
+    public MockupBus(Integer Id, int lengthPassed) {
+        this.passengerList = new ArrayList<MockupPassenger>();
+        this.currentBusStop = null;
+        this.lengthPassed = lengthPassed;
+        this.Id = Id;
+
+        this.busState = Bus.State.BUSSTOP;
+    }
+    
     public MockupBus(Bus bus, List<Passenger> passengerList)
     {
         this.Id = bus.getId();
@@ -59,6 +68,11 @@ public class MockupBus implements Serializable
         return lengthPassed;
     }
 
+    public void setLengthPassed(int lengthPassed)
+    {
+        this.lengthPassed = lengthPassed;
+    }
+    
     public Bus.State getState()
     {
         return busState;

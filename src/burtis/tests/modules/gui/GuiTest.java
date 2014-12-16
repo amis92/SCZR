@@ -18,7 +18,7 @@ import burtis.modules.network.client.ClientModule;
 /**
  * Runs GUI with some example data. No network connection.
  * 
- * @author Rafał Braun
+ * @author vanqyard
  *
  */
 public class GuiTest
@@ -44,10 +44,10 @@ public class GuiTest
             passengerList.add(new MockupPassenger(1, "wfewef2", "fwefwef2"));
             passengerList.add(new MockupPassenger(2, "wfewef3", "fwefwef3"));
             passengerList.add(new MockupPassenger(3, "wfewef4", "fwefwef4"));
-            buses.add(new MockupBus(0));
-            buses.add(new MockupBus(1));
-            buses.add(new MockupBus(2));
-            buses.add(new MockupBus(3));
+            buses.add(new MockupBus(0, 0));
+            buses.add(new MockupBus(1, 20));
+            buses.add(new MockupBus(2, 30));
+            buses.add(new MockupBus(3, 100));
             schedule.add(new MockupBusStop("Warszawa1"));
             schedule.add(new MockupBusStop("Warszawa2"));
             schedule.add(new MockupBusStop("Warszawa3"));
