@@ -98,7 +98,6 @@ public class Server extends AbstractEventHandler
             }
             sender.send(event, moduleConnection);
         }
-        stop();
     }
 
     private void forward(SimulationEvent event, String recipientName)

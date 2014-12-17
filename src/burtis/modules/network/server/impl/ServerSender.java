@@ -90,7 +90,7 @@ public class ServerSender implements Sender
         final int recipientPort = recipientSocketService.getPort();
         if (!recipientSocketService.isConnected())
         {
-            logger.warning(String.format("Nie ma połączenia - utracono paczkę",
+            logger.warning(String.format("Nie ma połączenia - utracono paczkę '{0}' do '{1}'.",
                     pack.object, pack.recipient.getModuleName()));
             return;
         }
