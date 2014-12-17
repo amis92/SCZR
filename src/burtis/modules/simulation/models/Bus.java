@@ -1,24 +1,20 @@
 ﻿package burtis.modules.simulation.models;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import burtis.common.constants.SimulationModuleConsts;
 import burtis.common.events.Passengers.WaitingPassengersEvent;
-import burtis.common.events.Passengers.WaitingPassengersRequestEvent;
-import burtis.common.mockups.MockupBus;
-import burtis.modules.simulation.Simulation;
 
 public class Bus
 {
-    private static final List<Bus> buses = new ArrayList<>();
+    private static final Logger logger = Logger.getLogger(Bus.class.getName());
     /**
      * Queue for the results of querying passenger module.
      */
-    private final static BlockingQueue<WaitingPassengersEvent> passengerQueryResults = new LinkedBlockingQueue<>(
+    private final BlockingQueue<WaitingPassengersEvent> passengerQueryResults = new LinkedBlockingQueue<>(
             1);
 
     public enum State
@@ -45,7 +41,7 @@ public class Bus
     /**
      * Bus speed (units/iteration).
      */
-    private final static int busSpeed = SimulationModuleConsts.BUS_SPEED;
+    private final int busSpeed = SimulationModuleConsts.BUS_SPEED;
     /**
      * Next bus stop defined by passengers.
      */
@@ -241,55 +237,6 @@ public class Bus
         this.closestBusStop = BusStop.getClosestBusStop(position);
     }
 
-    // //////////////////////////////
-    // ////// STATIC METHODS ////////
-    // //////////////////////////////
-    /**
-     * Returns bus of given id.
-     * 
-     * @param busId
-     *            bus id
-     * @return Bus
-     */
-    public static Bus getBusById(int busId)
-    {
-        for (Bus bus : buses)
-        {
-            if (bus.getId() == busId)
-                return bus;
-        }
-        return null;
-    }
-
-    /**
-     * Adds new bus of given capacity. New buses are created in a depot state.
-     * 
-     * @param capacity
-     *            bus capacity
-     * @return newly created bus
-     */
-    public static Bus add(int capacity)
-    {
-        Bus newBus = new Bus(capacity);
-        buses.add(newBus);
-        return newBus;
-    }
-
-    /**
-     * Updates bus positions according to its state.
-     */
-    public static void updatePositions()
-    {
-        for (Bus bus : buses)
-        {
-            // Running case
-            if (bus.getState() == Bus.State.RUNNING)
-            {
-                calculatePosition(bus);
-            }
-        }
-    }
-
     /**
      * Calculates next position of the bus. If one reaches bus stop, registers
      * it in the bus stop queue as well as changes its internal state to
@@ -297,8 +244,9 @@ public class Bus
      * 
      * @param bus
      */
-    private static void calculatePosition(Bus bus)
+    public void recalculatePosition()
     {
+        Bus bus = this;
         // Did we reach closest bus stop?
         BusStop closestBusStop = bus.getClosestBusStop();
         // If bus reaches bus stop in this iteration
@@ -364,83 +312,11 @@ public class Bus
      *            bus stop to be queried
      * @return true if at least one passenger is waiting
      */
-    private static boolean queryForWaitingPassengers(BusStop busStop)
+    public boolean queryForWaitingPassengers(BusStop busStop)
     {
-        Simulation.getInstance().send(
-                new WaitingPassengersRequestEvent(Simulation.getInstance()
-                        .getModuleConfig().getModuleName(), busStop.getId()));
-        Simulation
-                .getInstance()
-                .getLogger()
-                .log(Level.INFO,
-                        "Waiting for number of waiting passengers for bus stop {0}",
-                        busStop.getName());
-        WaitingPassengersEvent event;
-        while (true)
-        {
-            event = Simulation.getInstance().getWaitingPassengersEvent();
-            if (event != null)
-            {
-                break;
-            }
-        }
-        return event.getWaitingPassengers() > 0;
-    }
-
-    /**
-     * Withdraws bus of given id. Bus will be withdrawn to the depot at the
-     * moment of the arrival to the terminus.
-     * 
-     * @param busId
-     *            bus id
-     */
-    public static void withdrawBus(int busId)
-    {
-        Bus bus = getBusById(busId);
-        if (bus != null)
-        {
-            bus.setGoToDepot(true);
-        }
-        else
-        {
-            Simulation.getInstance().getLogger()
-                    .log(Level.WARNING, "No such bus {0}", busId);
-        }
-    }
-
-    /**
-     * Sets bus to start at next iteration after arriving from the depot. It
-     * clears bus cycles count.
-     * 
-     * @param busId
-     *            id of the bus
-     */
-    public static void sendFromDepot(int busId)
-    {
-        Bus bus = getBusById(busId);
-        if (bus != null)
-        {
-            if (bus.state != State.DEPOT)
-            {
-                Simulation
-                        .getInstance()
-                        .getLogger()
-                        .log(Level.WARNING,
-                                "Bus {0} is not in a depot. However, it was to be sent from the depot...",
-                                bus.id);
-            }
-            else
-            {
-                bus.cycle = 0;
-                bus.setPosition(0);
-                bus.depart(null);
-            }
-        }
-        else
-        {
-            Simulation.getInstance().getLogger()
-                    .log(Level.WARNING, "No such bus {0}", busId);
-        }
+        // reimplement
+        logger.severe("Method not yet implemented!");
+        throw new RuntimeException("Not implemented!");
     }
 
     /**
@@ -448,41 +324,19 @@ public class Bus
      */
     public void sendFromDepot()
     {
-        sendFromDepot(id);
-    }
-
-    /**
-     * Sets bus to start at next iteration after being at the terminus.
-     * Increments bus cycles count.
-     * 
-     * @param busId
-     *            id of the bus
-     */
-    public static void sendFromTerminus(int busId)
-    {
-        Bus bus = getBusById(busId);
-        if (bus != null)
+        Bus bus = this;
+        if (bus.state != State.DEPOT)
         {
-            if (bus.state != State.TERMINUS)
-            {
-                Simulation
-                        .getInstance()
-                        .getLogger()
-                        .log(Level.WARNING,
-                                "Bus {0} is not in at the terminus. However, it was to be sent from the terminus...",
-                                bus.id);
-            }
-            else
-            {
-                bus.cycle++;
-                bus.setPosition(0);
-                bus.depart(null);
-            }
+            logger.log(
+                    Level.WARNING,
+                    "Bus {0} is not in a depot. However, it was to be sent from the depot...",
+                    bus.id);
         }
         else
         {
-            Simulation.getInstance().getLogger()
-                    .log(Level.WARNING, "No such bus {0}", busId);
+            bus.cycle = 0;
+            bus.setPosition(0);
+            bus.depart(null);
         }
     }
 
@@ -491,7 +345,19 @@ public class Bus
      */
     public void sendFromTerminus()
     {
-        sendFromTerminus(id);
+        Bus bus = this;
+        if (bus.state != State.TERMINUS)
+        {
+            logger.log(Level.WARNING,
+                    "Bus {0} meant to be sent from Terminus isn't there.",
+                    bus.id);
+        }
+        else
+        {
+            bus.cycle++;
+            bus.setPosition(0);
+            bus.depart(null);
+        }
     }
 
     /**
@@ -500,23 +366,8 @@ public class Bus
      * @param event
      *            {@link WaitingPassengersEvent}
      */
-    public static void addQueryResult(WaitingPassengersEvent event)
+    public void addQueryResult(WaitingPassengersEvent event)
     {
         passengerQueryResults.add(event);
-    }
-
-    /**
-     * Generates list of {@link MockupBus}.
-     * 
-     * @return - list of {@link MockupBus}
-     */
-    public static List<MockupBus> getMockups()
-    {
-        List<MockupBus> mockups = new ArrayList<>();
-        for (Bus bus : buses)
-        {
-            mockups.add(new MockupBus(bus.getId()));
-        }
-        return mockups;
     }
 }

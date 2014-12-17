@@ -4,7 +4,7 @@ import burtis.common.events.Passengers.PassengerGenerationRateConfigurationEvent
 import burtis.common.events.Passengers.PassengerInfoRequestEvent;
 import burtis.common.events.Passengers.WaitingPassengersEvent;
 import burtis.common.events.Passengers.WaitingPassengersRequestEvent;
-import burtis.common.events.Simulator.BusArrivesAtBusStopEvent;
+import burtis.common.events.Simulator.BusArrivalEvent;
 import burtis.common.events.Simulator.BusDepartEvent;
 import burtis.common.events.Simulator.BusMockupsEvent;
 import burtis.common.events.Simulator.BusStateEvent;
@@ -106,7 +106,7 @@ public abstract class AbstractEventHandler
         defaultHandle(event);
     }
     
-    public void process(BusArrivesAtBusStopEvent event)
+    public void process(BusArrivalEvent event)
     {
         defaultHandle(event);
     }

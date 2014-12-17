@@ -6,14 +6,13 @@ import java.util.logging.Logger;
 import burtis.common.constants.SimulationModuleConsts;
 import burtis.common.events.SimulationEvent;
 import burtis.common.events.Passengers.WaitingPassengersEvent;
-import burtis.common.events.Simulator.BusMockupsEvent;
-import burtis.common.events.flow.CycleCompletedEvent;
 import burtis.common.mockups.MockupBus;
 import burtis.modules.AbstractNetworkModule;
 import burtis.modules.network.ModuleConfig;
 import burtis.modules.network.NetworkConfig;
 import burtis.modules.passengers.PassengerModule;
 import burtis.modules.simulation.models.Bus;
+import burtis.modules.simulation.models.BusManager;
 import burtis.modules.simulation.models.BusStop;
 import burtis.modules.simulation.models.Depot;
 import burtis.modules.simulation.models.Terminus;
@@ -30,14 +29,15 @@ import burtis.modules.simulation.models.Terminus;
  */
 public class Simulation extends AbstractNetworkModule
 {
-    private final static Simulation simulation = new Simulation(NetworkConfig
-            .defaultConfig().getModuleConfigs().get(NetworkConfig.SIM_MODULE));
-    private Logger logger;
+    private static final Logger logger = Logger.getLogger(Simulation.class
+            .getName());
     /**
      * Current cycle. Positive value mens in cycle, negative in between.
      */
-    private static long currentCycle;
+    private long currentCycle;
     private int lineLength = 0;
+    private final ActionExecutor actionExecutor;
+    private final BusManager busManager = new BusManager();
 
     public int getLineLength()
     {
@@ -49,24 +49,19 @@ public class Simulation extends AbstractNetworkModule
         return logger;
     }
 
-    public static Simulation getInstance()
-    {
-        return simulation;
-    }
-
     public ModuleConfig getModuleConfig()
     {
         return moduleConfig;
     }
 
-    public static long getCurrentCycle()
+    public long getCurrentCycle()
     {
         return currentCycle;
     }
 
-    public static void setCurrentCycle(long currentCycle)
+    public void setCurrentCycle(long currentCycle)
     {
-        Simulation.currentCycle = currentCycle;
+        this.currentCycle = currentCycle;
     }
 
     /**
@@ -75,10 +70,8 @@ public class Simulation extends AbstractNetworkModule
      */
     public void sendBusMockups()
     {
-        send(new BusMockupsEvent(moduleConfig.getModuleName(),
-                new String[] { NetworkConfig.defaultConfig().getModuleConfigs()
-                        .get(NetworkConfig.PSNGR_MODULE).getModuleName() },
-                Bus.getMockups(), currentCycle));
+        actionExecutor
+                .sendBusMockupEvent(currentCycle, busManager.getMockups());
     }
 
     /**
@@ -86,17 +79,19 @@ public class Simulation extends AbstractNetworkModule
      */
     public void sendCycleCompleted()
     {
-        send(new CycleCompletedEvent(moduleConfig.getModuleName(), currentCycle));
+        actionExecutor.sendCycleCompletedEvent(currentCycle);
         currentCycle = 0;
     }
 
     /**
      * Creates a new simulation.
      */
-    private Simulation(ModuleConfig config)
+    private Simulation(NetworkConfig netConfig)
     {
-        super(config);
-        logger = Logger.getLogger(moduleConfig.getModuleName());
+        super(netConfig.getModuleConfigs().get(NetworkConfig.SIM_MODULE));
+        this.actionExecutor = new ActionExecutor(this.client, netConfig);
+        this.eventHandler = new SimulationEventHandler(this, actionExecutor,
+                busManager);
     }
 
     @Override
@@ -117,7 +112,7 @@ public class Simulation extends AbstractNetworkModule
         Bus bus;
         for (int i = 0; i < SimulationModuleConsts.NUMBER_OF_BUSES; i++)
         {
-            bus = Bus.add(SimulationModuleConsts.BUS_CAPACITY);
+            bus = busManager.add(SimulationModuleConsts.BUS_CAPACITY);
             Depot.putBus(bus);
         }
         lineLength = 300;
@@ -166,8 +161,7 @@ public class Simulation extends AbstractNetworkModule
      */
     public static void main(String[] args)
     {
-        Simulation app = Simulation.getInstance();
-        app.eventHandler = new SimulationEventHandler();
+        Simulation app = new Simulation(NetworkConfig.defaultConfig());
         app.main();
     }
 }

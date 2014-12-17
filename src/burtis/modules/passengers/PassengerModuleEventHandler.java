@@ -13,7 +13,7 @@ import burtis.common.events.SimulationEvent;
 import burtis.common.events.Passengers.PassengerGenerationRateConfigurationEvent;
 import burtis.common.events.Passengers.WaitingPassengersEvent;
 import burtis.common.events.Passengers.WaitingPassengersRequestEvent;
-import burtis.common.events.Simulator.BusArrivesAtBusStopEvent;
+import burtis.common.events.Simulator.BusArrivalEvent;
 import burtis.common.events.Simulator.BusMockupsEvent;
 import burtis.common.events.Simulator.BusStopsListEvent;
 import burtis.common.events.flow.CycleCompletedEvent;
@@ -131,7 +131,7 @@ public class PassengerModuleEventHandler extends AbstractEventHandler
     }
 
     @Override
-    public void process(BusArrivesAtBusStopEvent event)
+    public void process(BusArrivalEvent event)
     {
         // Only in RUNNING state!
         if (pm.state == PassengerModule.State.INIT)

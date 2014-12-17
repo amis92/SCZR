@@ -8,13 +8,13 @@ import burtis.common.events.SimulationEvent;
  * 
  * @author Mikołaj Sowiński
  */
-public class BusArrivesAtBusStopEvent extends SimulationEvent
+public class BusArrivalEvent extends SimulationEvent
 {
     private static final long serialVersionUID = 1L;
     private final int busId;
     private final int busStopId;
 
-    public BusArrivesAtBusStopEvent(String sender, int busId, int busStopId)
+    public BusArrivalEvent(String sender, int busId, int busStopId)
     {
         super(sender);
         this.busId = busId;
