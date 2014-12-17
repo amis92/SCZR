@@ -20,7 +20,8 @@ import burtis.modules.network.server.Server;
  */
 public class ServerSender implements Sender
 {
-    private final static Logger logger = Logger.getLogger(Server.class.getName());
+    private final static Logger logger = Logger.getLogger(Server.class
+            .getName());
     private ExecutorService sendingExecutor = Executors
             .newSingleThreadExecutor();
     private final BlockingQueue<Package> toSendQueue = new LinkedBlockingQueue<Package>();
@@ -42,7 +43,9 @@ public class ServerSender implements Sender
         final Package newPack = new Package(object, recipient);
         if (!toSendQueue.offer(newPack))
         {
-            logger.warning("Kolejka do wysłania przepełniona");
+            logger.warning(String
+                    .format("Kolejka do wysłania przepełniona, utracono paczkę {0} do {1}",
+                            object, recipient.getModuleName()));
         }
     }
 
@@ -87,7 +90,8 @@ public class ServerSender implements Sender
         final int recipientPort = recipientSocketService.getPort();
         if (!recipientSocketService.isConnected())
         {
-            logger.warning("Nie ma połączenia - utracono paczkę");
+            logger.warning(String.format("Nie ma połączenia - utracono paczkę",
+                    pack.object, pack.recipient.getModuleName()));
             return;
         }
         logger.finest("Wysyłam do " + recipientPort);

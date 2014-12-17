@@ -26,6 +26,7 @@ import burtis.modules.network.client.ClientModule;
  */
 public abstract class AbstractNetworkModule
 {
+    private final Logger logger = Logger.getLogger(this.getClass().getName());
     private final ExecutorService listenerExecutor = Executors
             .newSingleThreadExecutor();
     /**
@@ -54,6 +55,7 @@ public abstract class AbstractNetworkModule
         this.moduleConfig = config;
         client = new ClientModule(moduleConfig);
         queue = client.getIncomingQueue();
+        logger.info("Created " + moduleConfig.getModuleName());
     }
 
     /**
@@ -61,6 +63,7 @@ public abstract class AbstractNetworkModule
      */
     public void shutdown()
     {
+        logger.info("Shutting down " + moduleConfig.getModuleName());
         isShutdownDemanded = true;
     }
 
@@ -78,14 +81,14 @@ public abstract class AbstractNetworkModule
         }
         catch (Exception e)
         {
-            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null,
-                    e);
+            logger.log(Level.FINE, null, e);
         }
         return false;
     }
 
     protected void closeModule()
     {
+        logger.info("Closing resources of " + moduleConfig.getModuleName());
         client.close();
         isRunning = false;
         listenerExecutor.shutdownNow();
@@ -93,12 +96,14 @@ public abstract class AbstractNetworkModule
 
     protected void initializeModule() throws IOException
     {
+        logger.info("Initializing resources in " + moduleConfig.getModuleName());
         listenerExecutor.execute(this::listenOnClient);
         client.connect();
     }
 
     private void listenOnClient()
     {
+        logger.info("Listening started.");
         while (isRunning)
         {
             try
@@ -108,10 +113,10 @@ public abstract class AbstractNetworkModule
             }
             catch (InterruptedException e)
             {
-                Logger.getLogger(this.getClass().getName()).log(Level.SEVERE,
-                        null, e);
+                logger.warning("Listening interrupted!");
             }
         }
+        logger.info("Listening finished.");
     }
 
     /**
@@ -143,8 +148,9 @@ public abstract class AbstractNetworkModule
         }
         catch (IOException ex)
         {
-            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null,
-                    ex);
+            logger.log(Level.SEVERE, "Błąd inicjalizacji.");
+            terminate();
+            closeModule();
             return;
         }
         System.out.println("Naciśnij enter any zakończyć.");
@@ -161,7 +167,8 @@ public abstract class AbstractNetworkModule
      * Called automatically at the end of {@link #main}. It's guaranteed to be
      * called. Use it to release used resources.
      * 
-     * It doesn't interrupt {@link #main()}. Don't call this manually, if using 'main'.
+     * It doesn't interrupt {@link #main()}. Don't call this manually, if using
+     * 'main'.
      */
     protected abstract void terminate();
 }

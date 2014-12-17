@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 
 import burtis.modules.network.Listener;
 import burtis.modules.network.ListenerImpl;
+import burtis.modules.network.SocketService;
 
 /**
  * Sends and receives objects to/from server.
@@ -30,7 +31,7 @@ public class ClientConnection<T>
     private final Listener listener;
     private ExecutorService listenerExecutor = Executors
             .newSingleThreadExecutor();
-    private final ClientSocketService socketService;
+    private final SocketService socketService;
 
     public ClientConnection(final String serverAddress, final int serverPort)
     {
@@ -41,6 +42,7 @@ public class ClientConnection<T>
 
     public void close()
     {
+        logger.info("Zamykam połączenie z serwerem.");
         listenerExecutor.shutdownNow();
         listenerExecutor = Executors.newSingleThreadExecutor();
         socketService.close();
@@ -48,24 +50,23 @@ public class ClientConnection<T>
 
     public void connect() throws IOException
     {
+        final int port = socketService.getPort();
         try
         {
-            logger.info(String.format(
-                    "Oczekuję na połączenie z serwerem na porcie %d",
-                    socketService.getPort()));
+            logger.info("Resetuję połączenie.");
             close();
+            logger.info("Oczekuję na połączenie z serwerem na porcie " + port);
             socketService.connect();
             listenerExecutor.execute(listener::listen);
-            logger.info(String.format("Podłączono do serwera na porcie %d",
-                    socketService.getPort()));
+            logger.info("Podłączono do serwera na porcie " + port);
         }
         catch (final ClosedByInterruptException e)
         {
-            logger.info("Przerywam łączenie z serwerem.");
+            logger.warning("Przerywam łączenie z serwerem.");
         }
         catch (final IOException e)
         {
-            logger.log(Level.SEVERE, "Błąd tworzenia Listener'a", e);
+            logger.severe("Nie udało się połączyć z serwerem.");
             throw e;
         }
     }
@@ -101,14 +102,14 @@ public class ClientConnection<T>
 
     public void send(Object objectToSend)
     {
-        logger.entering("write to socket", null);
         try
         {
             socketService.writeToSocket(objectToSend);
         }
         catch (Exception e)
         {
-            logger.log(Level.WARNING, "Błąd wysyłania", e);
+            logger.log(Level.WARNING, "Błąd wysyłania na serwer obiektu "
+                    + objectToSend, e);
         }
     }
 }

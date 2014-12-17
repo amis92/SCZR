@@ -42,7 +42,7 @@ public class SynchronizationModule extends AbstractNetworkModule
                 .getModuleConfigs().get(NetworkConfig.SYNC_MODULE);
         // print modules
         StringBuilder builder = new StringBuilder();
-        builder.append("Modules:\n========");
+        builder.append("\nModules:\n========\n");
         for (ModuleConfig module : NetworkConfig.defaultConfig()
                 .getModuleConfigs())
         {
