@@ -14,11 +14,11 @@ import com.sun.istack.internal.logging.Logger;
 
 /**
  * Handles incoming events by calling appropriate {@link SynchronizationModule}
- * methods.
+ * 's or {@link WatchdogService}'s methods.
  *
  * @author Mikołaj Sowiński
  */
-public class SyncEventHandler extends AbstractEventHandler
+class SyncEventHandler extends AbstractEventHandler
 {
     private final static Logger logger = Logger
             .getLogger(SynchronizationModule.class);

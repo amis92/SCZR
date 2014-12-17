@@ -18,12 +18,11 @@ import burtis.modules.network.NetworkConfig;
  * Sends {@link TickEvent} according to the internal state.
  * 
  * @author Mikołaj Sowiński
- *
+ * @author Amadeusz Sadowski
  */
 public class SynchronizationModule extends AbstractNetworkModule
 {
     private static final long INITIAL_PERIOD = 1000L;
-    
     /**
      * Synchronisation module logger.
      */
@@ -38,24 +37,10 @@ public class SynchronizationModule extends AbstractNetworkModule
      */
     public static void main(String[] args)
     {
-        ModuleConfig moduleConfig = NetworkConfig.defaultConfig()
-                .getModuleConfigs().get(NetworkConfig.SYNC_MODULE);
-        // print modules
-        StringBuilder builder = new StringBuilder();
-        builder.append("\nModules:\n========\n");
-        for (ModuleConfig module : NetworkConfig.defaultConfig()
-                .getModuleConfigs())
-        {
-            if (module.getModuleName().equalsIgnoreCase(
-                    moduleConfig.getModuleName()))
-            {
-                continue;
-            }
-            builder.append(" * " + module.getModuleName());
-            builder.append(module.isCritical() ? " (critical)\n" : "\n");
-        }
-        logger.info(builder.toString());
-        // setup
+        NetworkConfig netConfig = NetworkConfig.defaultConfig();
+        ModuleConfig moduleConfig = netConfig.getModuleConfigs().get(
+                NetworkConfig.SYNC_MODULE);
+        printNetworkConfig(netConfig, moduleConfig.getModuleName());
         SynchronizationModule app = new SynchronizationModule(moduleConfig);
         app.main();
     }
@@ -86,6 +71,31 @@ public class SynchronizationModule extends AbstractNetworkModule
             modules.add(new WatchedModule(moduleConfig));
         }
         return new WatchdogService(shutdownAction, modules);
+    }
+
+    /**
+     * Lists modules to console, describing which are critical. Omits itself.
+     * 
+     * @param netConfig
+     *            - list of all modules.
+     * @param moduleName
+     *            - to know itself.
+     */
+    private static void printNetworkConfig(NetworkConfig netConfig,
+            String moduleName)
+    {
+        StringBuilder builder = new StringBuilder();
+        builder.append("\nModules:\n========\n");
+        for (ModuleConfig module : netConfig.getModuleConfigs())
+        {
+            if (module.getModuleName().equalsIgnoreCase(moduleName))
+            {
+                continue;
+            }
+            builder.append(" * " + module.getModuleName());
+            builder.append(module.isCritical() ? " (critical)\n" : "\n");
+        }
+        logger.info(builder.toString());
     }
 
     private volatile boolean isRunning = false;

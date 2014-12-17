@@ -24,7 +24,7 @@ import burtis.modules.sync.WatchedModule.State;
  * 
  * @author Amadeusz Sadowski
  */
-public class WatchdogService
+class WatchdogService
 {
     private static final Logger logger = Logger.getLogger(WatchdogService.class
             .getName());
