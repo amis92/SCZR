@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Classes performing Client-side operations.
  * 
  * @author Amadeusz Sadowski

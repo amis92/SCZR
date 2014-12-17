@@ -1,4 +1,4 @@
-package burtis.modules.network.server.impl;
+﻿package burtis.modules.network.server.impl;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;

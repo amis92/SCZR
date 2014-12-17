@@ -1,4 +1,4 @@
-package burtis.modules.sync;
+﻿package burtis.modules.sync;
 
 import java.util.logging.Level;
 

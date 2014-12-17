@@ -1,4 +1,4 @@
-package burtis.modules.simulation.models;
+﻿package burtis.modules.simulation.models;
 
 import java.util.ArrayList;
 import java.util.List;

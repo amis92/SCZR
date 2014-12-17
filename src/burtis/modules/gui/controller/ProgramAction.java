@@ -1,4 +1,4 @@
-package burtis.modules.gui.controller;
+﻿package burtis.modules.gui.controller;
 
 import burtis.modules.gui.events.ProgramEvent;
 

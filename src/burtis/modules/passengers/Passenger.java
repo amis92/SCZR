@@ -1,4 +1,4 @@
-package burtis.modules.passengers;
+﻿package burtis.modules.passengers;
 
 import burtis.common.constants.PassengersModuleConsts;
 import java.util.ArrayList;

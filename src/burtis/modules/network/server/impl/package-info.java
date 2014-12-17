@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Contains implementations of {@link burtis.modules.network.server} interfaces.
  * 
  * @author Amadeusz Sadowski

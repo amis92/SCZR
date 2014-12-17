@@ -1,4 +1,4 @@
-package burtis.modules.gui.view;
+﻿package burtis.modules.gui.view;
 
 import java.awt.FlowLayout;
 import java.awt.event.MouseAdapter;

@@ -1,4 +1,4 @@
-package burtis.modules.gui.view;
+﻿package burtis.modules.gui.view;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -79,7 +79,7 @@ public class View
         frame.setLayout(new BorderLayout());
         frame.setTitle("burtis");
         frame.setVisible(true);
-        frame.setSize(1400, 400);
+        frame.setSize(800, 600);
         connectButton.addActionListener(e -> putInQueue(new ConnectEvent()));
         stopButton.addActionListener(e -> putInQueue(new StopEvent()));
         goButton.addActionListener(e -> putInQueue(new GoEvent()));
