@@ -115,7 +115,7 @@ public class View
         busStops = mockup.getBusStops();
         currentTime = mockup.getCurrentTime();
         timeLabel.setText(Long.toString(currentTime));
-        
+        buttonPanel.removeAll();
         for (MockupBusStop mbs : busStops)
         {
             String stationName = mbs.getName();
@@ -124,7 +124,7 @@ public class View
                     this::onBusStationClicked);
             buttonPanel.add(tmpBusStationButton);
         }
-        
+        animationPanel.removeAll();
         for (MockupBus bus : schedule)
         {
             animationPanel.addBus(bus);

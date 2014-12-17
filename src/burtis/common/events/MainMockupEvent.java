@@ -17,6 +17,12 @@ public class MainMockupEvent extends SimulationEvent
         this.mainMockup = mainMockup;
     }
 
+    public MainMockupEvent(String sender, String[] recipients, Mockup mainMockup)
+    {
+        super(sender, recipients);
+        this.mainMockup = mainMockup;
+    }
+
     public Mockup getMainMockup()
     {
         return mainMockup;

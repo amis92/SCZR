@@ -89,8 +89,13 @@ public class Server extends AbstractEventHandler
     @Override
     public void process(TerminateSimulationEvent event)
     {
+        String senderName = event.sender();
         for (ModuleConnection moduleConnection : moduleConnections)
         {
+            if (moduleConnection.getModuleName().equalsIgnoreCase(senderName))
+            {
+                continue;
+            }
             sender.send(event, moduleConnection);
         }
         stop();
@@ -121,8 +126,14 @@ public class Server extends AbstractEventHandler
         }
         else
         {
+            String senderName = event.sender();
             for (ModuleConnection moduleConnection : moduleConnections)
             {
+                if (moduleConnection.getModuleName().equalsIgnoreCase(
+                        senderName))
+                {
+                    continue;
+                }
                 forward(event, moduleConnection.getModuleName());
             }
         }

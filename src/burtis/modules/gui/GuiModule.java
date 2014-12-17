@@ -14,6 +14,7 @@ import javax.swing.UIManager;
 import burtis.common.events.AbstractEventHandler;
 import burtis.common.events.MainMockupEvent;
 import burtis.common.events.SimulationEvent;
+import burtis.common.events.flow.CycleCompletedEvent;
 import burtis.common.events.flow.ModuleReadyEvent;
 import burtis.modules.AbstractNetworkModule;
 import burtis.modules.gui.controller.ActionExecutor;
@@ -114,6 +115,12 @@ public class GuiModule extends AbstractNetworkModule
      */
     private class EventHandler extends AbstractEventHandler
     {
+        @Override
+        public void process(CycleCompletedEvent event)
+        {
+            // ignoring silently, that's just ok
+        }
+        
         @Override
         public void process(MainMockupEvent event)
         {

@@ -17,6 +17,11 @@ public class ModuleReadyEvent extends SimulationEvent
         super(sender);
     }
 
+    public ModuleReadyEvent(String sender, String[] recipients)
+    {
+        super(sender, recipients);
+    }
+
     public void visit(AbstractEventHandler eventProcessor)
     {
         eventProcessor.process(this);
