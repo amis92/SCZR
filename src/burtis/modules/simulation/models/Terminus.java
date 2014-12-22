@@ -6,36 +6,97 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import burtis.common.constants.SimulationModuleConsts;
+import burtis.modules.simulation.exceptions.NoSuchBusStopException;
 
+/**
+ * Representation of terminus.
+ * 
+ * It is subclass of BusStop. Should be uniquely added at the
+ * <b>end</b> of the line.
+ * 
+ * @author Mikołaj Sowiński
+ *
+ */
 public class Terminus extends BusStop
 {
-    private static final Logger logger = Logger.getLogger(Terminus.class
-            .getName());
-    private static final Queue<Bus> buses = new LinkedList<>();
-    private static long toTheNextDeparture = 0;
-    private static long releasingFrequency = SimulationModuleConsts.TERMINUS_RELEASING_FREQUENCY;
+    /**
+     * Terminus logger.
+     */
+    private final Logger logger = Logger.
+            getLogger(Terminus.class.getName());
+    
+    /**
+     * Queue of buses at the terminus.
+     * 
+     * Using queue makes buses stand in a FIFO order.
+     */
+    private final Queue<Bus> buses = new LinkedList<>();
+    
+    /**
+     * Number of iterations left to the next bus departure.
+     * 
+     * Used when scheduler module is not present.
+     */
+    private long toTheNextDeparture = 0;
+    
+    /**
+     * Automatic buses releasing frequency.
+     */
+    private long releasingFrequency = SimulationModuleConsts.TERMINUS_RELEASING_FREQUENCY;
+    
+    /**
+     * Reference to the depot.
+     */
+    private final Depot depot;
 
-    public static void changeReleasingFrequency(long newFrequency)
+    /**
+     * Constructor.
+     * 
+     * Essentially calls superclass constructor ({@link BusStop}) and sets 
+     * reference to the depot.
+     * 
+     * @param position terminus position
+     * @param name terminus name
+     * @param depot depot
+     */
+    public Terminus(int position, String name, Depot depot)
+    {
+        super(position, name);
+        this.depot = depot;
+    }
+    
+    /**
+     * Changes automatic bus releasing frequency.
+     * 
+     * @param newFrequency new releasing frequency
+     */
+    public void changeReleasingFrequency(long newFrequency)
     {
         releasingFrequency = newFrequency;
     }
 
-    public Terminus(int position, String name)
-    {
-        super(position, name);
-    }
-
-    public static void enqueueBus(Bus bus)
+    /**
+     * Adds given bus to the terminus queue.
+     * 
+     * @param bus bus to be added
+     */
+    public void enqueueBus(Bus bus)
     {
         buses.add(bus);
     }
 
     /**
-     * Departs buses at given intervals. If bus is avaliable at the terminus it
-     * is departed. If not, bus is taken from the depot. It there is no bus in
-     * the depot a warning is printed and time interval is reseted.
+     * Checks if bus should depart at current iteration and if so orders it to go. 
+     * 
+     * If bus is available at the terminus is ordered to go. If not, bus is taken 
+     * from the depot. It there is no bus in the depot a warning is logged.
+     * 
+     * No matter what action is taken, if depart was scheduled for current iteration
+     * toTheNextDeparture variable is reseted to the releasingFrequency.
+     * 
+     * @throws NoSuchBusStopException 
      */
-    public static void departBus()
+    public void departBus() throws NoSuchBusStopException
     {
         Bus bus;
         // It's departure time! :D
@@ -52,7 +113,7 @@ public class Terminus extends BusStop
             // If there is no bus at the terminus
             else
             {
-                bus = Depot.getBus();
+                bus = depot.getBus();
                 // If there is a bus in the depot
                 if (bus != null)
                 {
@@ -66,7 +127,7 @@ public class Terminus extends BusStop
                 }
             }
         }
-        // Still watiting...
+        // Not now...
         else
         {
             toTheNextDeparture--;
