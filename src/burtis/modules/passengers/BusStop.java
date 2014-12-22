@@ -8,6 +8,7 @@ import java.util.Random;
 import java.util.logging.Level;
 
 import burtis.common.events.Simulator.BusStopsListEvent;
+import burtis.modules.passengers.model.Passenger;
 
 /**
  * Representation of bus stop in passengers module.

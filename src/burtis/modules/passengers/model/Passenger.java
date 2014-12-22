@@ -1,6 +1,9 @@
-﻿package burtis.modules.passengers;
+﻿package burtis.modules.passengers.model;
 
 import burtis.common.constants.PassengersModuleConsts;
+import burtis.modules.passengers.Bus;
+import burtis.modules.passengers.BusStop;
+
 import java.util.ArrayList;
 import java.util.List;
 

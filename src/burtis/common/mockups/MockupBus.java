@@ -2,99 +2,121 @@ package burtis.common.mockups;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
 
-import burtis.modules.passengers.Passenger;
-import burtis.modules.simulation.Simulation;
 import burtis.modules.simulation.models.Bus;
 
+/**
+ * Mockup containing data of a single bus.
+ * 
+ * @author vanqyard, Mikołaj Sowiński
+ *
+ */
 public class MockupBus implements Serializable
 {
     private static final long serialVersionUID = 3835208126228698973L;
-    private ArrayList<MockupPassenger> passengerList;
-    private final String currentBusStop;
-    private int lengthPassed; // Posiiton in % of total line length 0..100
-    private final Integer Id;
-    private final Bus.State busState;
-
-    public MockupBus(Integer Id)
-    {
-        this.passengerList = new ArrayList<MockupPassenger>();
-        this.currentBusStop = null;
-        this.lengthPassed = 0;
-        this.Id = Id;
-        
-        this.busState = Bus.State.BUSSTOP;
-    }
-
-    public MockupBus(Integer Id, int lengthPassed) {
-        this.passengerList = new ArrayList<MockupPassenger>();
-        this.currentBusStop = null;
-        this.lengthPassed = lengthPassed;
-        this.Id = Id;
-
-        this.busState = Bus.State.BUSSTOP;
-    }
     
-    public MockupBus(Bus bus, List<Passenger> passengerList)
-    {
+    /**
+     * List of passengers mockups.
+     */
+    private ArrayList<MockupPassenger> passengerList;
+    
+    /**
+     * Name of the current bus stop the bus in enqueued to.
+     * This field can be null.
+     */
+    private final String currentBusStop;
+    
+    /**
+     * Position of the bus in units.
+     */
+    private int lengthPassed;
+    
+    /**
+     * Bus id.
+     */
+    private final Integer Id;
+    
+    /**
+     * Bus state as given in {@link Bus#State}.
+     */
+    private final Bus.State busState;
+    
+    /**
+     * Constructor from the simulation {@link Bus} object.
+     * 
+     * @param bus bus object
+     */
+    public MockupBus(Bus bus) {
+        
         this.Id = bus.getId();
-        this.currentBusStop = (bus.getCurrentBusStop() == null) ? null : bus.getCurrentBusStop().getName();
-        this.lengthPassed = bus.getPosition() * 100
-                / Simulation.getInstance().getLineLength();
-        this.busState = bus.getState();
-        this.passengerList = new ArrayList<MockupPassenger>(
-                bus.getNumberOfPassengers());
-        if(this.passengerList.size() > 0) {
-            for (Passenger passenger : passengerList)
-            {
-                this.passengerList.add(new MockupPassenger(passenger));
-            }
+        this.passengerList = new ArrayList<MockupPassenger>();
+        if(bus.getClosestBusStop() == null) {
+            this.currentBusStop = null;
         }
+        else {
+            this.currentBusStop = bus.getClosestBusStop().getName();
+        }
+        this.lengthPassed = bus.getPosition();
+        this.busState = bus.getState();    
+        
     }
 
+    /**
+     * @return list of passengers mockups
+     */
     public ArrayList<MockupPassenger> getPassengerList()
     {
         return passengerList;
     }
 
-    public String getCurrentBusStop()
-    {
-        return currentBusStop;
-    }
-
+    /**
+     * @return the lengthPassed
+     */
     public int getLengthPassed()
     {
         return lengthPassed;
     }
 
+    /**
+     * @param lengthPassed the lengthPassed to set
+     */
     public void setLengthPassed(int lengthPassed)
     {
         this.lengthPassed = lengthPassed;
     }
-    
-    public Bus.State getState()
+
+    /**
+     * @return the currentBusStop
+     */
+    public String getCurrentBusStop()
     {
-        return busState;
+        return currentBusStop;
     }
 
+    /**
+     * @return the id
+     */
     public Integer getId()
     {
         return Id;
     }
 
+    /**
+     * @return the busState
+     */
+    public Bus.State getBusState()
+    {
+        return busState;
+    }
+
+    /**
+     * Sets list of passengers of the bus.
+     * 
+     * @param list of passengers to set
+     */
     public void setPassengerList(ArrayList<MockupPassenger> passengerList)
     {
         this.passengerList = passengerList;
     }
-    
-    public void print() {
-        System.out.println("| Bus: " + Id + " pos: " + lengthPassed + " state: " + busState + " currentBS: " + currentBusStop);
-        if(passengerList.size() > 0) {
-            System.out.println("| Passengers:\n-------------");
-            for(MockupPassenger passengerMockup : passengerList) {
-                passengerMockup.print();
-            }
-        }
-    }
+
 }

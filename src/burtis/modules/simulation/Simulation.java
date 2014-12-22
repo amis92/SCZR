@@ -24,7 +24,7 @@ import burtis.modules.simulation.models.Terminus;
  * Communicates with passenger module to obtain information on passengers
  * waiting at bus stops.
  * 
- * @author Mikołaj Sowiński <mikolaj.sowinski@gmail.com>
+ * @author Mikołaj Sowiński
  *
  */
 public class Simulation extends AbstractNetworkModule

@@ -20,6 +20,7 @@ import burtis.common.events.flow.CycleCompletedEvent;
 import burtis.common.events.flow.TerminateSimulationEvent;
 import burtis.common.events.flow.TickEvent;
 import burtis.modules.network.NetworkConfig;
+import burtis.modules.passengers.model.Passenger;
 
 /**
  *

@@ -1,21 +1,45 @@
 package burtis.modules.simulation.models;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import burtis.common.mockups.MockupBus;
+import burtis.modules.simulation.exceptions.NoSuchBusStopException;
 
+/**
+ * Manages buses in simulation module.
+ * 
+ * @author Amadeusz Sadowski, Mikołaj Sowiński
+ *
+ */
 public class BusManager
 {
-    private static final Logger logger = Logger.getLogger(BusManager.class
-            .getName());
-    private final List<Bus> buses = new ArrayList<>();
+    
+    /**
+     * Logger of the BusManager class.
+     */
+    private final Logger logger = Logger
+            .getLogger(this.getClass().getName());
+    
+    /**
+     * List of buses in the simulation.
+     */
+    private final Map<Integer,Bus> buses = new HashMap<>();
+    
+    /**
+     * Reference to bus stop manager.
+     */
+    private final BusStopManager busStopManager;
 
-    public BusManager()
-    {
-        // TODO Auto-generated constructor stub
+    /**
+     * Generic no-argument constructor.
+     */
+    public BusManager(BusStopManager busStopManager) {
+        this.busStopManager = busStopManager;  
     }
 
     /**
@@ -27,12 +51,7 @@ public class BusManager
      */
     public Bus getBusById(int busId)
     {
-        for (Bus bus : buses)
-        {
-            if (bus.getId() == busId)
-                return bus;
-        }
-        return null;
+        return buses.get(busId);
     }
 
     /**
@@ -44,22 +63,23 @@ public class BusManager
      */
     public Bus add(int capacity)
     {
-        Bus newBus = new Bus(capacity);
-        buses.add(newBus);
+        Bus newBus = new Bus(capacity, busStopManager);
+        buses.put(newBus.getId(), newBus);
         return newBus;
     }
 
     /**
-     * Updates bus positions according to its state.
+     * Executes {@link Bus#updatePosition} on every bus which state is running.
+     * 
+     * @throws NoSuchBusStopException 
      */
-    public void updatePositions()
-    {
-        for (Bus bus : buses)
+    public void updateBusPositions() throws NoSuchBusStopException
+    {        
+        for (Bus bus : buses.values())
         {
-            // Running case
             if (bus.getState() == Bus.State.RUNNING)
             {
-                bus.recalculatePosition();
+                bus.updateBusPosition();
             }
         }
     }
@@ -73,7 +93,7 @@ public class BusManager
      */
     public void withdrawBus(int busId)
     {
-        Bus bus = getBusById(busId);
+        Bus bus = buses.get(busId);
         if (bus != null)
         {
             bus.setGoToDepot(true);
@@ -85,15 +105,17 @@ public class BusManager
     }
 
     /**
-     * Sets bus to start at next iteration after arriving from the depot. It
-     * clears bus cycles count.
+     * Sets bus to start at next iteration after arriving from the depot. 
+     * Clears bus cycles count.
      * 
      * @param busId
      *            id of the bus
+     *            
+     * @throws NoSuchBusStopException 
      */
-    public void sendFromDepot(int busId)
+    public void sendFromDepot(int busId) throws NoSuchBusStopException
     {
-        Bus bus = getBusById(busId);
+        Bus bus = buses.get(busId);
         if (bus != null)
         {
             bus.sendFromDepot();
@@ -103,22 +125,7 @@ public class BusManager
             logger.log(Level.WARNING, "No such bus {0}", busId);
         }
     }
-
-    /**
-     * Generates list of {@link MockupBus}.
-     * 
-     * @return - list of {@link MockupBus}
-     */
-    public List<MockupBus> getMockups()
-    {
-        List<MockupBus> mockups = new ArrayList<>();
-        for (Bus bus : buses)
-        {
-            mockups.add(new MockupBus(bus.getId()));
-        }
-        return mockups;
-    }
-    
+   
     /**
      * Sets bus to start at next iteration after being at the terminus.
      * Increments bus cycles count.
@@ -128,7 +135,7 @@ public class BusManager
      */
     public void sendFromTerminus(int busId)
     {
-        Bus bus = getBusById(busId);
+        Bus bus = buses.get(busId);
         if (bus != null)
         {
             bus.sendFromTerminus();
@@ -137,5 +144,20 @@ public class BusManager
         {
             logger.log(Level.WARNING, "No such bus {0}", busId);
         }
+    }
+    
+    /**
+     * Generates list of {@link MockupBus}.
+     * 
+     * @return - list of {@link MockupBus}
+     */
+    public List<MockupBus> getMockups()
+    {
+        List<MockupBus> mockups = new ArrayList<>();
+        for (Bus bus : buses.values())
+        {
+            mockups.add(new MockupBus(bus));
+        }
+        return mockups;
     }
 }

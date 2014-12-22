@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.logging.Level;
 
 import burtis.common.constants.SimulationModuleConsts;
+import burtis.modules.passengers.model.Passenger;
 
 /**
  * Representation of bus in passengers module.

@@ -2,7 +2,9 @@
 
 import java.util.LinkedList;
 import java.util.List;
+
 import burtis.common.constants.PassengersModuleConsts;
+import burtis.modules.passengers.model.Passenger;
 
 /**
  * Representation of transaction between bus stop and bus.

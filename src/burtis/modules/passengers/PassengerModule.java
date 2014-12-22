@@ -16,6 +16,7 @@ import burtis.common.mockups.MockupPassenger;
 import burtis.modules.AbstractNetworkModule;
 import burtis.modules.network.ModuleConfig;
 import burtis.modules.network.NetworkConfig;
+import burtis.modules.passengers.model.Passenger;
 import burtis.modules.simulation.Simulation;
 
 /**
@@ -25,6 +26,7 @@ import burtis.modules.simulation.Simulation;
  */
 public class PassengerModule extends AbstractNetworkModule
 {
+    
     private static final PassengerModule pm = new PassengerModule(NetworkConfig
             .defaultConfig().getModuleConfigs().get(NetworkConfig.PSNGR_MODULE));
     private Logger logger;
