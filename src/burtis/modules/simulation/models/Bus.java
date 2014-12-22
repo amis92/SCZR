@@ -363,6 +363,7 @@ public class Bus
     {
         
         position += busSpeed;
+        busStopQueryRequest = null;
         
         if(reachesBusStop()) {
             

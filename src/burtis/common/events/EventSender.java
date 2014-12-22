@@ -15,6 +15,11 @@ import burtis.modules.network.ModuleConfig;
 import burtis.modules.network.NetworkConfig;
 import burtis.modules.network.client.ClientModule;
 
+/**
+ * 
+ * @author Amaedusz Sadowski
+ *
+ */
 public class EventSender
 {
     protected final Logger logger = Logger.getLogger(this.getClass().getName());

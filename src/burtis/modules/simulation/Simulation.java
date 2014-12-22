@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 import burtis.common.constants.SimulationModuleConsts;
 import burtis.common.events.SimulationEvent;
 import burtis.common.events.Passengers.WaitingPassengersEvent;
+import burtis.common.events.flow.TickEvent;
 import burtis.common.mockups.MockupBus;
 import burtis.modules.AbstractNetworkModule;
 import burtis.modules.network.ModuleConfig;
@@ -14,6 +15,7 @@ import burtis.modules.passengers.PassengerModule;
 import burtis.modules.simulation.models.Bus;
 import burtis.modules.simulation.models.BusManager;
 import burtis.modules.simulation.models.BusStop;
+import burtis.modules.simulation.models.BusStopManager;
 import burtis.modules.simulation.models.Depot;
 import burtis.modules.simulation.models.Terminus;
 
@@ -29,19 +31,75 @@ import burtis.modules.simulation.models.Terminus;
  */
 public class Simulation extends AbstractNetworkModule
 {
+    
+    /**
+     * Simulation logger.
+     */
     private static final Logger logger = Logger.getLogger(Simulation.class
             .getName());
+    
     /**
-     * Current cycle. Positive value mens in cycle, negative in between.
+     * Current iteration.
+     * 
+     * This value is initially -1 because it <b>must</b> always be one less then
+     * iteration number received in {@link TickEvent} and in first iteration this
+     * number is equal to 0.
      */
-    private long currentCycle;
-    private int lineLength = 0;
+    private long currentIteration;
+    
+    /**
+     * Action executor responsible for sending events to other modules.
+     */
     private final ActionExecutor actionExecutor;
-    private final BusManager busManager = new BusManager();
+    
+    /**
+     * Bus stop manager.
+     */
+    private final BusStopManager busStopManager;
+    
+    /**
+     * Depot.
+     */
+    private final Depot depot;
+    
+    /**
+     * Bus manager.
+     */
+    private final BusManager busManager;
 
-    public int getLineLength()
+    /**
+     * Creates a new simulation.
+     * 
+     * @param netConfig network configuration
+     */
+    private Simulation(NetworkConfig netConfig)
     {
-        return lineLength;
+        super(netConfig.getModuleConfigs().get(NetworkConfig.SIM_MODULE));
+        
+        this.actionExecutor = new ActionExecutor(
+                this.client, 
+                netConfig);
+        
+        this.depot = new Depot();
+        
+        this.busStopManager = new BusStopManager(
+                SimulationModuleConsts.getDefaultBusStops(),
+                depot);
+        
+        this.busManager = new BusManager(
+                busStopManager,
+                SimulationModuleConsts.NUMBER_OF_BUSES,
+                SimulationModuleConsts.BUS_CAPACITY);
+        
+        this.eventHandler = new SimulationEventHandler(
+                this, 
+                actionExecutor, 
+                busManager,
+                busStopManager,
+                depot);
+        
+        this.currentIteration = -1;
+        
     }
 
     public Logger getLogger()
@@ -49,19 +107,14 @@ public class Simulation extends AbstractNetworkModule
         return logger;
     }
 
-    public ModuleConfig getModuleConfig()
-    {
-        return moduleConfig;
-    }
-
     public long getCurrentCycle()
     {
-        return currentCycle;
+        return currentIteration;
     }
 
     public void setCurrentCycle(long currentCycle)
     {
-        this.currentCycle = currentCycle;
+        this.currentIteration = currentCycle;
     }
 
     /**
@@ -71,80 +124,15 @@ public class Simulation extends AbstractNetworkModule
     public void sendBusMockups()
     {
         actionExecutor
-                .sendBusMockupEvent(currentCycle, busManager.getMockups());
+                .sendBusMockupEvent(currentIteration, busManager.getMockups());
     }
 
     /**
-     * Sends CycleCompletedEvent and zeros currentCycle variable.
+     * Sends CycleCompletedEvent.
      */
     public void sendCycleCompleted()
     {
-        actionExecutor.sendCycleCompletedEvent(currentCycle);
-        currentCycle = 0;
-    }
-
-    /**
-     * Creates a new simulation.
-     */
-    private Simulation(NetworkConfig netConfig)
-    {
-        super(netConfig.getModuleConfigs().get(NetworkConfig.SIM_MODULE));
-        this.actionExecutor = new ActionExecutor(this.client, netConfig);
-        this.eventHandler = new SimulationEventHandler(this, actionExecutor,
-                busManager);
-    }
-
-    @Override
-    protected void init()
-    {
-        // Create bus stops
-        BusStop.add(new Terminus(0, "Bielańska"));
-        BusStop.add(30, "Plac Zamkowy");
-        BusStop.add(60, "Hotel Bristol");
-        BusStop.add(90, "Uniwersytet");
-        BusStop.add(120, "Ordynacka");
-        BusStop.add(150, "Foksal");
-        BusStop.add(180, "Plac Trzech Krzyży");
-        BusStop.add(210, "Plac na Rozdrożu");
-        BusStop.add(240, "Plac Unii Lubelskiej");
-        BusStop.add(270, "Rakowiecka");
-        BusStop.add(new Terminus(300, "Bielańska"));
-        Bus bus;
-        for (int i = 0; i < SimulationModuleConsts.NUMBER_OF_BUSES; i++)
-        {
-            bus = busManager.add(SimulationModuleConsts.BUS_CAPACITY);
-            Depot.putBus(bus);
-        }
-        lineLength = 300;
-    }
-
-    /**
-     * Searches incoming event queue for WaitingPassengersEvent. Event handler
-     * can not be used here as main thread is blocked in serial execution of
-     * other event handler.
-     * 
-     * @return WaitingPassengersEvent or null if none is found
-     */
-    public WaitingPassengersEvent getWaitingPassengersEvent()
-    {
-        WaitingPassengersEvent waitingPassengersEvent;
-        if (client.getIncomingQueue().size() > 0)
-        {
-            for (SimulationEvent event : client.getIncomingQueue())
-            {
-                if (event instanceof WaitingPassengersEvent)
-                {
-                    waitingPassengersEvent = (WaitingPassengersEvent) event;
-                    client.getIncomingQueue().remove(event);
-                    return waitingPassengersEvent;
-                }
-            }
-            return null;
-        }
-        else
-        {
-            return null;
-        }
+        actionExecutor.sendCycleCompletedEvent(currentIteration);
     }
 
     @Override
@@ -164,4 +152,8 @@ public class Simulation extends AbstractNetworkModule
         Simulation app = new Simulation(NetworkConfig.defaultConfig());
         app.main();
     }
+
+    @Override
+    protected void init()
+    {}
 }

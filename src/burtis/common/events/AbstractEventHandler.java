@@ -20,6 +20,7 @@ import burtis.common.events.flow.PauseSimulationEvent;
 import burtis.common.events.flow.StartSimulationEvent;
 import burtis.common.events.flow.TerminateSimulationEvent;
 import burtis.common.events.flow.TickEvent;
+import burtis.modules.simulation.exceptions.OutOfSyncException;
 
 /**
  * Provides default processing abilities for all events. Inheriting classes

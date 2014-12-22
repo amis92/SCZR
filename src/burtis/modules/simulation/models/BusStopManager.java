@@ -1,7 +1,9 @@
 package burtis.modules.simulation.models;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.logging.Logger;
 
 import burtis.modules.simulation.exceptions.NoSuchBusStopException;
@@ -27,9 +29,34 @@ public class BusStopManager
     private final List<BusStop> busStops = new LinkedList<>();
 
     /**
-     * Generic no-argument constructor.
+     * Constructor.
+     * 
+     * Creates bus stops using data from supplied list. The last of
+     * supplied bus stops will be of terminus class.
+     * 
+     * @param busStopsList list of entries describing bus stops
+     * @param depot reference to the depot object
      */
-    public BusStopManager() {}
+    public BusStopManager(List<Entry<Integer,String>> busStopsList, Depot depot) {
+
+        for (int i = 0; i < busStopsList.size(); i++) {
+            
+            Entry<Integer,String> busStopData = busStopsList.get(i);
+            
+            if(i != (busStopsList.size()-1)) {
+                busStops.add(new BusStop(
+                        busStopData.getKey(),
+                        busStopData.getValue()));
+            }
+            else {
+                busStops.add(new Terminus(
+                        busStopData.getKey(),
+                        busStopData.getValue(),
+                        depot));
+            }
+        }
+        
+    }
     
     /**
      * Returns first bus stop in the line.
@@ -79,6 +106,13 @@ public class BusStopManager
         else {
             return busStop;
         }
+    }
+    
+    /**
+     * Returns reference to the terminus.
+     */
+    public Terminus getTerminus() {
+        return (Terminus) busStops.get(busStops.size()-1);
     }
     
 }

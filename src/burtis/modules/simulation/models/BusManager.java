@@ -2,8 +2,10 @@ package burtis.modules.simulation.models;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -36,10 +38,19 @@ public class BusManager
     private final BusStopManager busStopManager;
 
     /**
-     * Generic no-argument constructor.
+     * Constructor.
+     * 
+     * @param busStopManager reference to BusStopManager
+     * @param numberOfBuses number of buses to create
      */
-    public BusManager(BusStopManager busStopManager) {
-        this.busStopManager = busStopManager;  
+    public BusManager(BusStopManager busStopManager, int numberOfBuses, int busCapacity) {
+        this.busStopManager = busStopManager;
+        
+        Bus bus;
+        for(int i=0; i<numberOfBuses; i++) {
+            bus = new Bus(busCapacity, busStopManager);
+            buses.put(bus.getId(), bus);
+        }
     }
 
     /**
@@ -160,4 +171,20 @@ public class BusManager
         }
         return mockups;
     }
+    
+    /**
+     * Builds list of ids of bus stops that are to be 
+     * queried for waiting passengers.
+     */
+    public List<Integer> getBusStopsIdsList() {
+        
+        Set<Integer> busStopsList = new HashSet<>();
+        for(Bus bus : buses.values()) {
+            if(bus.getBusStopQueryRequest() != null) {
+                busStopsList.add(bus.getBusStopQueryRequest().getId());
+            }
+        }
+        return new ArrayList<Integer>(busStopsList);
+    }
+    
 }
