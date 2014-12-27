@@ -80,8 +80,7 @@ public class Simulation extends AbstractNetworkModule
         
         this.busManager = new BusManager(
                 busStopManager,
-                SimulationModuleConsts.NUMBER_OF_BUSES,
-                SimulationModuleConsts.BUS_CAPACITY);
+                SimulationModuleConsts.NUMBER_OF_BUSES);
         
         this.eventHandler = new SimulationEventHandler(
                 this, 

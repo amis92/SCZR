@@ -5,6 +5,7 @@ import java.util.List;
 
 import burtis.common.events.SimulationEvent;
 import burtis.common.events.Simulator.BusDeparturesEvent;
+import burtis.modules.passengers.model.Bus;
 
 /**
  * Holds events to be sent at the end of the iteration.

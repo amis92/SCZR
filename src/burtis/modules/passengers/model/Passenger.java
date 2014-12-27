@@ -1,20 +1,12 @@
 ﻿package burtis.modules.passengers.model;
 
-import burtis.common.constants.PassengersModuleConsts;
-import burtis.modules.passengers.Bus;
-import burtis.modules.passengers.BusStop;
-
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Representation of single passenger. 
  * 
  * @author Mikołaj Sowiński
  */
-public class Passenger {
-    
-    private static final List<Passenger> passengers = new ArrayList<>();
+public class Passenger 
+{  
     
     /**
      * Passenger id.
@@ -23,9 +15,11 @@ public class Passenger {
     
     /**
      * Passenger origin.
+     * 
      * Bus stop where passenger was generated.
      */
     private final BusStop origin;
+    
     /**
      * Passenger destination.
      */
@@ -41,22 +35,41 @@ public class Passenger {
      */
     private Bus bus;
     
-    
+    /**
+     * Generates passenger ids.
+     */
+    private static class IDGenerator
+    {
+        /**
+         * Recent bus id.
+         */
+        private static int lastId = 0;
+
+        /**
+         * Returns id of the next bus.
+         * @return new id
+         */
+        public static int getNextId()
+        {
+            return lastId++;
+        }
+    }
     
     /**
-     * New id to be assigned to next generated passenger.
+     * Constructor.
+     * 
+     * @param origin origin bus stop
+     * @param destination destination bus stop
      */
-    private static int newId = 0;
-
     public Passenger(BusStop origin, BusStop destination) {
-        this.id = newId++;
+        this.id = IDGenerator.getNextId();
         this.origin = origin;
         this.destination = destination;
     }
 
-    // ###############################
-    // Getters
-    // ###############################
+/* ##############################################
+ * GETTERS AND SETTERS
+ * ########################################### */
     
     public int getId() {
         return id;
@@ -74,43 +87,11 @@ public class Passenger {
         return waitingTime;
     }
     
-    // ###############################
-    // End of getters.
-    // ###############################
+/* ##############################################
+ * END OF GETTERS AND SETTERS
+ * ########################################### */
     
-    private static int generationCycleLength = PassengersModuleConsts.PASSENGER_GENERATION_CYCLE_LENGTH;
-    private static int passengersPerCycle = PassengersModuleConsts.PASSENGERS_PER_GENERATION_CYCLE;
-    private static int generationCycle = generationCycleLength;
-    
-    public static void setGenerationCycleLength(int generationCycle) {
-        Passenger.generationCycleLength = generationCycle;
-    }
-
-    public static void setPassengersPerCycle(int passengersPerCycle) {
-        Passenger.passengersPerCycle = passengersPerCycle;
-    }
-    
-    public static void deletePassenger(Passenger passenger) {
-        passengers.remove(passenger);
-    }
-          
-    public static void generatePassengers() {
-        if(generationCycle == 0) {
-            generationCycle = generationCycleLength-1;
-            BusStop busStop;
-            Passenger passenger;
-            for(int i=0; i<passengersPerCycle; i++) {
-                busStop = BusStop.getRandomBusStop();
-                passenger = new Passenger(busStop, BusStop.getRandomNextBusStop(busStop));
-                busStop.enqueuePassenger(passenger);
-                passengers.add(passenger);
-            }
-        }
-        else {
-            generationCycle--;
-        }
-    }
-    
+        
     @Override
     public String toString() {
         return "Passenger{" + "id=" + id + ", origin=" + origin + ", destination=" + destination + ", waitingTime=" + waitingTime + ", bus=" + bus + '}';

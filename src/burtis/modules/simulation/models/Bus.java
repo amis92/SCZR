@@ -80,12 +80,7 @@ public class Bus
      * Current bus position in units.
      */
     private int position;
-    
-    /**
-     * Maximum bus capacity.
-     */
-    private final int capacity;
-    
+        
     /**
      * Number of passengers in the bus.
      */
@@ -159,12 +154,11 @@ public class Bus
      * @param capacity
      *            bus capacity
      */
-    public Bus(int capacity, BusStopManager busStopManager, BusManager busManager)
+    public Bus(BusStopManager busStopManager, BusManager busManager)
     {
         this.id = IDGenerator.getNextId();
         this.logger = Logger.getLogger(this.getClass().getSimpleName() + " id:" + id);
         this.state = State.DEPOT;
-        this.capacity = capacity;
         this.position = 0;
         this.busStopManager = busStopManager;
         this.busManager = busManager;
@@ -265,7 +259,7 @@ public class Bus
      */
     public int getFreePlaces()
     {
-        return capacity - numberOfPassengers;
+        return SimulationModuleConsts.BUS_CAPACITY - numberOfPassengers;
     }
 
     /**

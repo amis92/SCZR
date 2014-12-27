@@ -1,23 +1,30 @@
-﻿package burtis.modules.passengers;
+﻿package burtis.modules.passengers.model;
 
 import java.util.LinkedList;
 import java.util.List;
 
 import burtis.common.constants.PassengersModuleConsts;
-import burtis.modules.passengers.model.Passenger;
 
 /**
  * Representation of transaction between bus stop and bus.
  * 
  * @author Mikołaj Sowiński
  */
-public class Transaction {
-    
-    private static final List<Transaction> transactions = new LinkedList<>();
-    
+public class Transaction 
+{
+    /**
+     * Number of iterations left to the end of transactions.
+     */
     private int iterations;
     
+    /**
+     * Bus involved.
+     */
     private final Bus bus;
+    
+    /**
+     * Bus stop involved.
+     */
     private final BusStop busStop;
 
     private Transaction(int iterations, Bus bus, BusStop busStop) {
@@ -60,7 +67,7 @@ public class Transaction {
         for(Passenger passenger : bus.getPassengers()) {
             if(passenger.getDestination() == busStop) {
                 bus.getPassengers().remove(passenger);
-                Passenger.deletePassenger(passenger);
+                Passenger.killPassenger(passenger);
                 unloadedPassengers++;
             }
         }

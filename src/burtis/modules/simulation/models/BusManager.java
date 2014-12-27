@@ -49,12 +49,12 @@ public class BusManager
      * @param busStopManager reference to BusStopManager
      * @param numberOfBuses number of buses to create
      */
-    public BusManager(BusStopManager busStopManager, int numberOfBuses, int busCapacity) {
+    public BusManager(BusStopManager busStopManager, int numberOfBuses) {
         this.busStopManager = busStopManager;
         
         Bus bus;
         for(int i=0; i<numberOfBuses; i++) {
-            bus = new Bus(busCapacity, busStopManager, this);
+            bus = new Bus(busStopManager, this);
             buses.put(bus.getId(), bus);
         }
     }
@@ -80,7 +80,7 @@ public class BusManager
      */
     public Bus add(int capacity)
     {
-        Bus newBus = new Bus(capacity, busStopManager, this);
+        Bus newBus = new Bus(busStopManager, this);
         buses.put(newBus.getId(), newBus);
         return newBus;
     }

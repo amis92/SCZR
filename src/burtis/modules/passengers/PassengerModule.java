@@ -16,6 +16,8 @@ import burtis.common.mockups.MockupPassenger;
 import burtis.modules.AbstractNetworkModule;
 import burtis.modules.network.ModuleConfig;
 import burtis.modules.network.NetworkConfig;
+import burtis.modules.passengers.model.Bus;
+import burtis.modules.passengers.model.BusStop;
 import burtis.modules.passengers.model.Passenger;
 import burtis.modules.simulation.Simulation;
 
