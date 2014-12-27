@@ -4,20 +4,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import burtis.common.constants.SimulationModuleConsts;
-import burtis.common.events.SimulationEvent;
-import burtis.common.events.Passengers.WaitingPassengersEvent;
 import burtis.common.events.flow.TickEvent;
-import burtis.common.mockups.MockupBus;
 import burtis.modules.AbstractNetworkModule;
-import burtis.modules.network.ModuleConfig;
 import burtis.modules.network.NetworkConfig;
-import burtis.modules.passengers.PassengerModule;
-import burtis.modules.simulation.models.Bus;
 import burtis.modules.simulation.models.BusManager;
-import burtis.modules.simulation.models.BusStop;
 import burtis.modules.simulation.models.BusStopManager;
 import burtis.modules.simulation.models.Depot;
-import burtis.modules.simulation.models.Terminus;
 
 /**
  * Simulation module.
@@ -117,24 +109,7 @@ public class Simulation extends AbstractNetworkModule
         this.currentIteration = currentCycle;
     }
 
-    /**
-     * Sends list of bus mockups ({@link MockupBus} to the
-     * {@link PassengerModule}.
-     */
-    public void sendBusMockups()
-    {
-        actionExecutor
-                .sendBusMockupEvent(currentIteration, busManager.getMockups());
-    }
-
-    /**
-     * Sends CycleCompletedEvent.
-     */
-    public void sendCycleCompleted()
-    {
-        actionExecutor.sendCycleCompletedEvent(currentIteration);
-    }
-
+    
     @Override
     protected void terminate()
     {
@@ -155,5 +130,7 @@ public class Simulation extends AbstractNetworkModule
 
     @Override
     protected void init()
-    {}
+    {
+        actionExecutor.sendModuleReadyEvent();
+    }
 }

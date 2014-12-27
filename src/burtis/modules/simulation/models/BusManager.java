@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import burtis.common.events.Simulator.BusDeparturesEvent;
 import burtis.common.mockups.MockupBus;
 import burtis.modules.simulation.exceptions.NoSuchBusStopException;
 
@@ -36,6 +37,11 @@ public class BusManager
      * Reference to bus stop manager.
      */
     private final BusStopManager busStopManager;
+    
+    /**
+     * List of bus arrivals.
+     */
+    private final List<Integer> busArrivalsList = new ArrayList<>();
 
     /**
      * Constructor.
@@ -48,7 +54,7 @@ public class BusManager
         
         Bus bus;
         for(int i=0; i<numberOfBuses; i++) {
-            bus = new Bus(busCapacity, busStopManager);
+            bus = new Bus(busCapacity, busStopManager, this);
             buses.put(bus.getId(), bus);
         }
     }
@@ -74,7 +80,7 @@ public class BusManager
      */
     public Bus add(int capacity)
     {
-        Bus newBus = new Bus(capacity, busStopManager);
+        Bus newBus = new Bus(capacity, busStopManager, this);
         buses.put(newBus.getId(), newBus);
         return newBus;
     }
@@ -187,4 +193,89 @@ public class BusManager
         return new ArrayList<Integer>(busStopsList);
     }
     
+    /**
+     * Sets response bits in bus objects and triggers response processing
+     * on every bus that requested information.
+     * 
+     * @throws NoSuchBusStopException 
+     */
+    public void processWaitingPassengersQueryResponse(Map<Integer,Boolean> response) throws NoSuchBusStopException {
+        
+        for(Bus bus : buses.values()) {
+            // If the bus was expecting an answer...
+            if(bus.getBusStopQueryRequest() != null) {
+                // set an answer 
+                bus.setQueryResult(response.get(bus.getBusStopQueryRequest().getId()));
+                // and make bus process it
+                bus.processQueryResult();
+            }
+        }
+        
+    }
+    
+    /**
+     * Adds bus to the list of buses that arrives at the bus stop in current iteration.
+     * 
+     * @param bus bus to be added
+     */
+    public void addBusArrival(Bus bus) {
+        
+        busArrivalsList.add(bus.getId());
+        
+    }
+    
+    /**
+     * Returns list of IDs of buses that arrives at the bus stop in the current iteration.
+     * 
+     * List of arrivals is cleared upon retrieval.
+     */
+    public List<Integer> getBusArrivalsList() {
+        
+        List<Integer> listCopy = busArrivalsList;
+        
+        busArrivalsList.clear();    
+        
+        return listCopy;
+    } 
+    
+    /**
+     * Processes bus departures list.
+     * 
+     * @throws NoSuchBusStopException 
+     */
+    public void processBusDeparturesList(List<BusDeparturesEvent.BusDepartureInfo> departureList) throws NoSuchBusStopException {
+        
+        for(BusDeparturesEvent.BusDepartureInfo departureInfo : departureList) {
+            departBus(departureInfo.busId, departureInfo.nexBusStopId);
+        }
+    }
+    
+    /**
+     * Calls {@link Bus#depart(BusStop)} at bus of given id.
+     * 
+     * @param busId id of bus that is to be departed
+     * @param nextBusStopId id of next bus stop that is requested by passengers
+     * 
+     * @throws NoSuchBusStopException 
+     */
+    private void departBus(int busId, int nextBusStopId) throws NoSuchBusStopException {
+        getBusById(busId).depart(busStopManager.getBusStopById(nextBusStopId));
+    }
+    
+    /**
+     * Returns list of @{link {@link MockupBus} objects corresponding to the current state of the buses.
+     * 
+     * @return List<MockupBus> list of bus mockups
+     */
+    public List<MockupBus> getBusMockups() {
+        
+        List<MockupBus> list = new ArrayList<>();
+        
+        for(Bus bus : buses.values()) {
+            list.add(new MockupBus(bus));
+        }
+        
+        return list;
+        
+    }
 }

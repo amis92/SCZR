@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import burtis.common.events.SimulationEvent;
-import burtis.common.events.Simulator.BusDepartEvent;
+import burtis.common.events.Simulator.BusDeparturesEvent;
 
 /**
  * Holds events to be sent at the end of the iteration.
@@ -36,7 +36,7 @@ public class EventBuilder {
         List<SimulationEvent> eventList = new ArrayList<>();
         
         departingBuses.forEach((Bus bus) -> {
-            eventList.add(new BusDepartEvent(sender, bus.getId(), bus.getNextBusStopId()));
+            eventList.add(new BusDeparturesEvent(sender, bus.getId(), bus.getNextBusStopId()));
         });
         departingBuses.clear();
         

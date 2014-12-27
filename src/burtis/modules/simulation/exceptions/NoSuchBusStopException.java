@@ -1,15 +1,14 @@
 package burtis.modules.simulation.exceptions;
 
-import burtis.modules.simulation.models.BusStop;
-
 public class NoSuchBusStopException extends Exception
 {
+    private static final long serialVersionUID = -2590241388530897238L;
     private final String busStopName;
 
-    public NoSuchBusStopException(BusStop busStop)
+    public NoSuchBusStopException(String busStopName)
     {
         super();
-        this.busStopName = busStop.getName();
+        this.busStopName = busStopName;
     }
 
     public String getBusStopName()

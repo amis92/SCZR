@@ -112,7 +112,7 @@ public class Bus
      * This value is null when bus is in RUNNING state.
      */
     private BusStop currentBusStop;
-    
+       
     /**
      * Determines if bus should be moved to the depot after arriving to the
      * terminus.
@@ -144,6 +144,11 @@ public class Bus
     private boolean queryResult;
     
     /**
+     * Reference to the bus manager.
+     */
+    private final BusManager busManager;
+    
+    /**
      * Reference to the bus stop manger.
      */
     private final BusStopManager busStopManager;
@@ -154,7 +159,7 @@ public class Bus
      * @param capacity
      *            bus capacity
      */
-    public Bus(int capacity, BusStopManager busStopManager)
+    public Bus(int capacity, BusStopManager busStopManager, BusManager busManager)
     {
         this.id = IDGenerator.getNextId();
         this.logger = Logger.getLogger(this.getClass().getSimpleName() + " id:" + id);
@@ -162,6 +167,7 @@ public class Bus
         this.capacity = capacity;
         this.position = 0;
         this.busStopManager = busStopManager;
+        this.busManager = busManager;
     }
     
 /* ##############################################
@@ -247,7 +253,7 @@ public class Bus
     {
         return id;
     }
-    
+
 /* ##############################################
  * END OF GETTERS AND SETTERS
  * ########################################### */
@@ -300,7 +306,7 @@ public class Bus
         currentBusStop = nearestBusStop;
         state = State.BUSSTOP;
         position = currentBusStop.getPosition();
-        // TODO: ADD BUS ARRIVAL EVENT
+        
     }
     
     /**

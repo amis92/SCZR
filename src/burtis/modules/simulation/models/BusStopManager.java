@@ -1,6 +1,5 @@
 package burtis.modules.simulation.models;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -88,7 +87,7 @@ public class BusStopManager
             return busStops.get(currentIndex+1);
         }
         else {
-            throw new NoSuchBusStopException(currentBusStop);
+            throw new NoSuchBusStopException(currentBusStop.getName());
         }
     }
     
@@ -101,7 +100,7 @@ public class BusStopManager
      */
     public BusStop busStopExists(BusStop busStop) throws NoSuchBusStopException {
         if(busStops.indexOf(busStop) < 0) {
-            throw new NoSuchBusStopException(busStop);
+            throw new NoSuchBusStopException(busStop.getName());
         }
         else {
             return busStop;
@@ -113,6 +112,22 @@ public class BusStopManager
      */
     public Terminus getTerminus() {
         return (Terminus) busStops.get(busStops.size()-1);
+    }
+    
+    /**
+     * Returns bus stop of given id.
+     * 
+     * Exception is thrown if bus stop does not exists.
+     * 
+     * @throws NoSuchBusStopException 
+     */
+    public BusStop getBusStopById(int id) throws NoSuchBusStopException {
+        for(BusStop busStop : busStops) {
+            if(busStop.getId() == id) {
+                return busStop;
+            }
+        }
+        throw new NoSuchBusStopException(new Integer(id).toString());
     }
     
 }

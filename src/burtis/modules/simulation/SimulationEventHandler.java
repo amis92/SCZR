@@ -6,11 +6,15 @@ import java.util.logging.Logger;
 import burtis.common.events.AbstractEventHandler;
 import burtis.common.events.SimulationEvent;
 import burtis.common.events.Passengers.WaitingPassengersEvent;
-import burtis.common.events.Simulator.BusDepartEvent;
+import burtis.common.events.Simulator.BusDeparturesEvent;
+import burtis.common.events.Simulator.BusMockupsEvent;
 import burtis.common.events.Simulator.BusStopsListRequestEvent;
 import burtis.common.events.Simulator.ChangeReleasingFrequencyEvent;
+import burtis.common.events.flow.ModuleReadyEvent;
 import burtis.common.events.flow.TerminateSimulationEvent;
 import burtis.common.events.flow.TickEvent;
+import burtis.common.mockups.MockupBus;
+import burtis.modules.simulation.exceptions.NoSuchBusStopException;
 import burtis.modules.simulation.exceptions.OutOfSyncException;
 import burtis.modules.simulation.models.Bus;
 import burtis.modules.simulation.models.BusManager;
@@ -45,7 +49,7 @@ class SimulationEventHandler extends AbstractEventHandler
      * Reference to bus stop manager.
      */
     private final BusStopManager busStopManager;
-    
+        
     /**
      * Reference to the depot.
      */
@@ -135,39 +139,79 @@ class SimulationEventHandler extends AbstractEventHandler
             logger.log(Level.SEVERE, ex.getClass().getSimpleName());
             simulation.terminate();
         }
-    }
 
-    @Override
-    public void process(BusDepartEvent event)
-    {
-        logger.log(Level.INFO, "Bus {0} departs from the bus stop.",
-                event.getBusId());
-        Bus bus = busManager.getBusById(event.getBusId());
-        if (bus != null)
-        {
-            bus.depart(BusStop.getBusStopById(event.getNextBusStopId()));
-        }
-        else
-        {
-            logger.log(Level.SEVERE, "Bus {0} does not exist.",
-                    event.getBusId());
-        }
     }
-
+    
+    /**
+     * {@link WaitingPassengersEvent} handler.
+     * 
+     * Takes list containing information on waiting passengers and calls
+     * {@link BusManager#processWaitingPassengersQueryResponse(java.util.Map) }
+     * 
+     * Any exception caught during execution of this handler causes termination of
+     * simulation.
+     * 
+     */
     @Override
     public void process(WaitingPassengersEvent event)
     {
-        logger.log(Level.INFO, "Passenger query result received.");
-        // TODO 
-        //busManager.addQueryResult(event);
+        try
+        {
+            busManager.processWaitingPassengersQueryResponse(event.getBusIdWaitingPassengersList());
+            
+            // This is "interiteration sync point" with PassengerModule.
+            // Iteration will be continued after receiving response from
+            // PassengerModule, namely it will be continued in the 
+            // BusDepartureEvent handler.
+            actionExecutor.sendBusArrivalEvent(busManager.getBusArrivalsList());
+        }
+        catch (Exception ex)
+        {
+            logger.log(Level.SEVERE, ex.getClass().getSimpleName());
+            simulation.terminate();
+        }
         
-        simulation.sendBusMockups();
-        simulation.sendCycleCompleted();
     }
 
+    /**
+     * {@link BusDeparturesEvent} handler.
+     * 
+     * Takes list containing infomarion on bus departures delivered in the event and calls
+     * {@link BusManager#processBusDeparturesList(java.util.List)}.
+     * 
+     * After that sends bus mockups {@link BusMockupsEvent} reflecting current state of the 
+     * fleet and, subsequently, sends {@link ModuleReadyEvent}.
+     * 
+     * Any exception caught during execution of this handler causes termination of
+     * simulation.
+     * 
+     */
+    @Override
+    public void process(BusDeparturesEvent event)
+    {
+        try {
+            busManager.processBusDeparturesList(event.getDeparturesList());
+            
+            actionExecutor.sendBusMockupEvent(simulation.getCurrentCycle(), busManager.getBusMockups());
+            actionExecutor.sendModuleReadyEvent();            
+        }
+        catch (Exception ex) {
+            logger.log(Level.SEVERE, ex.getClass().getSimpleName());
+            simulation.terminate();
+        }
+    }
+
+    
+    /**
+     * {@link ChangeReleasingFrequencyEvent} handler.
+     * 
+     * Calls {@link Terminus#changeReleasingFrequency(long)} with argument
+     * Retrieved from the event.
+     * 
+     */
     @Override
     public void process(ChangeReleasingFrequencyEvent event)
     {
-        Terminus.changeReleasingFrequency(event.getNewReleasingFrequency());
+        terminus.changeReleasingFrequency(event.getNewReleasingFrequency());
     }
 }

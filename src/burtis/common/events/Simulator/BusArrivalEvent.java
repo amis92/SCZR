@@ -1,34 +1,34 @@
 package burtis.common.events.Simulator;
 
+import java.util.List;
+
 import burtis.common.events.AbstractEventHandler;
 import burtis.common.events.SimulationEvent;
 
 /**
- * Event sent when bus arrives at the bus stop.
+ * Event transferring list of buses that arrives at the bus stops
+ * in the current iteration.
  * 
  * @author Mikołaj Sowiński
  */
 public class BusArrivalEvent extends SimulationEvent
 {
     private static final long serialVersionUID = 1L;
-    private final int busId;
-    private final int busStopId;
+    
+    /**
+     * List of buses IDs.
+     */
+    private final List<Integer> busArrivalList;
 
-    public BusArrivalEvent(String sender, int busId, int busStopId)
+    public BusArrivalEvent(String sender, List<Integer> busArrivalList)
     {
         super(sender);
-        this.busId = busId;
-        this.busStopId = busStopId;
+        this.busArrivalList = busArrivalList;
     }
 
-    public int getBusId()
+    public List<Integer> getBusArrivalList()
     {
-        return busId;
-    }
-
-    public int getBusStopId()
-    {
-        return busStopId;
+        return busArrivalList;
     }
 
     public void visit(AbstractEventHandler eventProcessor)

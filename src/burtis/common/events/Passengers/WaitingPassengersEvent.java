@@ -1,5 +1,7 @@
 package burtis.common.events.Passengers;
 
+import java.util.Map;
+
 import burtis.common.events.AbstractEventHandler;
 import burtis.common.events.SimulationEvent;
 
@@ -10,25 +12,18 @@ import burtis.common.events.SimulationEvent;
 public class WaitingPassengersEvent extends SimulationEvent
 {
     private static final long serialVersionUID = 1L;
-    private final int busStopId;
-    private final int waitingPassengers;
-
-    public WaitingPassengersEvent(String sender, int busStopId,
-            int waitingPassengers)
+    
+    private final Map<Integer,Boolean> busIdWaitingPassengersList;
+    
+    public WaitingPassengersEvent(String sender, Map<Integer,Boolean> busIdWaitingPassengersList)
     {
         super(sender);
-        this.busStopId = busStopId;
-        this.waitingPassengers = waitingPassengers;
+        this.busIdWaitingPassengersList = busIdWaitingPassengersList;
     }
 
-    public int getBusStopId()
+    public Map<Integer, Boolean> getBusIdWaitingPassengersList()
     {
-        return busStopId;
-    }
-
-    public int getWaitingPassengers()
-    {
-        return waitingPassengers;
+        return busIdWaitingPassengersList;
     }
 
     public void visit(AbstractEventHandler eventProcessor)

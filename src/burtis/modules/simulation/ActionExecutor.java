@@ -4,6 +4,7 @@ import java.util.List;
 
 import burtis.common.events.EventSender;
 import burtis.common.events.Passengers.WaitingPassengersRequestEvent;
+import burtis.common.events.Simulator.BusArrivalEvent;
 import burtis.common.events.Simulator.BusMockupsEvent;
 import burtis.common.events.Simulator.BusStopsListEvent;
 import burtis.common.mockups.MockupBus;
@@ -29,6 +30,10 @@ public class ActionExecutor extends EventSender
         this.busEventsRecipients = new String[] { this.modules.get(
                 NetworkConfig.PSNGR_MODULE).getModuleName() };
     }
+    
+    public void sendBusArrivalEvent(List<Integer> busArrivalList) {
+        clientModule.send(new BusArrivalEvent(sender, busArrivalList));
+    }
 
     public void sendBusMockupEvent(long iteration, List<MockupBus> busMockups)
     {
@@ -40,9 +45,4 @@ public class ActionExecutor extends EventSender
         clientModule.send(new WaitingPassengersRequestEvent(sender, busStopsIdsList));
     }
 
-    public void sendBusStopsListEvent(String recipient)
-    {
-        clientModule.send(new BusStopsListEvent(sender,
-                new String[] { recipient }, BusStop.getBusStopsList()));
-    }
 }
