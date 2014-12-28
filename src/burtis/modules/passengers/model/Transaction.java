@@ -4,6 +4,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import burtis.common.constants.PassengersModuleConsts;
+import burtis.common.constants.SimulationModuleConsts;
+import burtis.modules.passengers.Managers;
 
 /**
  * Representation of transaction between bus stop and bus.
@@ -26,13 +28,51 @@ public class Transaction
      * Bus stop involved.
      */
     private final BusStop busStop;
+    
+    /**
+     * Reference to the managers.
+     */
+    private Managers managers;
 
-    private Transaction(int iterations, Bus bus, BusStop busStop) {
-        this.iterations = iterations;
+    /**
+     * Constructor.
+     * 
+     * Calculates transaction time summing passengers that are to be
+     * loaded and unloaded and multiplying by constant 
+     * {@link PassengersModuleConsts#ITER_PER_PASSENGER}.
+     * 
+     * @param bus bus involved with the transaction
+     * @param busStop bus stop involved with the transaction
+     */
+    public Transaction(Bus bus, BusStop busStop, Managers managers) 
+    {
         this.bus = bus;
         this.busStop = busStop;
+        this.managers = managers;
+        
+        int unloadedPassengers = 0;
+        for(Passenger passenger : bus.getPassengers()) {
+            if(passenger.getDestination() == busStop) {
+                managers.getPassengerManager().killPassenger(passenger);
+                bus.getPassengers().remove(passenger);
+                unloadedPassengers++;
+            }
+        }
+        
+        int loadedPassengers = 0;
+        while(bus.getFreePlaces() != 0) {
+            bus.getPassengers().add(busStop.getNextPassenger());
+            loadedPassengers++;            
+        }
+        
+        this.iterations = (unloadedPassengers + loadedPassengers)*
+                Math.round(PassengersModuleConsts.ITER_PER_PASSENGER);
     }
 
+/* ##############################################
+ * GETTERS AND SETTERS
+ * ########################################### */
+    
     public Bus getBus() {
         return bus;
     }
@@ -41,82 +81,24 @@ public class Transaction
         return busStop;
     }
     
+/* ##############################################
+ * END OF GETTERS AND SETTERS
+ * ########################################### */
+    
+    /**
+     * Decreases number of iterations left to the end of transaction.
+     */
     public void nextIteration() {
         iterations--;
     }
     
+    /**
+     * Returns true if transaction is finished.
+     * 
+     * @return status of the transaction
+     */
     public boolean isFinished() {
         return iterations <= 0;
     }
-    
-    /**
-     * Creates transaction involving given bus and bus stop.
-     * Passengers that are traveling to the given bus stop are removed and new
-     * passengers are placed in the bus. It happens at the moment of creation
-     * of transaction. Transaction length is computed at the basis of number of
-     * passengers being unloaded and loaded.
-     * @param bus bus being taking part in transaction
-     * @param busStop bus stop taking part in transaction
-     */
-    public static void newTransaction(Bus bus, BusStop busStop) {
-        
-        int transactionTime = 0;
-        
-        // Passengers unloading
-        int unloadedPassengers = 0;
-        for(Passenger passenger : bus.getPassengers()) {
-            if(passenger.getDestination() == busStop) {
-                bus.getPassengers().remove(passenger);
-                Passenger.killPassenger(passenger);
-                unloadedPassengers++;
-            }
-        }
-        
-        // Passengers loading
-        int loadedPassengers = 0;
-        while(bus.getFreePlaces() != 0) {
-            bus.getPassengers().add(busStop.getNextPassenger());
-            loadedPassengers++;            
-        }
-        
-        transactionTime = (unloadedPassengers + loadedPassengers)*
-                Math.round(PassengersModuleConsts.ITER_PER_PASSENGER);
-        transactions.add(new Transaction(transactionTime, bus, busStop));     
-
-    }
-    
-    /**
-     * Ticks all transactions, departs buses and removes finished transactions.
-     */
-    public static void tickTransactions() {
-        
-        for(Transaction transaction : transactions) {
-            transaction.nextIteration();
-            
-            if(transaction.isFinished()) {
-                transaction.getBus().depart();
-                transaction.getBusStop().departBus();
-            }
-        }
-        
-        Transaction.removeFinishedTransactions(transactions);
-        
-    }
-    
-    /**
-     * Removes finished transactions.
-     * @param transactions list of transactions
-     */
-    public static void removeFinishedTransactions(final List<Transaction> transactions) {
-        
-        for(Transaction transaction : transactions) {
-            if(transaction.isFinished()) {
-                transactions.remove(transaction);
-            }
-        }
-        
-    }
-    
-    
-    
+           
 }

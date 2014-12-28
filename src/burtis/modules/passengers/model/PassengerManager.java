@@ -40,7 +40,7 @@ public class PassengerManager
     /**
      * Reference to the managers container.
      */
-    private final Managers managers;
+    private Managers managers;
     
     /**
      * Constructor.

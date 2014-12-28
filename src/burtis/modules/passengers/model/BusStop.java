@@ -1,15 +1,9 @@
 ﻿package burtis.modules.passengers.model;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Queue;
-import java.util.Random;
-import java.util.logging.Level;
 
-import burtis.common.events.Simulator.BusStopsListEvent;
 import burtis.modules.passengers.Managers;
-import burtis.modules.passengers.PassengerModule;
 
 /**
  * Representation of bus stop in passengers module.
@@ -122,7 +116,7 @@ public class BusStop
         if(busAtBusStop == null) {
             busAtBusStop = busQueue.poll();
             if(busAtBusStop != null) {
-                managers.getTransactionManager().newTransaction(busAtBusStop, this);
+                managers.getTransactionManager().addTransaction(new Transaction(busAtBusStop, this, managers));
             }
         }
     }
