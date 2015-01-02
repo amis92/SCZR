@@ -1,4 +1,4 @@
-package burtis.modules.gui.view;
+package burtis.modules.gui.simpleview;
 
 import java.awt.BorderLayout;
 import java.util.ArrayList;
@@ -10,7 +10,7 @@ import javax.swing.JTable;
 
 import burtis.common.mockups.MockupPassenger;
 
-class BusStopInfoPanel extends JPanel
+class BusStopDataPanel extends JPanel
 {
     private static final long serialVersionUID = 1L;
     private JTable table;
@@ -20,7 +20,7 @@ class BusStopInfoPanel extends JPanel
     String[] columnNames = { "Id", "Depot", "Destination" };
     Object[][] data = new Object[30][3];
 
-    public BusStopInfoPanel()
+    public BusStopDataPanel()
     {
         setLayout(new BorderLayout());
         add(title, BorderLayout.PAGE_START);

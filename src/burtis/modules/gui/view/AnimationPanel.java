@@ -64,7 +64,7 @@ class AnimationPanel extends JPanel
         try
         {
             if (tmp != null)
-                bQueue.put(new ShowBusEvent(tmp.getId()));
+                bQueue.put(new ShowBusEvent(tmp.getId(), tmp.getCurrentBusStop()));
         }
         catch (InterruptedException e)
         {
@@ -82,9 +82,9 @@ class AnimationPanel extends JPanel
         super.paintComponent(g);
         
         for(Location l : locationArray) {
-        	    
-        	g.setColor(Color.BLUE);                            // Jeśli autobus nie zatrzymał się na przystanku ma kolor niebieski
-        	if(l.getStop() == true) g.setColor(Color.RED);     // Jeśli nie ma kolor czerwony
+        	   
+        	g.setColor(Color.BLUE);                                    // Jeśli autobus nie zatrzymał się na przystanku ma kolor niebieski
+        	if(l.getCurrentBusStop() != "") g.setColor(Color.RED);     // Jeśli nie ma kolor czerwony
         	
         	g.fillRect(l.getX(),l.getY(),squareW,squareH);
         	g.setColor(Color.BLACK);
@@ -97,7 +97,7 @@ class AnimationPanel extends JPanel
     public void addBus(MockupBus tmp) {
         System.out.println(tmp.getLengthPassed());
     	locationArray.add(new Location(tmp.getLengthPassed() * (getParent().getWidth() / 100), 
-    	        squareY, tmp.getId(), false));
+    	        squareY, tmp.getId(), tmp.getCurrentBusStop()));
     	squareY += 50;
     }
     
@@ -111,25 +111,24 @@ class AnimationPanel extends JPanel
     	private int x;
     	private int y;
     	private Integer Id;
-    	private Boolean stop;
+    	private String currentBusStop = "";
     	
-    	Location(int x, int y, Integer Id, Boolean stop) {
+    	Location(int x, int y, Integer Id, String currentBusStop) {
     		this.x = x;
     		this.y = y;
     		this.Id = Id;
-    		this.stop = stop;
+    		this.currentBusStop = currentBusStop;
     	}
     	
-    	public int getX() { return x;}
+    	public String getCurrentBusStop()
+        {
+            return currentBusStop;
+        }
+
+        public int getX() { return x;}
     	public int getY() { return y;}
     	public Integer getId() { return Id;}
     	
-    	// Jeśli autobus zatrzymał się na przystanku ma kolor czerwony, jeśli nie - niebieski
-    	public Boolean getStop() { 
-    	    if(stop == true)
-    	        return true;
-    	    else
-    	        return false;
-    	}
     }
 }
+

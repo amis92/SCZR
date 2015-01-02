@@ -16,6 +16,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 import burtis.common.mockups.Mockup;
 import burtis.common.mockups.MockupBus;
@@ -26,7 +28,7 @@ import burtis.modules.gui.events.ProgramEvent;
 import burtis.modules.gui.events.StepEvent;
 import burtis.modules.gui.events.StopEvent;
 
-public class View
+public class View extends AbstractView
 {
     private final static Logger logger = Logger.getLogger(View.class.getName());
     private final AnimationPanel animationPanel;
@@ -37,12 +39,12 @@ public class View
     private final LinkedBlockingQueue<ProgramEvent> bQueue;
     
     /**
-     * Panel informacyjny z przyciskami aktywującymi wyświetlenei informacji o przystanku
+     * Panel informacyjny z przyciskami aktywującymi wyświetlenie informacji o przystanku
      */
     private final BusStopInfoPanel busStopInfoPanel = new BusStopInfoPanel();
     
     /**
-     * List Mockupów z przystankami
+     * Lista Mockupów z przystankami
      */
     private List<MockupBusStop> busStops;
     
@@ -64,9 +66,9 @@ public class View
     public View(LinkedBlockingQueue<ProgramEvent> bQueue,
             WindowListener exitListener)
     {
-        this.bQueue = bQueue;
-        //JFrame.setDefaultLookAndFeelDecorated(true);
         frame = new JFrame();
+        this.bQueue = bQueue;
+        
         if (exitListener == null)
         {
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -77,9 +79,7 @@ public class View
             frame.addWindowListener(exitListener);
         }
         frame.setLayout(new BorderLayout());
-        frame.setTitle("burtis");
-        frame.setVisible(true);
-        frame.setSize(1400, 400);
+
         connectButton.addActionListener(e -> putInQueue(new ConnectEvent()));
         stopButton.addActionListener(e -> putInQueue(new StopEvent()));
         goButton.addActionListener(e -> putInQueue(new GoEvent()));
@@ -101,6 +101,21 @@ public class View
         scrollPane.getViewport().add(mainPanel);
         frame.add(splitPaneHorizontal, BorderLayout.CENTER);
         frame.add(toolbar, BorderLayout.PAGE_START);
+        
+        
+        try
+        {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        }
+        catch (ClassNotFoundException | InstantiationException
+                | IllegalAccessException | UnsupportedLookAndFeelException e)
+        {
+            e.printStackTrace();
+        }
+        
+        frame.setTitle("burtis");
+        frame.setVisible(true);
+        frame.setSize(800, 600);
     }
 
     /**
@@ -142,7 +157,7 @@ public class View
         {
             if (bus.getId() == i)
             {
-                busStopInfoPanel.setCurrentBus(i, bus.getPassengerList());
+                busStopInfoPanel.setCurrentBus(i, bus.getCurrentBusStop(), bus.getPassengerList());
                 return;
             }
         }

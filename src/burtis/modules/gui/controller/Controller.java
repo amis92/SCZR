@@ -16,13 +16,14 @@ import burtis.modules.gui.events.ShowBusEvent;
 import burtis.modules.gui.events.ShowBusStopEvent;
 import burtis.modules.gui.events.StepEvent;
 import burtis.modules.gui.events.StopEvent;
+import burtis.modules.gui.view.AbstractView;
 import burtis.modules.gui.view.View;
 
 public class Controller
 {
     private final static Logger logger = Logger.getLogger(Controller.class
             .getName());
-    private final View view;
+    private final AbstractView view;
     /** Kolejka dla obiektow ProgramEvent. */
     private final BlockingQueue<ProgramEvent> blockingQueue;
     /** odwzorowanie obiektow ProgramEvent na obiekty ProgramAction */
@@ -39,7 +40,7 @@ public class Controller
      * @param blockingQueue
      *            kolejka do otrzymywania komunikatow z Widoku
      */
-    public Controller(View view, BlockingQueue<ProgramEvent> blockingQueue,
+    public Controller(AbstractView view, BlockingQueue<ProgramEvent> blockingQueue,
             ActionExecutor actionExecutor)
     {
         this.actionExecutor = actionExecutor;
@@ -54,11 +55,12 @@ public class Controller
      */
     private void fillEventActionMap()
     {
-        eventActionMap.put(GoEvent.class, e -> actionExecutor.sendStartEvent());
+        eventActionMap.put(GoEvent.class, 
+                e -> actionExecutor.sendStartEvent());
         eventActionMap.put(StepEvent.class,
                 e -> actionExecutor.sendOneStepEvent());
-        eventActionMap
-                .put(StopEvent.class, e -> actionExecutor.sendStopEvent());
+        eventActionMap.put(StopEvent.class, 
+                e -> actionExecutor.sendStopEvent());
         eventActionMap.put(ConnectEvent.class, e ->
         {
             try
@@ -67,7 +69,6 @@ public class Controller
             }
             catch (Exception e1)
             {
-                // TODO Auto-generated catch block
                 e1.printStackTrace();
             }
         });
