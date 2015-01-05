@@ -100,7 +100,7 @@ class SimulationEventHandler extends AbstractEventHandler
     @Override
     public void process(TerminateSimulationEvent event)
     {
-        simulation.shutdown();
+        simulation.terminate();
     }
 
     /**

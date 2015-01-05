@@ -1,10 +1,6 @@
 ﻿package burtis.modules.passengers.model;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import burtis.common.constants.PassengersModuleConsts;
-import burtis.common.constants.SimulationModuleConsts;
 import burtis.modules.passengers.Managers;
 
 /**

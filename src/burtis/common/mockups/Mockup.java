@@ -52,24 +52,4 @@ public final class Mockup implements Serializable
     {
         return currentTime;
     }
-
-    public void print()
-    {
-        if (schedule.size() > 0)
-        {
-            System.out.println("Bus Mockups:\n===========");
-            for (MockupBus busMockup : schedule)
-            {
-                busMockup.print();
-            }
-        }
-        if (busStops.size() > 0)
-        {
-            System.out.println("Bus Stops:\n===========");
-            for (MockupBusStop busStopMockup : busStops)
-            {
-                busStopMockup.print();
-            }
-        }
-    }
 }

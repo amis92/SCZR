@@ -1,6 +1,6 @@
 package burtis.common.events.Simulator;
 
-import java.util.List;
+import java.util.Map;
 
 import burtis.common.events.AbstractEventHandler;
 import burtis.common.events.SimulationEvent;
@@ -18,15 +18,15 @@ public class BusArrivalEvent extends SimulationEvent
     /**
      * List of buses IDs.
      */
-    private final List<Integer> busArrivalList;
+    private final Map<Integer,Integer> busArrivalList;
 
-    public BusArrivalEvent(String sender, List<Integer> busArrivalList)
+    public BusArrivalEvent(String sender, Map<Integer,Integer> busArrivalList)
     {
         super(sender);
         this.busArrivalList = busArrivalList;
     }
 
-    public List<Integer> getBusArrivalList()
+    public Map<Integer,Integer> getBusArrivalList()
     {
         return busArrivalList;
     }

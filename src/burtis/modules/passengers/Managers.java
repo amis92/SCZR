@@ -29,26 +29,6 @@ public class Managers
     private PassengerManager passengerManager;
 
     /**
-     * Constructor.
-     * 
-     * @param busStopManager
-     * @param transactionManager
-     * @param busManager
-     * @param passengerManager
-     */
-    public Managers(BusStopManager busStopManager,
-            TransactionManager transactionManager, 
-            BusManager busManager,
-            PassengerManager passengerManager)
-    {
-        super();
-        this.busStopManager = busStopManager;
-        this.transactionManager = transactionManager;
-        this.busManager = busManager;
-        this.passengerManager = passengerManager;
-    }
-
-    /**
      * @return the busStopManager
      */
     public BusStopManager getBusStopManager()

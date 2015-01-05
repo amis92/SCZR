@@ -300,7 +300,7 @@ public class Bus
         currentBusStop = nearestBusStop;
         state = State.BUSSTOP;
         position = currentBusStop.getPosition();
-        
+        busManager.addBusArrival(this, currentBusStop);
     }
     
     /**

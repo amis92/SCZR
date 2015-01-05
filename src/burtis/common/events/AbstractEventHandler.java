@@ -1,7 +1,6 @@
 package burtis.common.events;
 
 import burtis.common.events.Passengers.PassengerGenerationRateConfigurationEvent;
-import burtis.common.events.Passengers.PassengerInfoRequestEvent;
 import burtis.common.events.Passengers.WaitingPassengersEvent;
 import burtis.common.events.Passengers.WaitingPassengersRequestEvent;
 import burtis.common.events.Simulator.BusArrivalEvent;
@@ -20,7 +19,6 @@ import burtis.common.events.flow.PauseSimulationEvent;
 import burtis.common.events.flow.StartSimulationEvent;
 import burtis.common.events.flow.TerminateSimulationEvent;
 import burtis.common.events.flow.TickEvent;
-import burtis.modules.simulation.exceptions.OutOfSyncException;
 
 /**
  * Provides default processing abilities for all events. Inheriting classes
@@ -48,11 +46,6 @@ public abstract class AbstractEventHandler
     }
     
     public void process(ModuleReadyEvent event)
-    {
-        defaultHandle(event);
-    }
-    
-    public void process(PassengerInfoRequestEvent event)
     {
         defaultHandle(event);
     }

@@ -1,6 +1,7 @@
 package burtis.modules.simulation;
 
 import java.util.List;
+import java.util.Map;
 
 import burtis.common.events.EventSender;
 import burtis.common.events.Passengers.WaitingPassengersRequestEvent;
@@ -21,7 +22,6 @@ import burtis.modules.simulation.models.BusStop;
 public class ActionExecutor extends EventSender
 {
     
-    
     private final String[] busEventsRecipients;
 
     public ActionExecutor(ClientModule clientModule, NetworkConfig netConfig)
@@ -31,7 +31,7 @@ public class ActionExecutor extends EventSender
                 NetworkConfig.PSNGR_MODULE).getModuleName() };
     }
     
-    public void sendBusArrivalEvent(List<Integer> busArrivalList) {
+    public void sendBusArrivalEvent(Map<Integer,Integer> busArrivalList) {
         clientModule.send(new BusArrivalEvent(sender, busArrivalList));
     }
 

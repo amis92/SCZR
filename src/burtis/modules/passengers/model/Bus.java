@@ -2,12 +2,9 @@
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 
 import burtis.common.constants.SimulationModuleConsts;
-import burtis.modules.passengers.EventBuilder;
 import burtis.modules.passengers.Managers;
-import burtis.modules.passengers.PassengerModule;
 
 /**
  * Representation of bus in passengers module.

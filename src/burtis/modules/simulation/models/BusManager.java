@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import burtis.common.events.Simulator.BusDepartureInfo;
 import burtis.common.events.Simulator.BusDeparturesEvent;
 import burtis.common.mockups.MockupBus;
 import burtis.modules.simulation.exceptions.NoSuchBusStopException;
@@ -39,9 +40,11 @@ public class BusManager
     private final BusStopManager busStopManager;
     
     /**
-     * List of bus arrivals.
+     * Map of bus arrivals.
+     * 
+     * Key is bus id, value bus stop id.
      */
-    private final List<Integer> busArrivalsList = new ArrayList<>();
+    private final Map<Integer,Integer> busArrivalsList = new HashMap<>();
 
     /**
      * Constructor.
@@ -62,8 +65,7 @@ public class BusManager
     /**
      * Returns bus of given id.
      * 
-     * @param busId
-     *            bus id
+     * @param busId bus id
      * @return Bus
      */
     public Bus getBusById(int busId)
@@ -218,20 +220,21 @@ public class BusManager
      * 
      * @param bus bus to be added
      */
-    public void addBusArrival(Bus bus) {
+    public void addBusArrival(Bus bus, BusStop busStop) {
         
-        busArrivalsList.add(bus.getId());
+        busArrivalsList.put(bus.getId(), busStop.getId());
         
     }
     
     /**
-     * Returns list of IDs of buses that arrives at the bus stop in the current iteration.
+     * Returns map of IDs of buses that arrives at the bus stop in the current iteration together with corresponding
+     * bus stops ids.
      * 
      * List of arrivals is cleared upon retrieval.
      */
-    public List<Integer> getBusArrivalsList() {
+    public Map<Integer, Integer> getBusArrivalsList() {
         
-        List<Integer> listCopy = busArrivalsList;
+        Map<Integer, Integer> listCopy = busArrivalsList;
         
         busArrivalsList.clear();    
         
@@ -243,9 +246,9 @@ public class BusManager
      * 
      * @throws NoSuchBusStopException 
      */
-    public void processBusDeparturesList(List<BusDeparturesEvent.BusDepartureInfo> departureList) throws NoSuchBusStopException {
+    public void processBusDeparturesList(List<BusDepartureInfo> departureList) throws NoSuchBusStopException {
         
-        for(BusDeparturesEvent.BusDepartureInfo departureInfo : departureList) {
+        for(BusDepartureInfo departureInfo : departureList) {
             departBus(departureInfo.busId, departureInfo.nexBusStopId);
         }
     }

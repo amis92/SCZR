@@ -1,7 +1,9 @@
 package burtis.modules.passengers.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Map.Entry;
 
@@ -36,7 +38,7 @@ public class BusStopManager
     /**
      * Constructor.
      */
-    BusStopManager(Managers managers) {
+    public BusStopManager(Managers managers) {
         
         this.managers = managers;
         managers.setBusStopManager(this);
@@ -50,7 +52,15 @@ public class BusStopManager
         }
         
     }
-    
+
+    /**
+     * @return the busStops
+     */
+    public List<BusStop> getBusStops()
+    {
+        return busStops;
+    }
+
     /**
      * Returns bus stop of specified id.
      * 
@@ -99,6 +109,23 @@ public class BusStopManager
      */
     public int waitingPassengers(int busStopId) throws NoSuchBusStopException {
         return getBusStopById(busStopId).waitingPassengers();
+    }
+    
+    /**
+     * Generates map where key is bus stop id and value boolean that is true if there are any passengers
+     * waiting or false otherwise.
+     * 
+     * @return map of bus stops with waiting passengers
+     */
+    public Map<Integer, Boolean> getWaitingPassengersMap() 
+    {
+        Map<Integer, Boolean> map = new HashMap<>();
+                
+        for(BusStop busStop : busStops) {
+            map.put(busStop.getId(), busStop.waitingPassengers() != 0);
+        }
+        
+        return map;
     }
  
 }

@@ -23,6 +23,11 @@ public class TransactionManager
      */
     private final Managers managers;
     
+    /**
+     * Constructor.
+     * 
+     * @param managers
+     */
     public TransactionManager(Managers managers) {
         this.managers = managers;
         this.managers.setTransactionManager(this);  

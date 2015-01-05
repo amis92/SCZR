@@ -13,16 +13,7 @@ import burtis.common.events.SimulationEvent;
 public class BusDeparturesEvent extends SimulationEvent
 {
     private static final long serialVersionUID = 1L;
-    
-    public class BusDepartureInfo {
-        public final int busId; 
-        public final int nexBusStopId;
-        BusDepartureInfo(int busId, int nextBusStopId) {
-            this.busId = busId;
-            this.nexBusStopId = nextBusStopId;
-        }
-    }
-    
+        
     private final List<BusDepartureInfo> departuresList; 
 
     public BusDeparturesEvent(String sender, List<BusDepartureInfo> departuresList) 
