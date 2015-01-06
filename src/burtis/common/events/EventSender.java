@@ -61,9 +61,9 @@ public class EventSender
         logger.info("Sent DoStep");
     }
 
-    public void sendModuleReadyEvent()
+    public void sendModuleReadyEvent(long iteration)
     {
-        clientModule.send(new ModuleReadyEvent(sender, flowRecipients));
+        clientModule.send(new ModuleReadyEvent(sender, flowRecipients, iteration));
         logger.info("Sent ModuleReadyEvent");
     }
 

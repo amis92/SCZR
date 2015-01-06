@@ -8,17 +8,12 @@ import burtis.common.events.SimulationEvent;
 import burtis.common.events.Passengers.WaitingPassengersEvent;
 import burtis.common.events.Simulator.BusDeparturesEvent;
 import burtis.common.events.Simulator.BusMockupsEvent;
-import burtis.common.events.Simulator.BusStopsListRequestEvent;
 import burtis.common.events.Simulator.ChangeReleasingFrequencyEvent;
 import burtis.common.events.flow.ModuleReadyEvent;
 import burtis.common.events.flow.TerminateSimulationEvent;
 import burtis.common.events.flow.TickEvent;
-import burtis.common.mockups.MockupBus;
-import burtis.modules.simulation.exceptions.NoSuchBusStopException;
 import burtis.modules.simulation.exceptions.OutOfSyncException;
-import burtis.modules.simulation.models.Bus;
 import burtis.modules.simulation.models.BusManager;
-import burtis.modules.simulation.models.BusStop;
 import burtis.modules.simulation.models.BusStopManager;
 import burtis.modules.simulation.models.Depot;
 import burtis.modules.simulation.models.Terminus;
@@ -100,7 +95,7 @@ class SimulationEventHandler extends AbstractEventHandler
     @Override
     public void process(TerminateSimulationEvent event)
     {
-        simulation.terminate();
+        simulation.shutdown();
     }
 
     /**
@@ -115,15 +110,17 @@ class SimulationEventHandler extends AbstractEventHandler
     @Override
     public void process(TickEvent event)
     {
+        logger.info("TickEvent, iteration " + event.iteration());
+        
         long iteration = event.iteration();
         try {
             // Sync check
-            if(iteration != simulation.getCurrentCycle()+1) {
-                throw new OutOfSyncException("Simulation");
-            }
-            else {
+            //if(iteration != simulation.getCurrentCycle()+1) {
+            //    throw new OutOfSyncException("Simulation");
+            //}
+            //else {
                 simulation.setCurrentCycle(iteration);
-            }
+            //}
             
             terminus.departBus();
 
@@ -137,7 +134,7 @@ class SimulationEventHandler extends AbstractEventHandler
         }
         catch (Exception ex) {
             logger.log(Level.SEVERE, ex.getClass().getSimpleName());
-            simulation.terminate();
+            simulation.shutdown();
         }
 
     }
@@ -155,6 +152,8 @@ class SimulationEventHandler extends AbstractEventHandler
     @Override
     public void process(WaitingPassengersEvent event)
     {
+        logger.info("WaitingPassengersEvent");
+        
         try
         {
             busManager.processWaitingPassengersQueryResponse(event.getBusIdWaitingPassengersList());
@@ -168,7 +167,7 @@ class SimulationEventHandler extends AbstractEventHandler
         catch (Exception ex)
         {
             logger.log(Level.SEVERE, ex.getClass().getSimpleName());
-            simulation.terminate();
+            simulation.shutdown();
         }
         
     }
@@ -189,15 +188,17 @@ class SimulationEventHandler extends AbstractEventHandler
     @Override
     public void process(BusDeparturesEvent event)
     {
+        logger.info("BusDeparturesEvent");
+        
         try {
             busManager.processBusDeparturesList(event.getDeparturesList());
             
             actionExecutor.sendBusMockupEvent(simulation.getCurrentCycle(), busManager.getBusMockups());
-            actionExecutor.sendModuleReadyEvent();            
+            actionExecutor.sendModuleReadyEvent(simulation.getCurrentCycle());            
         }
         catch (Exception ex) {
             logger.log(Level.SEVERE, ex.getClass().getSimpleName());
-            simulation.terminate();
+            simulation.shutdown();
         }
     }
 
@@ -212,6 +213,7 @@ class SimulationEventHandler extends AbstractEventHandler
     @Override
     public void process(ChangeReleasingFrequencyEvent event)
     {
+        logger.info("ChangeReleasingFrequencyEvent, NRF=" + event.getNewReleasingFrequency());
         terminus.changeReleasingFrequency(event.getNewReleasingFrequency());
     }
 }

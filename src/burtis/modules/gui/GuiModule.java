@@ -126,7 +126,7 @@ public class GuiModule extends AbstractNetworkModule
         {
             logger.info("Received MainMockup.");
             view.refresh(event.getMainMockup());
-            send(new ModuleReadyEvent(moduleConfig.getModuleName()));
+            send(new ModuleReadyEvent(moduleConfig.getModuleName(), event.getMainMockup().getCurrentTime()));
         }
 
         @Override

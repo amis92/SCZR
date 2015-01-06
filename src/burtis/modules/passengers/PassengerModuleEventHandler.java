@@ -76,7 +76,7 @@ public class PassengerModuleEventHandler extends AbstractEventHandler
     @Override
     public void process(TerminateSimulationEvent event)
     {
-        passengerModule.terminate();
+        passengerModule.shutdown();
     }
 
     /**
@@ -88,6 +88,9 @@ public class PassengerModuleEventHandler extends AbstractEventHandler
     @Override
     public void process(PassengerGenerationRateConfigurationEvent event)
     {
+        logger.info("PassengerGenerationRateConfigurationEvent, "
+                + "GCL=" + event.getGenerationCycleLength() 
+                + " PPC=" + event.getPassengersPerCycle());
         managers.getPassengerManager().setGenerationCycleLength(event.getGenerationCycleLength());
         managers.getPassengerManager().setPassengersPerCycle(event.getPassengersPerCycle());
     }
@@ -102,6 +105,7 @@ public class PassengerModuleEventHandler extends AbstractEventHandler
     @Override
     public void process(WaitingPassengersRequestEvent event)
     {
+        logger.info("WaitingPassengersRequestEvent");
         actionExecutor.sendWaitingPassengersRequestResponse(managers.getBusStopManager().getWaitingPassengersMap());
     }
 
@@ -112,7 +116,8 @@ public class PassengerModuleEventHandler extends AbstractEventHandler
      */
     @Override
     public void process(TickEvent event)
-    {
+    {   
+        logger.info("TickEvent, iteration " + event.iteration());
         managers.getPassengerManager().generatePassengers();
         managers.getTransactionManager().tickTransactions();
         passengerModule.setCurrentCycle(event.iteration());
@@ -129,6 +134,8 @@ public class PassengerModuleEventHandler extends AbstractEventHandler
     @Override
     public void process(BusArrivalEvent event)
     {
+        logger.info("BusArrivalEvent, listSize=" + event.getBusArrivalList().size());
+        
         // Remove finished transactions
         managers.getTransactionManager().removeFinishedTransactions();
 
@@ -160,7 +167,8 @@ public class PassengerModuleEventHandler extends AbstractEventHandler
     @Override
     public void process(BusMockupsEvent event)
     {
+        logger.info("BusMockupEvent");
         actionExecutor.sendMainMockupEvent(passengerModule.buildMockup(event.getBusMockups()));
-        actionExecutor.sendModuleReadyEvent();
+        actionExecutor.sendModuleReadyEvent(passengerModule.getCurrentCycle());
     }
 }

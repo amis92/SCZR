@@ -12,7 +12,7 @@ import burtis.modules.network.ModuleConfig;
 import burtis.modules.network.NetworkConfig;
 
 /**
- * Synchronisation source for all time-dependent modules along with a module
+ * Synchronization source for all time-dependent modules along with a module
  * failure controller.
  * 
  * Sends {@link TickEvent} according to the internal state.
@@ -22,11 +22,12 @@ import burtis.modules.network.NetworkConfig;
  */
 public class SynchronizationModule extends AbstractNetworkModule
 {
-    private static final long INITIAL_PERIOD = 1000L;
+    private final long INITIAL_PERIOD = 1000L;
+    
     /**
-     * Synchronisation module logger.
+     * Synchronization module logger.
      */
-    private static final Logger logger = Logger
+    private final static Logger logger = Logger
             .getLogger(SynchronizationModule.class.getName());
 
     /**
@@ -46,7 +47,7 @@ public class SynchronizationModule extends AbstractNetworkModule
     }
 
     /**
-     * Creates list of modules from default network config, ignoring 'itself',
+     * Creates list of modules from default network configuration, ignoring 'itself',
      * and provides it to {@link WatchdogService}'s constructor.
      * 
      * @param syncConfig
@@ -99,16 +100,27 @@ public class SynchronizationModule extends AbstractNetworkModule
     }
 
     private volatile boolean isRunning = false;
+    
     /**
      * Number of iterations.
      */
     private final AtomicLong iteration = new AtomicLong(0);
+    
     /**
      * Ticking service.
      */
     private final TickService tickService;
+    
+    /**
+     * Watchdog service.
+     */
     private final WatchdogService watchdogService;
 
+    /**
+     * Constructor.
+     * 
+     * @param config
+     */
     public SynchronizationModule(ModuleConfig config)
     {
         super(config);
@@ -118,6 +130,12 @@ public class SynchronizationModule extends AbstractNetworkModule
                 iteration::incrementAndGet, this::send, watchdogService);
     }
 
+    /**
+     * Makes one step of simulation.
+     * 
+     * If simulation was running automatically it is paused and then one step
+     * is made.
+     */
     public void doStep()
     {
         doPause();
@@ -125,11 +143,19 @@ public class SynchronizationModule extends AbstractNetworkModule
         tickService.tickOnce();
     }
 
+    /**
+     * Getter of iteration count (simulation cycle).
+     * 
+     * @return simulation cycle
+     */
     public long getIteration()
     {
         return iteration.get();
     }
 
+    /**
+     * Pauses simulation.
+     */
     public void pauseSimulation()
     {
         logger.info("Pausing simulation.");
@@ -143,6 +169,9 @@ public class SynchronizationModule extends AbstractNetworkModule
         }
     }
 
+    /**
+     * Starts simulation.
+     */
     public void startSimulation()
     {
         logger.info("Starting simulation.");
@@ -157,6 +186,9 @@ public class SynchronizationModule extends AbstractNetworkModule
         }
     }
 
+    /**
+     * Executes pausing simulation.
+     */
     private void doPause()
     {
         isRunning = false;
@@ -168,11 +200,19 @@ public class SynchronizationModule extends AbstractNetworkModule
     {
     }
 
+    /**
+     * Increases iteration count.
+     * @return new iteration number
+     */
     protected long nextIteration()
     {
         return iteration.getAndIncrement();
     }
 
+    /**
+     * Stops {@link TickService}, {@link WatchdogService} and sends 
+     * {@link TerminateSimulationEvent} to shutdown other modules.
+     */
     @Override
     protected void terminate()
     {

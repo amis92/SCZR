@@ -130,6 +130,6 @@ public class Simulation extends AbstractNetworkModule
     @Override
     protected void init()
     {
-        actionExecutor.sendModuleReadyEvent();
+        actionExecutor.sendModuleReadyEvent(currentIteration);
     }
 }

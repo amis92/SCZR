@@ -31,18 +31,14 @@ public class PassengerModule extends AbstractNetworkModule
     /**
      * Logger.
      */
-    private Logger logger;
+    private Logger logger = Logger
+            .getLogger(PassengerModule.class.getSimpleName());
         
     /**
      * Managers.
      */
     private final Managers managers = new Managers();
-    
-    /**
-     * Passenger module's event handler.
-     */
-    private final PassengerModuleEventHandler eventHandler;
-    
+       
     /**
      * Action executor.
      */
@@ -95,7 +91,7 @@ public class PassengerModule extends AbstractNetworkModule
     @Override
     protected void init()
     {
-        actionExecutor.sendModuleReadyEvent();
+        actionExecutor.sendModuleReadyEvent(currentCycle);
     }
 
     @Override
