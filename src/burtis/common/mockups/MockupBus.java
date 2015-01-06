@@ -118,5 +118,19 @@ public class MockupBus implements Serializable
     {
         this.passengerList = passengerList;
     }
+    
+    @Override
+    public String toString() {
+        String busString = 
+                "\tBus ID:" + Id + ", Pos:" + lengthPassed + ", S:" + busState + "\n\t\tPas: ";
+        
+        for(MockupPassenger passenger : passengerList) {
+            busString += passenger.getId() + " ";
+        }
+        
+        busString += "\n";
+        
+        return busString;    
+    }
 
 }

@@ -4,8 +4,12 @@ import java.util.Map;
 
 import burtis.common.events.AbstractEventHandler;
 import burtis.common.events.SimulationEvent;
+import burtis.modules.network.NetworkConfig;
 
 /**
+ * Response of the passengers module for the {@link WaitingPassengersRequestEvent}
+ * containing map with pair: <bus stop id,  true if anyone is waiting / false if 
+ * nobody is waiting at the corresponding bus stop>.
  *
  * @author Mikołaj Sowiński
  */
@@ -17,7 +21,7 @@ public class WaitingPassengersEvent extends SimulationEvent
     
     public WaitingPassengersEvent(String sender, Map<Integer,Boolean> busIdWaitingPassengersList)
     {
-        super(sender);
+        super(sender, new String[] {NetworkConfig.getModuleName(NetworkConfig.SIM_MODULE)});
         this.busIdWaitingPassengersList = busIdWaitingPassengersList;
     }
 

@@ -13,6 +13,7 @@ import burtis.common.events.Simulator.BusMockupsEvent;
 import burtis.common.events.flow.ModuleReadyEvent;
 import burtis.common.events.flow.TerminateSimulationEvent;
 import burtis.common.events.flow.TickEvent;
+import burtis.common.mockups.Mockup;
 import burtis.modules.passengers.exceptions.NoSuchBusStopException;
 import burtis.modules.passengers.model.Bus;
 import burtis.modules.passengers.model.BusStop;
@@ -168,7 +169,9 @@ public class PassengerModuleEventHandler extends AbstractEventHandler
     public void process(BusMockupsEvent event)
     {
         logger.info("BusMockupEvent");
-        actionExecutor.sendMainMockupEvent(passengerModule.buildMockup(event.getBusMockups()));
+        Mockup mockup = passengerModule.buildMockup(event.getBusMockups());
+        logger.info(mockup.toString());
+        actionExecutor.sendMainMockupEvent(mockup);
         actionExecutor.sendModuleReadyEvent(passengerModule.getCurrentCycle());
     }
 }

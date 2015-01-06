@@ -52,4 +52,24 @@ public final class Mockup implements Serializable
     {
         return currentTime;
     }
+    
+    @Override
+    public String toString() {
+        
+        String mockupString =  
+                "Mockup, T: " + currentTime + '\n' +
+                "=========================\n";
+        
+        for(MockupBus mockupBus : schedule) {
+            mockupString += mockupBus;
+        }
+        
+        for(MockupBusStop mockupBusStop : busStops) {
+            mockupString += mockupBusStop;
+        }
+        
+        return mockupString;
+                
+    
+    }
 }

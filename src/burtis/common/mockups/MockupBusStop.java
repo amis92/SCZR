@@ -46,14 +46,20 @@ public class MockupBusStop implements Serializable
         return passengerList.size();
     }
     
-    public void print() {
-        System.out.println("| Bus stop: " + busStopName);
+    public String toString() {
+        
+        String mockupString = 
+                "\tBus stop: " + busStopName + "\n";
+        
         if(passengerList.size() > 0) {
-            System.out.println("| Passengers:\n-------------");
+            mockupString += "\t\tPas: ";
             for(MockupPassenger passengerMockup : passengerList) {
-                passengerMockup.print();
+                mockupString += passengerMockup.getId() + " ";
             }
+            mockupString += "\n";
         }
+        
+        return mockupString;
     }
     
 }

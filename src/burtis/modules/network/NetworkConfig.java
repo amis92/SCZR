@@ -50,6 +50,10 @@ public class NetworkConfig
         return new NetworkConfig(serverAddress, configs);
     }
     
+    public static String getModuleName(int moduleId) {
+        return NetworkConfig.defaultConfig().getModuleConfigs().get(moduleId).getModuleName();
+    }
+    
     public final static int GUI_MODULE = 0;
     public final static int SYNC_MODULE = 1;
     public final static int BUSSHED_MODULE = 2;

@@ -4,6 +4,7 @@ import java.util.List;
 
 import burtis.common.events.AbstractEventHandler;
 import burtis.common.events.SimulationEvent;
+import burtis.modules.network.NetworkConfig;
 import burtis.modules.simulation.Simulation;
 
 /**
@@ -18,7 +19,7 @@ public class WaitingPassengersRequestEvent extends SimulationEvent
 
     public WaitingPassengersRequestEvent(String sender, List<Integer> busStopIdsList)
     {
-        super(sender);
+        super(sender, new String[] {NetworkConfig.getModuleName(NetworkConfig.PSNGR_MODULE)});
         this.busStopIdsList = busStopIdsList;
     }
 

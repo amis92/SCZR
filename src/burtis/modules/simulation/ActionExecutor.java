@@ -21,14 +21,10 @@ import burtis.modules.simulation.models.BusStop;
  */
 public class ActionExecutor extends EventSender
 {
-    
-    private final String[] busEventsRecipients;
 
     public ActionExecutor(ClientModule clientModule, NetworkConfig netConfig)
     {
         super(clientModule, netConfig);
-        this.busEventsRecipients = new String[] { this.modules.get(
-                NetworkConfig.PSNGR_MODULE).getModuleName() };
     }
     
     public void sendBusArrivalEvent(Map<Integer,Integer> busArrivalList) {
@@ -37,7 +33,7 @@ public class ActionExecutor extends EventSender
 
     public void sendBusMockupEvent(long iteration, List<MockupBus> busMockups)
     {
-        clientModule.send(new BusMockupsEvent(sender, busEventsRecipients,
+        clientModule.send(new BusMockupsEvent(sender,
                 busMockups, iteration));
     }
     

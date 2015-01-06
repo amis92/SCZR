@@ -4,6 +4,7 @@ import java.util.Map;
 
 import burtis.common.events.AbstractEventHandler;
 import burtis.common.events.SimulationEvent;
+import burtis.modules.network.NetworkConfig;
 
 /**
  * Event transferring list of buses that arrives at the bus stops
@@ -22,7 +23,7 @@ public class BusArrivalEvent extends SimulationEvent
 
     public BusArrivalEvent(String sender, Map<Integer,Integer> busArrivalList)
     {
-        super(sender);
+        super(sender, new String[] {NetworkConfig.getModuleName(NetworkConfig.PSNGR_MODULE)});
         this.busArrivalList = busArrivalList;
     }
 

@@ -4,6 +4,7 @@ import java.util.List;
 
 import burtis.common.events.AbstractEventHandler;
 import burtis.common.events.SimulationEvent;
+import burtis.modules.network.NetworkConfig;
 
 /**
  * Event transferring list of bus departures in the current iteration.
@@ -18,7 +19,7 @@ public class BusDeparturesEvent extends SimulationEvent
 
     public BusDeparturesEvent(String sender, List<BusDepartureInfo> departuresList) 
     {
-        super(sender);
+        super(sender, new String[] {NetworkConfig.getModuleName(NetworkConfig.SIM_MODULE)});
         this.departuresList = departuresList;        
     }
 

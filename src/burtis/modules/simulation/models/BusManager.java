@@ -45,6 +45,11 @@ public class BusManager
      * Key is bus id, value bus stop id.
      */
     private final Map<Integer,Integer> busArrivalsList = new HashMap<>();
+    
+    /**
+     * Reference to the depot.
+     */
+    private final Depot depot;
 
     /**
      * Constructor.
@@ -52,14 +57,19 @@ public class BusManager
      * @param busStopManager reference to BusStopManager
      * @param numberOfBuses number of buses to create
      */
-    public BusManager(BusStopManager busStopManager, int numberOfBuses) {
+    public BusManager(BusStopManager busStopManager, int numberOfBuses, Depot depot) {
         this.busStopManager = busStopManager;
+        
+        this.depot = depot;
         
         Bus bus;
         for(int i=0; i<numberOfBuses; i++) {
             bus = new Bus(busStopManager, this);
             buses.put(bus.getId(), bus);
+            depot.putBus(bus);
         }
+        
+        
     }
 
     /**
@@ -222,6 +232,7 @@ public class BusManager
      */
     public void addBusArrival(Bus bus, BusStop busStop) {
         
+        logger.info("Adding bus " + bus.getId() + " to the bus stop " + busStop.getName());
         busArrivalsList.put(bus.getId(), busStop.getId());
         
     }
