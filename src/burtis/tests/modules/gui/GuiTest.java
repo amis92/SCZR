@@ -76,11 +76,12 @@ public class GuiTest
             buses.get(1).setPassengerList(passengerList);
             buses.get(2).setPassengerList(passengerList);
             buses.get(3).setPassengerList(passengerList);
+            */
             long currentTime = 0;
             
             Mockup mockup = new Mockup(buses, schedule, currentTime);
             
-            view.refresh(mockup);*/
+            view.refresh(mockup);
         }
         catch (Exception e)
         {

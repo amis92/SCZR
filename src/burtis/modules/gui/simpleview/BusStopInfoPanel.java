@@ -10,7 +10,7 @@ import javax.swing.JTable;
 
 import burtis.common.mockups.MockupPassenger;
 
-class BusStopDataPanel extends JPanel
+class BusStopInfoPanel extends JPanel
 {
     private static final long serialVersionUID = 1L;
     private JTable table;
@@ -20,7 +20,7 @@ class BusStopDataPanel extends JPanel
     String[] columnNames = { "Id", "Depot", "Destination" };
     Object[][] data = new Object[30][3];
 
-    public BusStopDataPanel()
+    public BusStopInfoPanel()
     {
         setLayout(new BorderLayout());
         add(title, BorderLayout.PAGE_START);
@@ -58,11 +58,14 @@ class BusStopDataPanel extends JPanel
 	    }
 	}
 	
-	public void setCurrentBus(Integer i, String currentBusStop, ArrayList<MockupPassenger> passengerList) {
+	public void setCurrentBus(Integer i, ArrayList<MockupPassenger> passengerList) {
 	    this.passengerList = passengerList;
+	    
 	    title.setText("Bus Id: " + i.toString());
-	    busStop.setText(currentBusStop);
 	    int count = 0;
+	    
+	    if(passengerList == null)
+            System.out.println("passengerList is null");
 	    
 	    for(MockupPassenger mp : passengerList) {
 	        table.setValueAt(mp.getId(), count , 0);

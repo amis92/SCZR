@@ -55,12 +55,9 @@ public class Controller
      */
     private void fillEventActionMap()
     {
-        eventActionMap.put(GoEvent.class, 
-                e -> actionExecutor.sendStartEvent());
-        eventActionMap.put(StepEvent.class,
-                e -> actionExecutor.sendOneStepEvent());
-        eventActionMap.put(StopEvent.class, 
-                e -> actionExecutor.sendStopEvent());
+        eventActionMap.put(GoEvent.class, e -> actionExecutor.sendStartEvent());
+        eventActionMap.put(StepEvent.class, e -> actionExecutor.sendOneStepEvent());
+        eventActionMap.put(StopEvent.class, e -> actionExecutor.sendStopEvent());
         eventActionMap.put(ConnectEvent.class, e ->
         {
             try
@@ -72,16 +69,15 @@ public class Controller
                 e1.printStackTrace();
             }
         });
-        eventActionMap.put(DisconnectEvent.class,
-                e -> actionExecutor.disconnect());
+        eventActionMap.put(DisconnectEvent.class, e -> actionExecutor.disconnect());
         eventActionMap.put(ShowBusEvent.class, e ->
         {
+            //logger.info("Show Bus " + ((ShowBusEvent) e).getId());
             view.updateBusInfoPanel(((ShowBusEvent) e).getId());
-            logger.info("Show Bus" + ((ShowBusEvent) e).getId());
         });
         eventActionMap.put(ShowBusStopEvent.class, e ->
         {
-            logger.info("Show Bus Stop");
+            //logger.info("Show Bus Stop ");
             view.updateBusStopInfoPanel(((ShowBusStopEvent) e).getName());
         });
     }
@@ -118,8 +114,7 @@ public class Controller
             try
             {
                 ProgramEvent event = blockingQueue.take();
-                ProgramAction programAction = eventActionMap.get(event
-                        .getClass());
+                ProgramAction programAction = eventActionMap.get(event.getClass());
                 programAction.go(event);
             }
             catch (Exception e)
