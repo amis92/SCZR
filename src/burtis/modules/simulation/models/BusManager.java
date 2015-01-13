@@ -211,13 +211,14 @@ public class BusManager
      * 
      * @throws NoSuchBusStopException 
      */
-    public void processWaitingPassengersQueryResponse(Map<Integer,Boolean> response) throws NoSuchBusStopException {
+    public void processWaitingPassengersQueryResponse(Map<String,Boolean> response) throws NoSuchBusStopException {
         
         for(Bus bus : buses.values()) {
             // If the bus was expecting an answer...
             if(bus.getBusStopQueryRequest() != null) {
                 // set an answer 
-                bus.setQueryResult(response.get(bus.getBusStopQueryRequest().getId()));
+                System.out.println(response.toString());
+                bus.setQueryResult(response.get(bus.getBusStopQueryRequest().getName()));
                 // and make bus process it
                 bus.processQueryResult();
             }

@@ -133,7 +133,7 @@ class SimulationEventHandler extends AbstractEventHandler
             actionExecutor.sendWaitingPassengersQueryRequest(busManager.getBusStopsIdsList());
         }
         catch (Exception ex) {
-            logger.log(Level.SEVERE, ex.getClass().getSimpleName());
+            logger.log(Level.SEVERE, "TE " + ex.getClass().getSimpleName());
             simulation.shutdown();
         }
 
@@ -164,9 +164,12 @@ class SimulationEventHandler extends AbstractEventHandler
             // BusDepartureEvent handler.
             actionExecutor.sendBusArrivalEvent(busManager.getBusArrivalsList());
         }
+        catch (NullPointerException ex) {
+            ex.printStackTrace();
+        }
         catch (Exception ex)
         {
-            logger.log(Level.SEVERE, ex.getClass().getSimpleName());
+            logger.log(Level.SEVERE, "WPE " + ex.getClass().getSimpleName());
             simulation.shutdown();
         }
         
@@ -197,7 +200,7 @@ class SimulationEventHandler extends AbstractEventHandler
             actionExecutor.sendModuleReadyEvent(simulation.getCurrentCycle());            
         }
         catch (Exception ex) {
-            logger.log(Level.SEVERE, ex.getClass().getSimpleName());
+            logger.log(Level.SEVERE, "BDE " + ex.getClass().getSimpleName());
             simulation.shutdown();
         }
     }

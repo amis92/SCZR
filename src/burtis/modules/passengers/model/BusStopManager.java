@@ -117,12 +117,12 @@ public class BusStopManager
      * 
      * @return map of bus stops with waiting passengers
      */
-    public Map<Integer, Boolean> getWaitingPassengersMap() 
+    public Map<String, Boolean> getWaitingPassengersMap() 
     {
-        Map<Integer, Boolean> map = new HashMap<>();
+        Map<String, Boolean> map = new HashMap<>();
                 
         for(BusStop busStop : busStops) {
-            map.put(busStop.getId(), busStop.waitingPassengers() != 0);
+            map.put(busStop.getName(), busStop.waitingPassengers() != 0);
         }
         
         return map;

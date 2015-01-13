@@ -20,7 +20,7 @@ public class ActionExecutor extends EventSender
         super(clientModule, netConfig);
     }
     
-    public void sendWaitingPassengersRequestResponse(Map<Integer, Boolean> response) {
+    public void sendWaitingPassengersRequestResponse(Map<String, Boolean> response) {
         clientModule.send(new WaitingPassengersEvent(sender, response));
     }
     
