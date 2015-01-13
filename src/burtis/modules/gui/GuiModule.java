@@ -20,7 +20,8 @@ import burtis.modules.AbstractNetworkModule;
 import burtis.modules.gui.controller.ActionExecutor;
 import burtis.modules.gui.controller.Controller;
 import burtis.modules.gui.events.ProgramEvent;
-import burtis.modules.gui.view.View;
+import burtis.modules.gui.simpleview.SimpleView;
+import burtis.modules.gui.view.AbstractView;
 import burtis.modules.network.NetworkConfig;
 
 import com.sun.istack.internal.logging.Logger;
@@ -35,7 +36,7 @@ public class GuiModule extends AbstractNetworkModule
 {
     private static final Logger logger = Logger.getLogger(GuiModule.class);
     private final LinkedBlockingQueue<ProgramEvent> queue = new LinkedBlockingQueue<ProgramEvent>();
-    private View view;
+    private AbstractView view;
     private Controller controller;
     private final ActionExecutor actionExecutor;
 
@@ -81,7 +82,7 @@ public class GuiModule extends AbstractNetworkModule
                 System.exit(0);
             }
         };
-        view = new View(queue, onExit);
+        view = new SimpleView(queue, onExit);
     }
 
     @Override
@@ -120,13 +121,14 @@ public class GuiModule extends AbstractNetworkModule
         {
             // ignoring silently, that's just ok
         }
-        
+
         @Override
         public void process(MainMockupEvent event)
         {
             logger.info("Received MainMockup.");
             view.refresh(event.getMainMockup());
-            send(new ModuleReadyEvent(moduleConfig.getModuleName(), event.getMainMockup().getCurrentTime()));
+            send(new ModuleReadyEvent(moduleConfig.getModuleName(), event
+                    .getMainMockup().getCurrentTime()));
         }
 
         @Override
