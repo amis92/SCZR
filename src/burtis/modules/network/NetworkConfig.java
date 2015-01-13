@@ -1,4 +1,4 @@
-package burtis.modules.network;
+﻿package burtis.modules.network;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -48,6 +48,10 @@ public class NetworkConfig
         configs.add(new ModuleConfig(psgrName,  serverAddress, 8124, false, null));
         configs.add(new ModuleConfig(simName,   serverAddress, 8125, true, null));
         return new NetworkConfig(serverAddress, configs);
+    }
+    
+    public static String getModuleName(int moduleId) {
+        return NetworkConfig.defaultConfig().getModuleConfigs().get(moduleId).getModuleName();
     }
     
     public final static int GUI_MODULE = 0;

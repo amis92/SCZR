@@ -1,6 +1,7 @@
 package burtis.common.events;
 
 import burtis.common.mockups.Mockup;
+import burtis.modules.network.NetworkConfig;
 
 /**
  *
@@ -13,7 +14,7 @@ public class MainMockupEvent extends SimulationEvent
 
     public MainMockupEvent(String sender, Mockup mainMockup)
     {
-        super(sender);
+        super(sender, new String[] {NetworkConfig.getModuleName(NetworkConfig.GUI_MODULE)});
         this.mainMockup = mainMockup;
     }
 

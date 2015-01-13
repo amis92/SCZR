@@ -2,7 +2,7 @@ package burtis.common.mockups;
 
 import java.io.Serializable;
 
-import burtis.modules.passengers.Passenger;
+import burtis.modules.passengers.model.Passenger;
 
 public class MockupPassenger implements Serializable
 {

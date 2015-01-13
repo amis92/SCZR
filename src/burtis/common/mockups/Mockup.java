@@ -52,24 +52,24 @@ public final class Mockup implements Serializable
     {
         return currentTime;
     }
-
-    public void print()
-    {
-        if (schedule.size() > 0)
-        {
-            System.out.println("Bus Mockups:\n===========");
-            for (MockupBus busMockup : schedule)
-            {
-                busMockup.print();
-            }
+    
+    @Override
+    public String toString() {
+        
+        String mockupString =  
+                "Mockup, T: " + currentTime + '\n' +
+                "=========================\n";
+        
+        for(MockupBus mockupBus : schedule) {
+            mockupString += mockupBus;
         }
-        if (busStops.size() > 0)
-        {
-            System.out.println("Bus Stops:\n===========");
-            for (MockupBusStop busStopMockup : busStops)
-            {
-                busStopMockup.print();
-            }
+        
+        for(MockupBusStop mockupBusStop : busStops) {
+            mockupString += mockupBusStop;
         }
+        
+        return mockupString;
+                
+    
     }
 }

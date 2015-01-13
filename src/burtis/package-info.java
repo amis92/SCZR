@@ -1,4 +1,4 @@
-/**
+﻿/**
  * BUs Real TIme Simulator - <b>BURTIS</b>
  * 
  * <p>

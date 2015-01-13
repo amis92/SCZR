@@ -1,4 +1,4 @@
-package burtis.modules.sync;
+﻿package burtis.modules.sync;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -14,7 +14,7 @@ import burtis.common.events.flow.TickEvent;
 /**
  * Controls thread responsible for sending ticks.
  */
-public class TickService
+class TickService
 {
     private ScheduledExecutorService executor = Executors
             .newSingleThreadScheduledExecutor();

@@ -11,19 +11,29 @@ import burtis.common.events.SimulationEvent;
 public class ModuleReadyEvent extends SimulationEvent
 {
     private static final long serialVersionUID = 1L;
+    
+    private final long iteration;
 
-    public ModuleReadyEvent(String sender)
+    public ModuleReadyEvent(String sender, long iteration)
     {
         super(sender);
+        this.iteration = iteration;
     }
 
-    public ModuleReadyEvent(String sender, String[] recipients)
+    public ModuleReadyEvent(String sender, String[] recipients, long iteration)
     {
         super(sender, recipients);
+        this.iteration = iteration;
     }
 
     public void visit(AbstractEventHandler eventProcessor)
     {
         eventProcessor.process(this);
     }
+
+    public long getIteration()
+    {
+        return iteration;
+    }
+    
 }

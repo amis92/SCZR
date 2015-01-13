@@ -1,4 +1,4 @@
-package burtis.modules.network.server;
+﻿package burtis.modules.network.server;
 
 /**
  * Allows for unblocked sending of objects to other {@link ModuleConnection}s.

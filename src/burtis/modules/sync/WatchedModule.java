@@ -1,4 +1,4 @@
-package burtis.modules.sync;
+﻿package burtis.modules.sync;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -11,7 +11,7 @@ import burtis.modules.network.ModuleConfig;
  * 
  * @author Mikołaj Sowiński
  */
-public class WatchedModule
+class WatchedModule
 {
     private static final Logger logger = Logger.getLogger(WatchedModule.class
             .getName());

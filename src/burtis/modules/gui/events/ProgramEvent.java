@@ -1,4 +1,4 @@
-package burtis.modules.gui.events;
+﻿package burtis.modules.gui.events;
 
 /**
  * Klasa bazowa, służąca jako typ wspólny kolejki zdarzeń GUI.

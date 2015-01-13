@@ -1,4 +1,4 @@
-package burtis.modules.network.server;
+﻿package burtis.modules.network.server;
 
 /**
  * Allows for execution of some action. Functional method: {@link #perform}.

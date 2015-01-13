@@ -15,6 +15,11 @@ import burtis.modules.network.ModuleConfig;
 import burtis.modules.network.NetworkConfig;
 import burtis.modules.network.client.ClientModule;
 
+/**
+ * 
+ * @author Amaedusz Sadowski
+ *
+ */
 public class EventSender
 {
     protected final Logger logger = Logger.getLogger(this.getClass().getName());
@@ -56,9 +61,9 @@ public class EventSender
         logger.info("Sent DoStep");
     }
 
-    public void sendModuleReadyEvent()
+    public void sendModuleReadyEvent(long iteration)
     {
-        clientModule.send(new ModuleReadyEvent(sender, flowRecipients));
+        clientModule.send(new ModuleReadyEvent(sender, flowRecipients, iteration));
         logger.info("Sent ModuleReadyEvent");
     }
 

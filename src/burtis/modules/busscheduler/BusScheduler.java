@@ -1,4 +1,4 @@
-package burtis.modules.busscheduler;
+﻿package burtis.modules.busscheduler;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -75,8 +75,8 @@ public class BusScheduler extends AbstractEventHandler
         for (MockupBus bus : busList)
         {
             int passengerCount = bus.getPassengerList().size();
-            if (bus.getState() == Bus.State.BUSSTOP
-                    || bus.getState() == Bus.State.RUNNING)
+            if (bus.getBusState() == Bus.State.BUSSTOP
+                    || bus.getBusState() == Bus.State.RUNNING)
             {
                 passengersSittingTotal += passengerCount;
             }
@@ -84,7 +84,7 @@ public class BusScheduler extends AbstractEventHandler
         return passengersSittingTotal;
     }
 
-    private void makeDecision(Integer passengersSittingTotal,
+    private int calculateNewFrequency(Integer passengersSittingTotal,
             Integer waitingPassengersTotal, Long waitingTimeTotal)
     {
         int peopleInTheWorld = passengersSittingTotal + waitingPassengersTotal;
@@ -92,13 +92,13 @@ public class BusScheduler extends AbstractEventHandler
                 / (double) SimulationModuleConsts.BUS_CAPACITY);
         if (howManyBuses == 0)
         {
-            setNewFrequency(0);
+            return 0;
         }
         else
         {
             int newFrequency = (busStopCount * SimulationModuleConsts.BUS_MAX_CYCLES)
                     / (howManyBuses);
-            setNewFrequency(newFrequency);
+            return newFrequency;
         }
         /**
          * TODO: Potencjalne problemy: - gdy nagle zmieni się sytuacja na
@@ -128,11 +128,12 @@ public class BusScheduler extends AbstractEventHandler
                 waitingTimeTotal += waitingTime;
             }
         }
-        makeDecision(passengersSittingTotal, waitingPassengersTotal,
-                waitingTimeTotal);
+        int newFrequency = calculateNewFrequency(passengersSittingTotal,
+                waitingPassengersTotal, waitingTimeTotal);
+        setNewFrequency(newFrequency, mockup.getCurrentTime());
     }
 
-    private void setNewFrequency(int newFrequency)
+    private void setNewFrequency(int newFrequency, long currentTime)
     {
         logger.log(Level.INFO,
                 "Sending calculated frequency [frames between bus releases]: "
@@ -141,7 +142,7 @@ public class BusScheduler extends AbstractEventHandler
         event = new ChangeReleasingFrequencyEvent(moduleName, receiverNames,
                 newFrequency);
         sender.accept(event);
-        sender.accept(new ModuleReadyEvent(moduleName));
+        sender.accept(new ModuleReadyEvent(moduleName, currentTime));
     }
 
     /**

@@ -1,24 +1,13 @@
-package burtis.modules.simulation.models;
+﻿package burtis.modules.simulation.models;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
-import burtis.common.events.Simulator.BusArrivesAtBusStopEvent;
 import burtis.common.events.Simulator.BusStopsListEvent;
-import burtis.modules.simulation.Simulation;
 
 public class BusStop
 {
-    private static final String namePrefix = "Przystanek ";
-       
-    private final int id;
-    /**
-     * Position expressed in meters.
-     */
-    private final int position;
-    private final String name;
-
-    private static final List<BusStop> busStops = new LinkedList<>();
     
     /**
      * Generates unique ids for bus stops.
@@ -26,119 +15,95 @@ public class BusStop
     private static class IDGenerator
     {
         private static int lastId = 0;
-        
-        public static int getNextId(){
+
+        public static int getNextId()
+        {
             return lastId++;
-        }   
-    }
+        }
+    }    
     
-    public BusStop(int position, String name) 
+    /**
+     * Bus stop id.
+     */
+    private final int id;
+    
+    /**
+     * Bus stop name.
+     */
+    private final String name;
+    
+    /**
+     * Position expressed in meters.
+     */
+    private final int position;
+    
+    /**
+     * FIFO queue of buses waiting to the bus stop.
+     * 
+     * None of the buses here is currently AT the bus stop.
+     */
+    private final Queue<Bus> waitingBuses = new LinkedList<>();
+    
+    /**
+     * Bus that is currently at the bus stop.
+     */
+    private Bus currentBus;
+        
+    /**
+     * Constructor.
+     * 
+     * Assigns unique id for the new bus stop.
+     * Name parameter can be null, then name in form of
+     * "Bus stop <id>" will be set.
+     * 
+     * @param position
+     * @param name
+     */
+    public BusStop(int position, String name)
     {
         this.id = IDGenerator.getNextId();
         this.position = position;
-        if(name==null) {
-            this.name = namePrefix + "nr " + this.id;
+        if (name == null)
+        {
+            this.name = "Bus stop " + this.id;
         }
-        else {
+        else
+        {
             this.name = name;
         }
     }
-    
-    /**
-     * Adds bus stop with given parameters.
-     * Name can be null. In such case default bus stop name will be assigned.
-     * @param position position of bus stop
-     * @param name bus stop name
-     * @return newly created bus stop
-     */
-    public static BusStop add(int position, String name) {
-        BusStop busStop = new BusStop(position, name);
-        busStops.add(busStop);
-        return busStop;
-    }
-    
-    /**
-     * Adds new bus stop object to the list of bus stops.
-     * 
-     * @param busStop bus stop to be added
-     * @return bus stop given as parameter
-     */
-    public static BusStop add(BusStop busStop) {
-        busStops.add(busStop);
-        return busStop;
-    }
 
-        
-    /**
-     * Returns list of bus stops ready to be sent to the passenger module.
-     * 
-     * @return list of BusStopsListEvent.BusStop
-     */
-    public static List<BusStopsListEvent.BusStop> getBusStopsList() {
-        List<BusStopsListEvent.BusStop> busStopsList = new LinkedList<>();
-        
-        for(BusStop busStop : busStops) {
-            if(!(busStop instanceof Terminus)) {
-                busStopsList.add(new BusStopsListEvent.BusStop(busStop.getId(), busStop.getName()));
-            }
-        }
-        
-        return busStopsList;
-    }
-    
-    /**
-     * Returns bus stop of given id.
-     * 
-     * @param id bus stop id
-     * @return bus stop
-     */
-    public static BusStop getBusStopById(int id) {
-        for(BusStop busStop : busStops) {
-            if(busStop.getId() == id) return busStop;
-        }
-        return null;
-    }
-        
-    public int getId() {
+/* ##############################################
+ * GETTERS AND SETTERS
+ * ########################################### */
+
+    public int getId()
+    {
         return id;
     }
-    
-    public String getName() {
+
+    public String getName()
+    {
         return name;
     }
-    
-    public int getPosition() {
+
+    public int getPosition()
+    {
         return position;
     }
-
-    /**
-     * Enqueues bus to the bus stop.
-     * Sends BusArrivesAtBusStopEvent to the passenger module.
-     * @param bus bus to be enqueued
-     * @param busStop bus stop bus to be queued to
-     */
-    public static void enqueueBus(Bus bus, BusStop busStop) {
-        Simulation.getInstance().send(new BusArrivesAtBusStopEvent(
-                Simulation.getInstance().getModuleConfig().getModuleName(),
-                bus.getId(), 
-                busStop.getId()));
-    }
     
+/* ##############################################
+ * END OF GETTERS AND SETTERS
+ * ########################################### */
+
     /**
-     * Returns bus stop closest to the given position.
-     * If position is larger than the furthest bus stop, a final terminus is returned.
-     * @param position searched position
-     * @return closes bus stop
+     * Enqueues bus to the bus stop. 
+     * Bus is put into FIFO queue.
      */
-    public static BusStop getClosestBusStop(int position) {
-        
-        for(BusStop busStop : busStops) {
-            if(busStop.getPosition() > position) {
-                return busStop;
-            }
-        }
-        return busStops.get(busStops.size()-1);
-        
+    public void enqueueBus(Bus bus)
+    {
+        waitingBuses.add(bus);
     }
 
+    
 }

@@ -1,4 +1,4 @@
-package burtis.modules.busscheduler;
+﻿package burtis.modules.busscheduler;
 
 import burtis.modules.AbstractNetworkModule;
 import burtis.modules.network.ModuleConfig;

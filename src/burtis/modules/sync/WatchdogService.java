@@ -1,4 +1,4 @@
-package burtis.modules.sync;
+﻿package burtis.modules.sync;
 
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -24,14 +24,18 @@ import burtis.modules.sync.WatchedModule.State;
  * 
  * @author Amadeusz Sadowski
  */
-public class WatchdogService
+class WatchdogService
 {
     private static final Logger logger = Logger.getLogger(WatchdogService.class
             .getName());
     /**
      * Defines how often are modules checked.
      */
-    private static final long PERIOD = 500;
+    
+    // CHANGED!!
+    private static final long PERIOD = 500000;
+    
+    
     private ScheduledExecutorService executor = Executors
             .newSingleThreadScheduledExecutor();
     private final AtomicBoolean isWatchTime = new AtomicBoolean(false);

@@ -1,4 +1,4 @@
-package burtis.modules.sync;
+﻿package burtis.modules.sync;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,22 +12,22 @@ import burtis.modules.network.ModuleConfig;
 import burtis.modules.network.NetworkConfig;
 
 /**
- * Synchronisation source for all time-dependent modules along with a module
+ * Synchronization source for all time-dependent modules along with a module
  * failure controller.
  * 
  * Sends {@link TickEvent} according to the internal state.
  * 
  * @author Mikołaj Sowiński
- *
+ * @author Amadeusz Sadowski
  */
 public class SynchronizationModule extends AbstractNetworkModule
 {
-    private static final long INITIAL_PERIOD = 1000L;
+    private final long INITIAL_PERIOD = 1000L;
     
     /**
-     * Synchronisation module logger.
+     * Synchronization module logger.
      */
-    private static final Logger logger = Logger
+    private final static Logger logger = Logger
             .getLogger(SynchronizationModule.class.getName());
 
     /**
@@ -38,30 +38,16 @@ public class SynchronizationModule extends AbstractNetworkModule
      */
     public static void main(String[] args)
     {
-        ModuleConfig moduleConfig = NetworkConfig.defaultConfig()
-                .getModuleConfigs().get(NetworkConfig.SYNC_MODULE);
-        // print modules
-        StringBuilder builder = new StringBuilder();
-        builder.append("\nModules:\n========\n");
-        for (ModuleConfig module : NetworkConfig.defaultConfig()
-                .getModuleConfigs())
-        {
-            if (module.getModuleName().equalsIgnoreCase(
-                    moduleConfig.getModuleName()))
-            {
-                continue;
-            }
-            builder.append(" * " + module.getModuleName());
-            builder.append(module.isCritical() ? " (critical)\n" : "\n");
-        }
-        logger.info(builder.toString());
-        // setup
+        NetworkConfig netConfig = NetworkConfig.defaultConfig();
+        ModuleConfig moduleConfig = netConfig.getModuleConfigs().get(
+                NetworkConfig.SYNC_MODULE);
+        printNetworkConfig(netConfig, moduleConfig.getModuleName());
         SynchronizationModule app = new SynchronizationModule(moduleConfig);
         app.main();
     }
 
     /**
-     * Creates list of modules from default network config, ignoring 'itself',
+     * Creates list of modules from default network configuration, ignoring 'itself',
      * and provides it to {@link WatchdogService}'s constructor.
      * 
      * @param syncConfig
@@ -88,17 +74,53 @@ public class SynchronizationModule extends AbstractNetworkModule
         return new WatchdogService(shutdownAction, modules);
     }
 
+    /**
+     * Lists modules to console, describing which are critical. Omits itself.
+     * 
+     * @param netConfig
+     *            - list of all modules.
+     * @param moduleName
+     *            - to know itself.
+     */
+    private static void printNetworkConfig(NetworkConfig netConfig,
+            String moduleName)
+    {
+        StringBuilder builder = new StringBuilder();
+        builder.append("\nModules:\n========\n");
+        for (ModuleConfig module : netConfig.getModuleConfigs())
+        {
+            if (module.getModuleName().equalsIgnoreCase(moduleName))
+            {
+                continue;
+            }
+            builder.append(" * " + module.getModuleName());
+            builder.append(module.isCritical() ? " (critical)\n" : "\n");
+        }
+        logger.info(builder.toString());
+    }
+
     private volatile boolean isRunning = false;
+    
     /**
      * Number of iterations.
      */
     private final AtomicLong iteration = new AtomicLong(0);
+    
     /**
      * Ticking service.
      */
     private final TickService tickService;
+    
+    /**
+     * Watchdog service.
+     */
     private final WatchdogService watchdogService;
 
+    /**
+     * Constructor.
+     * 
+     * @param config
+     */
     public SynchronizationModule(ModuleConfig config)
     {
         super(config);
@@ -108,6 +130,12 @@ public class SynchronizationModule extends AbstractNetworkModule
                 iteration::incrementAndGet, this::send, watchdogService);
     }
 
+    /**
+     * Makes one step of simulation.
+     * 
+     * If simulation was running automatically it is paused and then one step
+     * is made.
+     */
     public void doStep()
     {
         doPause();
@@ -115,11 +143,19 @@ public class SynchronizationModule extends AbstractNetworkModule
         tickService.tickOnce();
     }
 
+    /**
+     * Getter of iteration count (simulation cycle).
+     * 
+     * @return simulation cycle
+     */
     public long getIteration()
     {
         return iteration.get();
     }
 
+    /**
+     * Pauses simulation.
+     */
     public void pauseSimulation()
     {
         logger.info("Pausing simulation.");
@@ -133,6 +169,9 @@ public class SynchronizationModule extends AbstractNetworkModule
         }
     }
 
+    /**
+     * Starts simulation.
+     */
     public void startSimulation()
     {
         logger.info("Starting simulation.");
@@ -147,6 +186,9 @@ public class SynchronizationModule extends AbstractNetworkModule
         }
     }
 
+    /**
+     * Executes pausing simulation.
+     */
     private void doPause()
     {
         isRunning = false;
@@ -158,11 +200,19 @@ public class SynchronizationModule extends AbstractNetworkModule
     {
     }
 
+    /**
+     * Increases iteration count.
+     * @return new iteration number
+     */
     protected long nextIteration()
     {
         return iteration.getAndIncrement();
     }
 
+    /**
+     * Stops {@link TickService}, {@link WatchdogService} and sends 
+     * {@link TerminateSimulationEvent} to shutdown other modules.
+     */
     @Override
     protected void terminate()
     {

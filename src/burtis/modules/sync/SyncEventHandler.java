@@ -1,4 +1,4 @@
-package burtis.modules.sync;
+﻿package burtis.modules.sync;
 
 import java.util.logging.Level;
 
@@ -6,6 +6,7 @@ import burtis.common.events.AbstractEventHandler;
 import burtis.common.events.SimulationEvent;
 import burtis.common.events.flow.CycleCompletedEvent;
 import burtis.common.events.flow.DoStepEvent;
+import burtis.common.events.flow.ModuleReadyEvent;
 import burtis.common.events.flow.PauseSimulationEvent;
 import burtis.common.events.flow.StartSimulationEvent;
 import burtis.common.events.flow.TerminateSimulationEvent;
@@ -14,17 +15,35 @@ import com.sun.istack.internal.logging.Logger;
 
 /**
  * Handles incoming events by calling appropriate {@link SynchronizationModule}
- * methods.
+ * 's or {@link WatchdogService}'s methods.
  *
+ * @author Amadeusz Sadowski
  * @author Mikołaj Sowiński
  */
-public class SyncEventHandler extends AbstractEventHandler
+class SyncEventHandler extends AbstractEventHandler
 {
+    /**
+     * Logger.
+     */
     private final static Logger logger = Logger
             .getLogger(SynchronizationModule.class);
+    
+    /**
+     * Reference to Synchronization Module.
+     */
     private final SynchronizationModule syncModule;
+    
+    /**
+     * Reference to the Watchdog Service.
+     */
     private final WatchdogService watchdogService;
 
+    /**
+     * Constructor.
+     * 
+     * @param syncModule
+     * @param watchdogService
+     */
     public SyncEventHandler(SynchronizationModule syncModule,
             WatchdogService watchdogService)
     {
@@ -64,9 +83,9 @@ public class SyncEventHandler extends AbstractEventHandler
     }
 
     @Override
-    public void process(CycleCompletedEvent event)
+    public void process(ModuleReadyEvent event)
     {
         watchdogService.handleModuleResponded(event.sender(),
-                event.iteration() == syncModule.getIteration());
+                event.getIteration() == syncModule.getIteration());
     }
 }

@@ -1,4 +1,4 @@
-package burtis.modules.network;
+﻿package burtis.modules.network;
 
 import java.io.IOException;
 import java.nio.channels.AsynchronousCloseException;

@@ -1,4 +1,4 @@
-package burtis.modules.gui.events;
+﻿package burtis.modules.gui.events;
 
 public class GoEvent extends ProgramEvent {
 }

@@ -3,6 +3,8 @@ package burtis.common.events.Simulator;
 import burtis.common.events.AbstractEventHandler;
 import burtis.common.events.SimulationEvent;
 import burtis.common.mockups.MockupBus;
+import burtis.modules.network.NetworkConfig;
+
 import java.util.List;
 
 /**
@@ -18,8 +20,8 @@ public class BusMockupsEvent extends SimulationEvent {
     private final List<MockupBus> busMockups;
     private final long iteration;
 
-    public BusMockupsEvent(String sender, String[] recipients, List<MockupBus> busMockups, long iteration) {
-        super(sender, recipients);
+    public BusMockupsEvent(String sender, List<MockupBus> busMockups, long iteration) {
+        super(sender, new String[] {NetworkConfig.getModuleName(NetworkConfig.PSNGR_MODULE)});
         this.busMockups = busMockups;
         this.iteration = iteration;
     }

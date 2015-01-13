@@ -1,4 +1,4 @@
-package burtis.modules.gui.view;
+﻿package burtis.modules.gui.view;
 
 import java.awt.Color;
 import java.awt.Dimension;
