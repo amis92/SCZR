@@ -26,6 +26,7 @@ import burtis.common.mockups.Mockup;
 import burtis.common.mockups.MockupBus;
 import burtis.common.mockups.MockupBusStop;
 import burtis.modules.gui.events.ConnectEvent;
+import burtis.modules.gui.events.DisconnectEvent;
 import burtis.modules.gui.events.GoEvent;
 import burtis.modules.gui.events.ProgramEvent;
 import burtis.modules.gui.events.StepEvent;
@@ -51,11 +52,12 @@ public class SimpleView extends AbstractView {
     /**
      * Toolbar and buttons
      */
+    private JButton connectionButton = new JButton("Connect");
     private final JToolBar toolbar = new JToolBar();
     private final JButton goButton = new JButton("Go");
     private final JButton stepButton = new JButton("Step");
     private final JButton stopButton = new JButton("Stop");
-    private final JButton connectButton = new JButton("Connect");
+    
     private final JLabel timeLabel = new JLabel("    Time: " + Long.toString(currentTime));
     private final JLabel connectedLabel = new JLabel("    Connected: " + connected);
 
@@ -74,12 +76,24 @@ public class SimpleView extends AbstractView {
         frame.setSize(800, 600);
         frame.setTitle("burtis");
         
-        connectButton.addMouseListener(new MouseAdapter() {
+        connectionButton.addMouseListener(new MouseAdapter() {
            @Override
            public void mouseClicked(MouseEvent ev) {
-               // zmiana przycisku z connected na disconnected i vice versa
-               
-               putInQueue(new ConnectEvent());
+               if(connected) {
+                   //putInQueue(new DisconnectEvent());
+                   connectionButton.setText("Connect");
+                   connectionButton.setBackground(Color.GREEN);
+                   
+                   connected = false;
+                   connectedLabel.setText("    Connected: " + connected);
+               } else {
+                   //putInQueue(new ConnectEvent());
+                   connectionButton.setText("Disconnect");
+                   connectionButton.setBackground(Color.RED);
+
+                   connected = true;
+                   connectedLabel.setText("    Connected: " + connected);
+               }   
            }
         });
         
@@ -87,10 +101,10 @@ public class SimpleView extends AbstractView {
         goButton.addActionListener(e -> putInQueue(new GoEvent()));
         stepButton.addActionListener(e -> putInQueue(new StepEvent()));
         
-        connectButton.setBackground(Color.GREEN);
+        connectionButton.setBackground(Color.GREEN);
         
         toolbar.setLayout(new GridLayout(1, 5));
-        toolbar.add(connectButton);
+        toolbar.add(connectionButton);
         toolbar.add(stopButton);
         toolbar.add(goButton);
         toolbar.add(stepButton);
@@ -168,5 +182,5 @@ public class SimpleView extends AbstractView {
             logger.log(Level.WARNING,
                     "Couldn't put event in queue: " + ev.getClass(), err);
         }
-    }    
+    }
 }
