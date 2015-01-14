@@ -40,7 +40,8 @@ public class ProgressBarPanel extends JPanel
             pb.setString(currentBus.getId().toString());
             pb.setString("Bus Id: " + currentBus.getId().toString()
                     + ", Progress: " + currentBus.getLengthPassed()
-                    + ", Bus State: " + currentBus.getBusState());
+                    + ", Bus State: " + currentBus.getBusState()
+                    + ", Current Bus Stop: " + currentBus.getCurrentBusStop());
             pb.addMouseListener(new MouseAdapter() {
                 public void mousePressed(MouseEvent e)
                 {

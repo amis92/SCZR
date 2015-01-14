@@ -69,6 +69,15 @@ public class MockupBus implements Serializable
         this.busState = Bus.State.RUNNING;
     }
 
+    public MockupBus(Integer id, int lengthPassed)
+    {
+        this.Id = id;
+        this.passengerList = new ArrayList<MockupPassenger>();
+        this.currentBusStop = null;
+        this.lengthPassed = lengthPassed;
+        this.busState = Bus.State.RUNNING;
+    }
+    
     /**
      * @return list of passengers mockups
      */
