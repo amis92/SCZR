@@ -151,10 +151,15 @@ public class SimpleView extends AbstractView
 
     public void refresh(Mockup mockup)
     {
-        // do cleanup
+        // doing cleanup
+        progressBarPanel.removeAll();
+        busStopButtonPanel.removeAll();
+        
         this.mockup = mockup;
+        
         progressBarPanel.refreshProgressBarPanel(mockup.getBuses());
         busStopButtonPanel.refreshBusStopButtonPanel(mockup.getBusStops());
+        
         currentTime = mockup.getCurrentTime();
         timeLabel.setText("    Time: " + Long.toString(currentTime));
     }
