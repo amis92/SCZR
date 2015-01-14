@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.logging.Logger;
@@ -52,6 +53,7 @@ public class BusProgressPanel extends JPanel
 
     private void createBars(List<MockupBus> freshList)
     {
+        progressBars = new ArrayList<MyProgressBar>(freshList.size());
         removeAll();
         setLayout(new GridLayout(freshList.size(), 1));
         for (int i = 0; i < freshList.size(); ++i)
@@ -76,6 +78,7 @@ public class BusProgressPanel extends JPanel
                     pb.setForeground(Color.BLUE);
                 }
             });
+            progressBars.add(pb);
             this.add(pb);
         }
     }
