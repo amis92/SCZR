@@ -210,8 +210,8 @@ public class OldView implements View
     }
 
     @Override
-    public void setConnectionStatus(boolean isConnected)
+    public void refreshConnectionStatus()
     {
-        // no gui element to update here
+        // ignoring
     }
 }

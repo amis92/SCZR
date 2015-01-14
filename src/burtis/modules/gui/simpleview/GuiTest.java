@@ -24,7 +24,7 @@ public class GuiTest
     public static void main(String[] args)
     {
         bQueue = new LinkedBlockingQueue<ProgramEvent>();
-        view = new SimpleView(bQueue, null);
+        view = new SimpleView(bQueue, null, () -> false);
         // NetworkConfig netConfig = NetworkConfig.defaultConfig();
         // ModuleConfig config =
         // netConfig.getModuleConfigs().get(NetworkConfig.GUI_MODULE);

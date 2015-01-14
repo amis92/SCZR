@@ -82,7 +82,7 @@ public class GuiModule extends AbstractNetworkModule
                 System.exit(0);
             }
         };
-        view = new SimpleView(queue, onExit);
+        view = new SimpleView(queue, onExit, this.client::isConnected);
     }
 
     @Override

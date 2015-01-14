@@ -10,5 +10,5 @@ public interface View
 
     public void refresh(Mockup mockup);
     
-    public void setConnectionStatus(boolean isConnected);
+    public void refreshConnectionStatus();
 }

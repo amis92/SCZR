@@ -73,17 +73,17 @@ public class Controller
             try
             {
                 actionExecutor.connect();
-                view.setConnectionStatus(true);
             }
             catch (Exception e1)
             {
-                view.setConnectionStatus(false);
+                // ignore, refresh will inform user
             }
+            view.refreshConnectionStatus();
         });
         eventActionMap.put(DisconnectEvent.class, e ->
         {
             actionExecutor.disconnect();
-            view.setConnectionStatus(false);
+            view.refreshConnectionStatus();
         });
         eventActionMap.put(ShowBusEvent.class,
                 e -> view.updateBusInfoPanel(((ShowBusEvent) e).getId()));

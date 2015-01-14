@@ -5,14 +5,14 @@ import java.util.ArrayList;
 import java.util.logging.Logger;
 
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JToolBar;
 
 import burtis.common.mockups.MockupPassenger;
 import burtis.modules.gui.View;
 
-class PassengerInfoPanel extends JPanel
+class PassengerInfoPanel extends JToolBar
 {
     private static final long serialVersionUID = 1L;
     private final static Logger logger = Logger.getLogger(View.class.getName());
