@@ -49,7 +49,7 @@ public class PassengerModule extends AbstractNetworkModule
      * 
      * Updated by {@link PassengerModuleEventHandler#process(burtis.common.events.flow.TickEvent)}.
      */
-    private long currentCycle;
+    private long currentCycle = 0;
         
     public PassengerModule(NetworkConfig networkConfig)
     {

@@ -4,6 +4,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import burtis.common.constants.SimulationModuleConsts;
+import burtis.common.events.flow.TerminateSimulationEvent;
 import burtis.common.events.flow.TickEvent;
 import burtis.modules.AbstractNetworkModule;
 import burtis.modules.network.NetworkConfig;
@@ -90,7 +91,7 @@ public class Simulation extends AbstractNetworkModule
                 busStopManager,
                 depot);
         
-        this.currentIteration = -1;
+        this.currentIteration = 0;
         
     }
 
@@ -109,6 +110,15 @@ public class Simulation extends AbstractNetworkModule
         this.currentIteration = currentCycle;
     }
 
+    /**
+     * Sends termination event and shuts down module loop, closing all operations.
+     */
+    @Override
+    public void shutdown()
+    {
+        send(new TerminateSimulationEvent(this.moduleConfig.getModuleName()));
+        super.shutdown();
+    }
     
     @Override
     protected void terminate()

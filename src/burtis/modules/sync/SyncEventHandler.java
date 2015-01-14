@@ -1,6 +1,7 @@
 ﻿package burtis.modules.sync;
 
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import burtis.common.events.AbstractEventHandler;
 import burtis.common.events.SimulationEvent;
@@ -9,8 +10,6 @@ import burtis.common.events.flow.ModuleReadyEvent;
 import burtis.common.events.flow.PauseSimulationEvent;
 import burtis.common.events.flow.StartSimulationEvent;
 import burtis.common.events.flow.TerminateSimulationEvent;
-
-import com.sun.istack.internal.logging.Logger;
 
 /**
  * Handles incoming events by calling appropriate {@link SynchronizationModule}
@@ -25,7 +24,7 @@ class SyncEventHandler extends AbstractEventHandler
      * Logger.
      */
     private final static Logger logger = Logger
-            .getLogger(SynchronizationModule.class);
+            .getLogger(SynchronizationModule.class.getName());
     /**
      * Reference to Synchronization Module.
      */
