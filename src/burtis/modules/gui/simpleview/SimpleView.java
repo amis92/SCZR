@@ -31,7 +31,7 @@ public class SimpleView implements View
 {
     private long currentTime = 0;
     private boolean isConnected = false;
-    private final BusStopInfoPanel busStopInfoPanel = new BusStopInfoPanel();
+    private final PassengerInfoPanel busStopInfoPanel = new PassengerInfoPanel();
     private final static Logger logger = Logger.getLogger(View.class.getName());
     private final LinkedBlockingQueue<ProgramEvent> bQueue;
     // private List<MockupBusStop> busStops;
@@ -103,7 +103,7 @@ public class SimpleView implements View
         {
             if (mb.getId().equals(i))
             {
-                busStopInfoPanel.setCurrentBus(i, mb.getPassengerList());
+                busStopInfoPanel.showForBus(i, mb.getPassengerList());
                 return;
             }
         }
@@ -116,7 +116,7 @@ public class SimpleView implements View
         {
             if (mbs.getName().equals(s))
             {
-                busStopInfoPanel.setCurrentBusStop(s, mbs.getPassengerList());
+                busStopInfoPanel.showForBusStop(s, mbs.getPassengerList());
                 return;
             }
         }

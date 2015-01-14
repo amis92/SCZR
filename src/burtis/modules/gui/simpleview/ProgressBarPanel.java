@@ -20,31 +20,44 @@ public class ProgressBarPanel extends JPanel
 {
     private static final long serialVersionUID = 7949410421119596681L;
     private BlockingQueue<ProgramEvent> bQueue;
-    // private List<MockupBus> schedule = null;
     private final static Logger logger = Logger.getLogger(View.class.getName());
+    private List<MockupBus> lastUsedList;
+    private List<MyProgressBar> progressBars;
 
     public ProgressBarPanel(BlockingQueue<ProgramEvent> bQueue)
     {
         this.bQueue = bQueue;
     }
 
-    public void refreshProgressBarPanel(List<MockupBus> list)
+    public void refreshProgressBarPanel(List<MockupBus> freshList)
     {
-        // this.schedule = list;
-        setLayout(new GridLayout(list.size(), 1));
-        for (int i = 0; i < list.size(); i++)
+        if (busListChanged(freshList))
+        {
+            createBars(freshList);
+        }
+        updateValues(freshList);;
+    }
+
+    private void updateValues(List<MockupBus> freshList)
+    {
+        lastUsedList = freshList;
+        for (int i = 0; i < freshList.size(); ++i)
+        {
+            MyProgressBar pb = progressBars.get(i);
+            MockupBus currentBus = freshList.get(i);
+            pb.setString(currentBus.toString(true));
+            pb.setValue(currentBus.getLengthPassed());
+        }
+    }
+
+    private void createBars(List<MockupBus> freshList)
+    {
+        setLayout(new GridLayout(freshList.size(), 1));
+        for (int i = 0; i < freshList.size(); ++i)
         {
             MyProgressBar pb = new MyProgressBar(i);
-            MockupBus currentBus = list.get(i);
-            this.add(pb);
             pb.setForeground(Color.BLUE);
             pb.setStringPainted(true);
-            pb.setValue(currentBus.getLengthPassed());
-            pb.setString(currentBus.getId().toString());
-            pb.setString("Bus Id: " + currentBus.getId().toString()
-                    + ", Progress: " + currentBus.getLengthPassed()
-                    + ", Bus State: " + currentBus.getBusState()
-                    + ", Current Bus Stop: " + currentBus.getCurrentBusStop());
             pb.addMouseListener(new MouseAdapter() {
                 public void mousePressed(MouseEvent e)
                 {
@@ -62,7 +75,21 @@ public class ProgressBarPanel extends JPanel
                     pb.setForeground(Color.BLUE);
                 }
             });
+            this.add(pb);
         }
+    }
+
+    private boolean busListChanged(List<MockupBus> freshList)
+    {
+        if (progressBars != null && lastUsedList.size() == freshList.size())
+        {
+            for (int i = 0; i < freshList.size(); ++i)
+            {
+                if (!freshList.get(i).equals(lastUsedList.get(i)))
+                    return false;
+            }
+        }
+        return true;
     }
 
     /**

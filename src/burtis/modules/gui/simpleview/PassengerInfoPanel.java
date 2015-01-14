@@ -2,6 +2,7 @@ package burtis.modules.gui.simpleview;
 
 import java.awt.BorderLayout;
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -9,17 +10,20 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
 import burtis.common.mockups.MockupPassenger;
+import burtis.modules.gui.View;
 
-class BusStopInfoPanel extends JPanel
+class PassengerInfoPanel extends JPanel
 {
     private static final long serialVersionUID = 1L;
+    private final static Logger logger = Logger.getLogger(View.class.getName());
+    public static final int TABLE_ROWS = 30;
     private JTable table;
     private JLabel title = new JLabel();
     // private JLabel busStop = new JLabel();
-    String[] columnNames = { "Id", "Depot", "Destination" };
-    Object[][] data = new Object[30][3];
+    private final String[] columnNames = { "Id", "Depot", "Destination" };
+    private final Object[][] data = new Object[TABLE_ROWS][columnNames.length];
 
-    public BusStopInfoPanel()
+    public PassengerInfoPanel()
     {
         setLayout(new BorderLayout());
         add(title, BorderLayout.PAGE_START);
@@ -29,23 +33,17 @@ class BusStopInfoPanel extends JPanel
         add(scrollPane, BorderLayout.CENTER);
     }
 
-    public void setCurrentBusStop(String s)
-    {
-        title.setText("Bus Stop Name: " + s);
-    }
-
-    public void setCurrentBus(Integer i)
-    {
-        title.setText("Bus Id: " + i.toString());
-    }
-
-    public void setCurrentBusStop(String s,
+    public void showForBusStop(String s,
             ArrayList<MockupPassenger> passengerList)
     {
         title.setText("Bus Stop Name: " + s);
         int count = 0;
+        clearTable();
         if (passengerList == null)
-            System.out.println("passengerList is null");
+        {
+            logger.warning("passengerList is null");
+            return;
+        }
         for (MockupPassenger mp : passengerList)
         {
             table.setValueAt(mp.getId(), count, 0);
@@ -55,19 +53,34 @@ class BusStopInfoPanel extends JPanel
         }
     }
 
-    public void setCurrentBus(Integer i,
+    public void showForBus(Integer i,
             ArrayList<MockupPassenger> passengerList)
     {
         title.setText("Bus Id: " + i.toString());
         int count = 0;
+        clearTable();
         if (passengerList == null)
-            System.out.println("passengerList is null");
+        {
+            logger.warning("passengerList is null");
+            return;
+        }
         for (MockupPassenger mp : passengerList)
         {
             table.setValueAt(mp.getId(), count, 0);
             table.setValueAt(mp.getDepot(), count, 1);
             table.setValueAt(mp.getDestination(), count, 2);
             count++;
+        }
+    }
+
+    private void clearTable()
+    {
+        for (int row = 0; row < data.length; ++row)
+        {
+            for (int column = 0; column < columnNames.length; ++column)
+            {
+                table.setValueAt("", row, column);
+            }
         }
     }
 }

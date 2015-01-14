@@ -7,6 +7,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.logging.Logger;
 
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
@@ -24,8 +25,6 @@ import burtis.modules.gui.events.ProgramEvent;
 import burtis.modules.gui.simpleview.SimpleView;
 import burtis.modules.network.NetworkConfig;
 
-import com.sun.istack.internal.logging.Logger;
-
 /**
  * Initializes GUI with network connection.
  * 
@@ -34,7 +33,7 @@ import com.sun.istack.internal.logging.Logger;
  */
 public class GuiModule extends AbstractNetworkModule
 {
-    private static final Logger logger = Logger.getLogger(GuiModule.class);
+    private static final Logger logger = Logger.getLogger(GuiModule.class.getName());
     private final LinkedBlockingQueue<ProgramEvent> queue = new LinkedBlockingQueue<ProgramEvent>();
     private View view;
     private Controller controller;
@@ -63,7 +62,7 @@ public class GuiModule extends AbstractNetworkModule
         }
         catch (IOException e)
         {
-            //can't happen, we don't try to connect
+            // can't happen, we don't try to connect
             throw new RuntimeException(e);
         }
     }
@@ -122,7 +121,7 @@ public class GuiModule extends AbstractNetworkModule
         {
             // ignoring silently, waiting for mockup
         }
-        
+
         @Override
         public void process(CycleCompletedEvent event)
         {

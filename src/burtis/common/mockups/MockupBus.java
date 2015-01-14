@@ -14,52 +14,50 @@ import burtis.modules.simulation.models.Bus;
 public class MockupBus implements Serializable
 {
     private static final long serialVersionUID = 3835208126228698973L;
-    
     /**
      * List of passengers mockups.
      */
     private ArrayList<MockupPassenger> passengerList;
-    
     /**
-     * Name of the current bus stop the bus in enqueued to.
-     * This field can be null.
+     * Name of the current bus stop the bus in enqueued to. This field can be
+     * null.
      */
     private final String currentBusStop;
-    
     /**
      * Position of the bus in units.
      */
     private int lengthPassed;
-    
     /**
      * Bus id.
      */
     private final Integer Id;
-    
     /**
      * Bus state as given in {@link Bus#State}.
      */
     private final Bus.State busState;
-    
+
     /**
      * Constructor from the simulation {@link Bus} object.
      * 
-     * @param bus bus object
+     * @param bus
+     *            bus object
      */
-    public MockupBus(Bus bus) {
-        
+    public MockupBus(Bus bus)
+    {
         this.Id = bus.getId();
         this.passengerList = new ArrayList<MockupPassenger>();
-        if(bus.getClosestBusStop() == null) {
+        if (bus.getClosestBusStop() == null)
+        {
             this.currentBusStop = null;
         }
-        else {
+        else
+        {
             this.currentBusStop = bus.getClosestBusStop().getName();
         }
         this.lengthPassed = bus.getPosition();
         this.busState = bus.getState();
     }
-    
+
     public MockupBus(int id, int lengthPassed)
     {
         this.Id = id;
@@ -77,7 +75,7 @@ public class MockupBus implements Serializable
         this.lengthPassed = lengthPassed;
         this.busState = Bus.State.RUNNING;
     }
-    
+
     /**
      * @return list of passengers mockups
      */
@@ -95,7 +93,8 @@ public class MockupBus implements Serializable
     }
 
     /**
-     * @param lengthPassed the lengthPassed to set
+     * @param lengthPassed
+     *            the lengthPassed to set
      */
     public void setLengthPassed(int lengthPassed)
     {
@@ -129,25 +128,45 @@ public class MockupBus implements Serializable
     /**
      * Sets list of passengers of the bus.
      * 
-     * @param list of passengers to set
+     * @param list
+     *            of passengers to set
      */
     public void setPassengerList(ArrayList<MockupPassenger> passengerList)
     {
         this.passengerList = passengerList;
     }
-    
+
     @Override
-    public String toString() {
-        String busString = 
-                "\tBus ID:" + Id + ", Pos:" + lengthPassed + ", S:" + busState + "\n\t\tPas: ";
-        
-        for(MockupPassenger passenger : passengerList) {
+    public String toString()
+    {
+        String busString = "\tBus ID:" + Id + ", Pos:" + lengthPassed + ", S:"
+                + busState + "\n\t\tPas: ";
+        for (MockupPassenger passenger : passengerList)
+        {
             busString += passenger.getId() + " ";
         }
-        
         busString += "\n";
-        
-        return busString;    
+        return busString;
     }
 
+    public String toString(boolean noPassengersInfo)
+    {
+        if (!noPassengersInfo)
+            return toString();
+        String format = "Bus Id: %s, Progress: %d, Bus State: %s, Current Bus Stop: %s";
+        String busStopName = currentBusStop == null ? "N/A" : currentBusStop;
+        return String.format(format, Id.toString(), lengthPassed,
+                busState.toString(), busStopName);
+    }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (obj instanceof MockupBus)
+        {
+            MockupBus other = (MockupBus) obj;
+            return other.Id.equals(Id);
+        }
+        return false;
+    }
 }
