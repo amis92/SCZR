@@ -81,12 +81,12 @@ public class SimpleView implements View
         toolbars.add(statusFlowToolbar, BorderLayout.PAGE_START);
         toolbars.add(settingsToolbar, BorderLayout.CENTER);
         // bus and stops panels
-        final JScrollPane busScrollPanel = new JScrollPane();
         busProgressPanel = new BusProgressPanel(bQueue);
         stopsPanel = new StopsPanel(bQueue);
         final JPanel busInfoPanel = new JPanel(new BorderLayout());
         busInfoPanel.add(stopsPanel, BorderLayout.PAGE_START);
         busInfoPanel.add(busProgressPanel, BorderLayout.CENTER);
+        final JScrollPane busScrollPanel = new JScrollPane();
         busScrollPanel.getViewport().add(busInfoPanel);
         // frame setup
         final JFrame frame = new JFrame();

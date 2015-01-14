@@ -16,11 +16,13 @@ public class MockupBusStop implements Serializable
         this.busStopName = busStopName;
     }
 
-    public MockupBusStop(ArrayList<MockupPassenger> passengerList, String busStopName) {
+    public MockupBusStop(ArrayList<MockupPassenger> passengerList,
+            String busStopName)
+    {
         this.passengerList = passengerList;
         this.busStopName = busStopName;
     }
-    
+
     public List<MockupPassenger> getPassengers()
     {
         return passengerList;
@@ -45,21 +47,30 @@ public class MockupBusStop implements Serializable
     {
         return passengerList.size();
     }
-    
-    public String toString() {
-        
-        String mockupString = 
-                "\tBus stop: " + busStopName + "\n";
-        
-        if(passengerList.size() > 0) {
+
+    public String toString()
+    {
+        String mockupString = "\tBus stop: " + busStopName + "\n";
+        if (passengerList.size() > 0)
+        {
             mockupString += "\t\tPas: ";
-            for(MockupPassenger passengerMockup : passengerList) {
+            for (MockupPassenger passengerMockup : passengerList)
+            {
                 mockupString += passengerMockup.getId() + " ";
             }
             mockupString += "\n";
         }
-        
         return mockupString;
     }
-    
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (!(obj instanceof MockupBusStop))
+        {
+            return false;
+        }
+        MockupBusStop other = (MockupBusStop) obj;
+        return other.busStopName.equals(other);
+    }
 }
