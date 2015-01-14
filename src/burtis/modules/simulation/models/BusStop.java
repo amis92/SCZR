@@ -1,14 +1,10 @@
 ﻿package burtis.modules.simulation.models;
 
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Queue;
-
-import burtis.common.events.Simulator.BusStopsListEvent;
 
 public class BusStop
 {
-    
     /**
      * Generates unique ids for bus stops.
      */
@@ -20,41 +16,36 @@ public class BusStop
         {
             return lastId++;
         }
-    }    
-    
+    }
+
     /**
      * Bus stop id.
      */
     private final int id;
-    
     /**
      * Bus stop name.
      */
     private final String name;
-    
     /**
      * Position expressed in meters.
      */
     private final int position;
-    
     /**
      * FIFO queue of buses waiting to the bus stop.
      * 
      * None of the buses here is currently AT the bus stop.
      */
     private final Queue<Bus> waitingBuses = new LinkedList<>();
-    
+
     /**
      * Bus that is currently at the bus stop.
      */
-    private Bus currentBus;
-        
+    // private Bus currentBus;
     /**
      * Constructor.
      * 
-     * Assigns unique id for the new bus stop.
-     * Name parameter can be null, then name in form of
-     * "Bus stop <id>" will be set.
+     * Assigns unique id for the new bus stop. Name parameter can be null, then
+     * name in form of "Bus stop <id>" will be set.
      * 
      * @param position
      * @param name
@@ -73,10 +64,6 @@ public class BusStop
         }
     }
 
-/* ##############################################
- * GETTERS AND SETTERS
- * ########################################### */
-
     public int getId()
     {
         return id;
@@ -91,19 +78,12 @@ public class BusStop
     {
         return position;
     }
-    
-/* ##############################################
- * END OF GETTERS AND SETTERS
- * ########################################### */
 
     /**
-     * Enqueues bus to the bus stop. 
-     * Bus is put into FIFO queue.
+     * Enqueues bus to the bus stop. Bus is put into FIFO queue.
      */
     public void enqueueBus(Bus bus)
     {
         waitingBuses.add(bus);
     }
-
-    
 }

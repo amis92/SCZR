@@ -12,7 +12,6 @@ import burtis.common.events.Simulator.ChangeReleasingFrequencyEvent;
 import burtis.common.events.flow.ModuleReadyEvent;
 import burtis.common.events.flow.TerminateSimulationEvent;
 import burtis.common.events.flow.TickEvent;
-import burtis.modules.simulation.exceptions.OutOfSyncException;
 import burtis.modules.simulation.models.BusManager;
 import burtis.modules.simulation.models.BusStopManager;
 import burtis.modules.simulation.models.Depot;
@@ -29,37 +28,31 @@ class SimulationEventHandler extends AbstractEventHandler
      * Reference to the simulation module object.
      */
     private final Simulation simulation;
-    
     /**
      * Reference to simulation's action executor.
      */
     private final ActionExecutor actionExecutor;
-    
     /**
      * Reference to bus manager.
      */
     private final BusManager busManager;
-    
     /**
      * Reference to bus stop manager.
      */
-    private final BusStopManager busStopManager;
-        
+    // private final BusStopManager busStopManager;
     /**
      * Reference to the depot.
      */
-    private final Depot depot;
-    
+    // private final Depot depot;
     /**
      * Reference to the terminus.
      */
     private final Terminus terminus;
-    
     /**
      * Event handler's logger.
      */
-    private final Logger logger = Logger
-            .getLogger(SimulationEventHandler.class.getName());
+    private final Logger logger = Logger.getLogger(SimulationEventHandler.class
+            .getName());
 
     /**
      * Constructor.
@@ -70,18 +63,15 @@ class SimulationEventHandler extends AbstractEventHandler
      * @param busStopManager
      * @param depot
      */
-    public SimulationEventHandler(
-            final Simulation simulation,
-            final ActionExecutor actionExecutor, 
-            final BusManager busManager,
-            final BusStopManager busStopManager,
-            final Depot depot)
+    public SimulationEventHandler(final Simulation simulation,
+            final ActionExecutor actionExecutor, final BusManager busManager,
+            final BusStopManager busStopManager, final Depot depot)
     {
         this.simulation = simulation;
         this.actionExecutor = actionExecutor;
         this.busManager = busManager;
-        this.busStopManager = busStopManager;
-        this.depot = depot;
+        // this.busStopManager = busStopManager;
+        // this.depot = depot;
         this.terminus = busStopManager.getTerminus();
     }
 
@@ -101,70 +91,68 @@ class SimulationEventHandler extends AbstractEventHandler
     /**
      * {@link TickEvent} handler.
      * 
-     * Checks if simulation is in sync with tick events. It means currentIteration
-     * must be one less than number received in the event. 
+     * Checks if simulation is in sync with tick events. It means
+     * currentIteration must be one less than number received in the event.
      * 
-     * Any exception caught during execution of this handler causes termination of
-     * simulation.
+     * Any exception caught during execution of this handler causes termination
+     * of simulation.
      */
     @Override
     public void process(TickEvent event)
     {
         logger.info("TickEvent, iteration " + event.iteration());
-        
         long iteration = event.iteration();
-        try {
+        try
+        {
             // Sync check
-            //if(iteration != simulation.getCurrentCycle()+1) {
-            //    throw new OutOfSyncException("Simulation");
-            //}
-            //else {
-                simulation.setCurrentCycle(iteration);
-            //}
-            
+            // if(iteration != simulation.getCurrentCycle()+1) {
+            // throw new OutOfSyncException("Simulation");
+            // }
+            // else {
+            simulation.setCurrentCycle(iteration);
+            // }
             terminus.departBus();
-
             busManager.updateBusPositions();
-            
             // This is "interiteration sync point" with PassengerModule.
             // Iteration will be continued after receiving response from
-            // PassengerModule, namely it will be continued in the 
+            // PassengerModule, namely it will be continued in the
             // WaitingPassengersEvent handler.
-            actionExecutor.sendWaitingPassengersQueryRequest(busManager.getBusStopsIdsList());
+            actionExecutor.sendWaitingPassengersQueryRequest(busManager
+                    .getBusStopsIdsList());
         }
-        catch (Exception ex) {
+        catch (Exception ex)
+        {
             logger.log(Level.SEVERE, "TE " + ex.getClass().getSimpleName());
             simulation.shutdown();
         }
-
     }
-    
+
     /**
      * {@link WaitingPassengersEvent} handler.
      * 
      * Takes list containing information on waiting passengers and calls
      * {@link BusManager#processWaitingPassengersQueryResponse(java.util.Map) }
      * 
-     * Any exception caught during execution of this handler causes termination of
-     * simulation.
+     * Any exception caught during execution of this handler causes termination
+     * of simulation.
      * 
      */
     @Override
     public void process(WaitingPassengersEvent event)
     {
         logger.info("WaitingPassengersEvent");
-        
         try
         {
-            busManager.processWaitingPassengersQueryResponse(event.getBusIdWaitingPassengersList());
-            
+            busManager.processWaitingPassengersQueryResponse(event
+                    .getBusIdWaitingPassengersList());
             // This is "interiteration sync point" with PassengerModule.
             // Iteration will be continued after receiving response from
-            // PassengerModule, namely it will be continued in the 
+            // PassengerModule, namely it will be continued in the
             // BusDepartureEvent handler.
             actionExecutor.sendBusArrivalEvent(busManager.getBusArrivalsList());
         }
-        catch (NullPointerException ex) {
+        catch (NullPointerException ex)
+        {
             ex.printStackTrace();
         }
         catch (Exception ex)
@@ -172,40 +160,39 @@ class SimulationEventHandler extends AbstractEventHandler
             logger.log(Level.SEVERE, "WPE " + ex.getClass().getSimpleName());
             simulation.shutdown();
         }
-        
     }
 
     /**
      * {@link BusDeparturesEvent} handler.
      * 
-     * Takes list containing infomarion on bus departures delivered in the event and calls
-     * {@link BusManager#processBusDeparturesList(java.util.List)}.
+     * Takes list containing infomarion on bus departures delivered in the event
+     * and calls {@link BusManager#processBusDeparturesList(java.util.List)}.
      * 
-     * After that sends bus mockups {@link BusMockupsEvent} reflecting current state of the 
-     * fleet and, subsequently, sends {@link ModuleReadyEvent}.
+     * After that sends bus mockups {@link BusMockupsEvent} reflecting current
+     * state of the fleet and, subsequently, sends {@link ModuleReadyEvent}.
      * 
-     * Any exception caught during execution of this handler causes termination of
-     * simulation.
+     * Any exception caught during execution of this handler causes termination
+     * of simulation.
      * 
      */
     @Override
     public void process(BusDeparturesEvent event)
     {
         logger.info("BusDeparturesEvent");
-        
-        try {
+        try
+        {
             busManager.processBusDeparturesList(event.getDeparturesList());
-            
-            actionExecutor.sendBusMockupEvent(simulation.getCurrentCycle(), busManager.getBusMockups());
-            actionExecutor.sendModuleReadyEvent(simulation.getCurrentCycle());            
+            actionExecutor.sendBusMockupEvent(simulation.getCurrentCycle(),
+                    busManager.getBusMockups());
+            actionExecutor.sendModuleReadyEvent(simulation.getCurrentCycle());
         }
-        catch (Exception ex) {
+        catch (Exception ex)
+        {
             logger.log(Level.SEVERE, "BDE " + ex.getClass().getSimpleName());
             simulation.shutdown();
         }
     }
 
-    
     /**
      * {@link ChangeReleasingFrequencyEvent} handler.
      * 
@@ -216,7 +203,8 @@ class SimulationEventHandler extends AbstractEventHandler
     @Override
     public void process(ChangeReleasingFrequencyEvent event)
     {
-        logger.info("ChangeReleasingFrequencyEvent, NRF=" + event.getNewReleasingFrequency());
+        logger.info("ChangeReleasingFrequencyEvent, NRF="
+                + event.getNewReleasingFrequency());
         terminus.changeReleasingFrequency(event.getNewReleasingFrequency());
     }
 }

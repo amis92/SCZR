@@ -4,7 +4,6 @@ import java.util.logging.Level;
 
 import burtis.common.events.AbstractEventHandler;
 import burtis.common.events.SimulationEvent;
-import burtis.common.events.flow.CycleCompletedEvent;
 import burtis.common.events.flow.DoStepEvent;
 import burtis.common.events.flow.ModuleReadyEvent;
 import burtis.common.events.flow.PauseSimulationEvent;
@@ -27,12 +26,10 @@ class SyncEventHandler extends AbstractEventHandler
      */
     private final static Logger logger = Logger
             .getLogger(SynchronizationModule.class);
-    
     /**
      * Reference to Synchronization Module.
      */
     private final SynchronizationModule syncModule;
-    
     /**
      * Reference to the Watchdog Service.
      */
