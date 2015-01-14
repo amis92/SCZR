@@ -1,14 +1,13 @@
 package burtis.common.events.flow;
 
 import burtis.common.events.AbstractEventHandler;
-import burtis.common.events.SimulationEvent;
 
 /**
- * Event to be send upon module main loop completion.
+ * Event to be sent upon module main loop completion.
  * 
  * @author Mikołaj Sowiński <mikolaj.sowinski@gmail.com>
  */
-public class CycleCompletedEvent extends SimulationEvent
+public class CycleCompletedEvent extends FlowEvent
 {
     private static final long serialVersionUID = 1L;
     /**

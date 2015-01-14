@@ -1,20 +1,18 @@
 package burtis.common.events.flow;
 
 import burtis.common.events.AbstractEventHandler;
-import burtis.common.events.SimulationEvent;
-
 
 /**
  * @author Mikołaj Sowiński
  *
  */
-public class TickEvent extends SimulationEvent
+public class TickEvent extends FlowEvent
 {
     private final long iteration;
 
     public TickEvent(String sender, long iteration)
     {
-        super(sender);
+        super(sender, new String[] {});
         this.iteration = iteration;
     }
 

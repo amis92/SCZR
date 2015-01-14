@@ -15,6 +15,7 @@ import burtis.common.events.Simulator.SendBusEvent;
 import burtis.common.events.Simulator.WithdrawBusEvent;
 import burtis.common.events.flow.CycleCompletedEvent;
 import burtis.common.events.flow.DoStepEvent;
+import burtis.common.events.flow.FlowEvent;
 import burtis.common.events.flow.ModuleReadyEvent;
 import burtis.common.events.flow.PauseSimulationEvent;
 import burtis.common.events.flow.SetCycleLengthEvent;
@@ -148,6 +149,11 @@ public abstract class AbstractEventHandler
     }
 
     public void process(SetCycleLengthEvent event)
+    {
+        defaultHandle(event);
+    }
+
+    public void process(FlowEvent event)
     {
         defaultHandle(event);
     }

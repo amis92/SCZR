@@ -26,26 +26,23 @@ public class EventSender
     protected final ClientModule clientModule;
     protected final String sender;
     protected final List<ModuleConfig> modules;
-    protected final String[] flowRecipients;
 
     public EventSender(ClientModule clientModule, NetworkConfig netConfig)
     {
         this.clientModule = clientModule;
         this.sender = clientModule.getModuleName();
         this.modules = netConfig.getModuleConfigs();
-        this.flowRecipients = new String[] { modules.get(
-                NetworkConfig.SYNC_MODULE).getModuleName() };
     }
 
     public void sendStartEvent()
     {
-        clientModule.send(new StartSimulationEvent(sender, flowRecipients));
+        clientModule.send(new StartSimulationEvent(sender));
         logger.info("Sent Start");
     }
 
     public void sendPauseEvent()
     {
-        clientModule.send(new PauseSimulationEvent(sender, flowRecipients));
+        clientModule.send(new PauseSimulationEvent(sender));
         logger.info("Sent Pause");
     }
 
@@ -57,13 +54,13 @@ public class EventSender
 
     public void sendOneStepEvent()
     {
-        clientModule.send(new DoStepEvent(sender, flowRecipients));
+        clientModule.send(new DoStepEvent(sender));
         logger.info("Sent DoStep");
     }
 
     public void sendModuleReadyEvent(long iteration)
     {
-        clientModule.send(new ModuleReadyEvent(sender, flowRecipients, iteration));
+        clientModule.send(new ModuleReadyEvent(sender, iteration));
         logger.info("Sent ModuleReadyEvent");
     }
 

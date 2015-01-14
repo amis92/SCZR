@@ -1,19 +1,15 @@
 package burtis.common.events.flow;
 
 import burtis.common.events.AbstractEventHandler;
-import burtis.common.events.SimulationEvent;
-import burtis.modules.network.NetworkConfig;
 
-public class SetCycleLengthEvent extends SimulationEvent
+public class SetCycleLengthEvent extends FlowEvent
 {
     private static final long serialVersionUID = -7989779856296248255L;
-    public static final String[] defaultRecipients = new String[] { NetworkConfig
-            .getModuleName(NetworkConfig.SYNC_MODULE) };
     private final long cycleLength;
 
     public SetCycleLengthEvent(String sender, long cycleLength)
     {
-        super(sender, defaultRecipients);
+        super(sender);
         this.cycleLength = cycleLength;
     }
 
@@ -22,7 +18,7 @@ public class SetCycleLengthEvent extends SimulationEvent
     {
         eventProcessor.process(this);
     }
-    
+
     public long getCycleLength()
     {
         return cycleLength;
