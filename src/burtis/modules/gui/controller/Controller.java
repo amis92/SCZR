@@ -14,6 +14,7 @@ import burtis.modules.gui.events.CreatePassengerEvent;
 import burtis.modules.gui.events.DisconnectEvent;
 import burtis.modules.gui.events.GoEvent;
 import burtis.modules.gui.events.PassengerGenRateEvent;
+import burtis.modules.gui.events.PauseEvent;
 import burtis.modules.gui.events.ProgramEvent;
 import burtis.modules.gui.events.SetCycleLengthEvent;
 import burtis.modules.gui.events.ShowBusEvent;
@@ -63,6 +64,8 @@ public class Controller
                 e -> actionExecutor.createPassenger((CreatePassengerEvent) e));
         eventActionMap.put(PassengerGenRateEvent.class, e -> actionExecutor
                 .setPassengerGenRates((PassengerGenRateEvent) e));
+        eventActionMap.put(PauseEvent.class,
+                e -> actionExecutor.sendPauseEvent());
         eventActionMap.put(GoEvent.class, e -> actionExecutor.sendStartEvent());
         eventActionMap.put(StepEvent.class,
                 e -> actionExecutor.sendOneStepEvent());
@@ -86,9 +89,9 @@ public class Controller
             view.refreshConnectionStatus();
         });
         eventActionMap.put(ShowBusEvent.class,
-                e -> view.updateBusInfoPanel(((ShowBusEvent) e).getId()));
+                e -> view.updatePassengerInfoPanel(((ShowBusEvent) e).getId()));
         eventActionMap.put(ShowBusStopEvent.class, e -> view
-                .updateBusStopInfoPanel(((ShowBusStopEvent) e).getName()));
+                .updatePassengerInfoPanel(((ShowBusStopEvent) e).getName()));
     }
 
     /**

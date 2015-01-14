@@ -24,6 +24,7 @@ import burtis.modules.gui.View;
 import burtis.modules.gui.events.ConnectEvent;
 import burtis.modules.gui.events.DisconnectEvent;
 import burtis.modules.gui.events.GoEvent;
+import burtis.modules.gui.events.PauseEvent;
 import burtis.modules.gui.events.ProgramEvent;
 import burtis.modules.gui.events.StepEvent;
 import burtis.modules.gui.events.StopEvent;
@@ -42,8 +43,8 @@ public class SimpleView implements View
     private final JLabel timeLabel = new JLabel("    Time: "
             + Long.toString(currentTime));
     private final JLabel connectedLabel = new JLabel();
-    private final ProgressBarPanel progressBarPanel;
-    private final BusStopButtonPanel stopsButtonPanel;
+    private final ProgressBarPanel busProgressPanel;
+    private final BusStopButtonPanel stopsPanel;
     private Mockup mockup;
     private final Supplier<Boolean> isConnected;
 
@@ -52,6 +53,42 @@ public class SimpleView implements View
     {
         this.bQueue = bQueue;
         this.isConnected = isConnected;
+        // status flow toolbar
+        final JButton stopButton = new JButton("Stop");
+        final JButton pauseButton = new JButton("Pause");
+        final JButton stepButton = new JButton("Step");
+        final JButton goButton = new JButton("Go");
+        stopButton.addActionListener(e -> putInQueue(new StopEvent()));
+        pauseButton.addActionListener(e -> putInQueue(new PauseEvent()));
+        stepButton.addActionListener(e -> putInQueue(new StepEvent()));
+        goButton.addActionListener(e -> putInQueue(new GoEvent()));
+        connectionButton.addActionListener(e -> tryChangeConnectionStatus());
+        refreshConnectionStatus();
+        final JToolBar statusFlowToolbar = new JToolBar();
+        statusFlowToolbar.setLayout(new FlowLayout(FlowLayout.LEFT));
+        statusFlowToolbar.add(connectionButton);
+        statusFlowToolbar.add(stopButton);
+        statusFlowToolbar.add(pauseButton);
+        statusFlowToolbar.add(stepButton);
+        statusFlowToolbar.add(goButton);
+        statusFlowToolbar.add(timeLabel);
+        statusFlowToolbar.add(connectedLabel);
+        statusFlowToolbar.setRollover(true);
+        // management toolbar
+        final ButtonPanel buttonPanel = new ButtonPanel(bQueue, () -> mockup,
+                isConnected);
+        final JPanel toolbars = new JPanel(new GridLayout(0, 1));
+        toolbars.add(statusFlowToolbar, BorderLayout.PAGE_START);
+        toolbars.add(buttonPanel, BorderLayout.CENTER);
+        // bus and stops panels
+        final JScrollPane busScrollPanel = new JScrollPane();
+        busProgressPanel = new ProgressBarPanel(bQueue);
+        stopsPanel = new BusStopButtonPanel(bQueue);
+        final JPanel busInfoPanel = new JPanel(new BorderLayout());
+        busInfoPanel.add(stopsPanel, BorderLayout.PAGE_START);
+        busInfoPanel.add(busProgressPanel, BorderLayout.CENTER);
+        busScrollPanel.getViewport().add(busInfoPanel);
+        // frame setup
         final JFrame frame = new JFrame();
         if (exitListener == null)
         {
@@ -66,46 +103,12 @@ public class SimpleView implements View
         frame.setVisible(true);
         frame.setSize(800, 600);
         frame.setTitle("burtis");
-        // status flow toolbar
-        JButton goButton = new JButton("Go");
-        JButton stepButton = new JButton("Pause/Step");
-        JButton stopButton = new JButton("Stop");
-        stopButton.addActionListener(e -> putInQueue(new StopEvent()));
-        goButton.addActionListener(e -> putInQueue(new GoEvent()));
-        stepButton.addActionListener(e -> putInQueue(new StepEvent()));
-        connectionButton.addActionListener(e -> tryChangeConnectionStatus());
-        connectionButton.setBackground(Color.GREEN);
-        refreshConnectionStatus();
-        JToolBar statusToolbar = new JToolBar();
-        statusToolbar.setLayout(new FlowLayout(FlowLayout.LEFT));
-        statusToolbar.add(connectionButton);
-        statusToolbar.add(stopButton);
-        statusToolbar.add(goButton);
-        statusToolbar.add(stepButton);
-        statusToolbar.add(timeLabel);
-        statusToolbar.add(connectedLabel);
-        statusToolbar.setRollover(true);
-        // management toolbar
-        ButtonPanel buttonPanel = new ButtonPanel(bQueue, () -> mockup,
-                isConnected);
-        JPanel toolbars = new JPanel(new GridLayout(0, 1));
-        toolbars.add(statusToolbar, BorderLayout.PAGE_START);
-        toolbars.add(buttonPanel, BorderLayout.CENTER);
-        // bus and stops panels
-        JScrollPane busScrollPanel = new JScrollPane();
-        progressBarPanel = new ProgressBarPanel(bQueue);
-        stopsButtonPanel = new BusStopButtonPanel(bQueue);
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.add(stopsButtonPanel, BorderLayout.PAGE_START);
-        panel.add(progressBarPanel, BorderLayout.CENTER);
-        busScrollPanel.getViewport().add(panel);
-        // frame setup
         frame.add(toolbars, BorderLayout.PAGE_START);
         frame.add(busScrollPanel, BorderLayout.CENTER);
         frame.add(passengerInfoPanel, BorderLayout.PAGE_END);
     }
 
-    public void updateBusInfoPanel(Integer i)
+    public void updatePassengerInfoPanel(Integer i)
     {
         for (MockupBus mb : mockup.getBuses())
         {
@@ -118,7 +121,7 @@ public class SimpleView implements View
         logger.warning("Can't show BusInfoPanel for busId=" + i.toString());
     }
 
-    public void updateBusStopInfoPanel(String s)
+    public void updatePassengerInfoPanel(String s)
     {
         for (MockupBusStop mbs : mockup.getBusStops())
         {
@@ -134,8 +137,8 @@ public class SimpleView implements View
     public void refresh(Mockup mockup)
     {
         this.mockup = mockup;
-        progressBarPanel.refresh(mockup.getBuses());
-        stopsButtonPanel.refresh(mockup.getBusStops());
+        busProgressPanel.refresh(mockup.getBuses());
+        stopsPanel.refresh(mockup.getBusStops());
         currentTime = mockup.getCurrentTime();
         timeLabel.setText("    Time: " + Long.toString(currentTime));
     }

@@ -148,7 +148,7 @@ public class OldView implements View
      * 
      * @param e
      */
-    public void updateBusInfoPanel(Integer i)
+    public void updatePassengerInfoPanel(Integer i)
     {
         for (MockupBus bus : schedule)
         {
@@ -166,7 +166,7 @@ public class OldView implements View
      * 
      * @param e
      */
-    public void updateBusStopInfoPanel(String s)
+    public void updatePassengerInfoPanel(String s)
     {
         for (MockupBusStop busStop : busStops)
         {
