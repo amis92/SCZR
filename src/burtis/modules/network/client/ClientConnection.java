@@ -42,7 +42,7 @@ public class ClientConnection<T>
 
     public void close()
     {
-        logger.info("Zamykam połączenie z serwerem.");
+        logger.info("Closing connection to server.");
         listenerExecutor.shutdownNow();
         listenerExecutor = Executors.newSingleThreadExecutor();
         socketService.close();
@@ -53,20 +53,20 @@ public class ClientConnection<T>
         final int port = socketService.getPort();
         try
         {
-            logger.info("Resetuję połączenie.");
+            logger.info("Resetting connection.");
             close();
-            logger.info("Oczekuję na połączenie z serwerem na porcie " + port);
+            logger.info("Awaiting connection from server on port " + port);
             socketService.connect();
             listenerExecutor.execute(listener::listen);
-            logger.info("Podłączono do serwera na porcie " + port);
+            logger.info("Connected to server on port " + port);
         }
         catch (final ClosedByInterruptException e)
         {
-            logger.warning("Przerywam łączenie z serwerem.");
+            logger.warning("Interrupting connecting with server.");
         }
         catch (final IOException e)
         {
-            logger.severe("Nie udało się połączyć z serwerem.");
+            logger.severe("Connection failed.");
             throw e;
         }
     }
@@ -95,7 +95,7 @@ public class ClientConnection<T>
         }
         catch (IOException e)
         {
-            logger.severe("Klient nie mógł połączyć się ponownie.");
+            logger.severe("Client couldn't reconnect.");
             throw new RuntimeException(e);
         }
     }
@@ -108,7 +108,7 @@ public class ClientConnection<T>
         }
         catch (Exception e)
         {
-            logger.log(Level.WARNING, "Błąd wysyłania na serwer obiektu "
+            logger.log(Level.WARNING, "Error sending object "
                     + objectToSend, e);
         }
     }

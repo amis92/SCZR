@@ -76,12 +76,12 @@ public class Server extends AbstractEventHandler
         if (receivedObject instanceof SimulationEvent)
         {
             SimulationEvent event = (SimulationEvent) receivedObject;
-            logger.finer("Przesyłam dalej obiekt " + event.getClass().getName());
+            logger.finer("Forwarding object " + event.getClass().getName());
             event.visit(this);
         }
         else
         {
-            logger.warning("Odebrałem nieprawidłowy obiekt: "
+            logger.warning("Received unexpected object: "
                     + receivedObject.getClass().getName());
         }
     }
@@ -108,7 +108,7 @@ public class Server extends AbstractEventHandler
         }
         else
         {
-            logger.warning("Brak takiego modułu - nie można przesłać zdarzenia do "
+            logger.warning("No such module - can't send object to "
                     + recipientName);
         }
     }

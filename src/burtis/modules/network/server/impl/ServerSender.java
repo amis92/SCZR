@@ -43,9 +43,9 @@ public class ServerSender implements Sender
         final Package newPack = new Package(object, recipient);
         if (!toSendQueue.offer(newPack))
         {
-            logger.warning(String
-                    .format("Kolejka do wysłania przepełniona, utracono paczkę {0} do {1}",
-                            object, recipient.getModuleName()));
+            logger.warning(String.format(
+                    "Sending queue overflow, lost '%1$s' addressed to '%2$s'.",
+                    object.getClass().getName(), recipient.getModuleName()));
         }
     }
 
@@ -78,7 +78,7 @@ public class ServerSender implements Sender
             catch (final InterruptedException e)
             {
                 stopSending();
-                logger.warning("Przerywam wysyłanie.");
+                logger.warning("Interrupted sending.");
             }
         }
     }
@@ -90,19 +90,21 @@ public class ServerSender implements Sender
         final int recipientPort = recipientSocketService.getPort();
         if (!recipientSocketService.isConnected())
         {
-            logger.warning(String.format("Nie ma połączenia - utracono paczkę '{0}' do '{1}'.",
-                    pack.object, pack.recipient.getModuleName()));
+            logger.warning(String.format(
+                    "No connection - lost '%1$s' to '%2$s'.", pack.object
+                            .getClass().getName(), pack.recipient
+                            .getModuleName()));
             return;
         }
-        logger.finest("Wysyłam do " + recipientPort);
+        logger.finest("Sending on port " + recipientPort);
         try
         {
             recipientSocketService.writeToSocket(pack.getObject());
-            logger.finest("Wysłałem do " + recipientPort);
+            logger.finest("Sent on port " + recipientPort);
         }
         catch (Exception e)
         {
-            logger.log(Level.WARNING, "Błąd wysyłania", e);
+            logger.log(Level.WARNING, "Error sending.", e);
         }
     }
 

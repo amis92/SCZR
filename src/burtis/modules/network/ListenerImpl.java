@@ -36,12 +36,12 @@ public class ListenerImpl implements Listener
     public void listen()
     {
         final int port = socketService.getPort();
-        logger.log(Level.INFO, "Rozpoczęcie nasłuchiwania na porcie " + port);
+        logger.log(Level.INFO, "Starting listening on port " + port);
         while (!isInterrupted && socketService.isConnected())
         {
             awaitAndAccept();
         }
-        logger.log(Level.INFO, "Koniec nasłuchiwania na porcie " + port);
+        logger.log(Level.INFO, "Ending listening on port " + port);
     }
 
     private void awaitAndAccept()
@@ -53,11 +53,11 @@ public class ListenerImpl implements Listener
         catch (final AsynchronousCloseException e)
         {
             isInterrupted = true;
-            logger.info("Interrupt - Przerywam nasłuchiwanie.");
+            logger.info("Interrupted listening.");
         }
         catch (IOException e)
         {
-            logger.log(Level.WARNING, "Błąd. Ponownie łączenie.");
+            logger.log(Level.WARNING, "Error. Reconnecting.");
             socketService.close();
             reconnect.perform();
         }

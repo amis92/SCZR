@@ -76,23 +76,23 @@ public class ModuleConnection
         try
         {
             logger.log(Level.INFO, String.format(
-                    "Oczekuję na połączenie z modułem %1$s na porcie %2$d",
+                    "Awaiting connection from '%1$s'\t on port %2$d",
                     moduleName, socketService.getPort()));
             listenerExecutor.shutdownNow();
             listenerExecutor = Executors.newSingleThreadExecutor();
             socketService.connect();
             listenerExecutor.execute(listener::listen);
             logger.log(Level.INFO, String.format(
-                    "Podłączył się klient '%1$s' na porcie %2$d", moduleName,
+                    "Client '%1$s'\t connected on port %2$d", moduleName,
                     socketService.getPort()));
         }
         catch (final ClosedByInterruptException e)
         {
-            logger.info("Przerywam łączenie z modułem " + moduleName);
+            logger.info("Interrupting connecting with " + moduleName);
         }
         catch (final IOException e)
         {
-            logger.log(Level.SEVERE, "Błąd łączenia z modułem " + moduleName, e);
+            logger.log(Level.SEVERE, "Error connecting to " + moduleName, e);
             throw new RuntimeException(e);
         }
     }

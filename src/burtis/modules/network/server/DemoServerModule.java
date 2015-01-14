@@ -25,7 +25,7 @@ public class DemoServerModule extends Server
         try
         {
             server.run();
-            System.out.println("Naciśnij enter any zakończyć.");
+            System.out.println(">>> Press enter to close application.");
             System.in.read();
         }
         catch (IOException ex)

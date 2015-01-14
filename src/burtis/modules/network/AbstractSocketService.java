@@ -46,7 +46,7 @@ public abstract class AbstractSocketService implements SocketService
         }
         catch (final IOException e)
         {
-            logger.log(Level.WARNING, "Błąd zamykania połączenia", e);
+            logger.log(Level.WARNING, "Error closing connection", e);
         }
         finally
         {
@@ -113,15 +113,15 @@ public abstract class AbstractSocketService implements SocketService
                 return;
             }
             ObjectInputStream ois = new ObjectInputStream(getInputStream());
-            logger.log(Level.FINEST, "Czekam na obiekt");
+            logger.log(Level.FINEST, "Waiting for object");
             Object object = ois.readObject();
-            logger.log(Level.FINEST, "Dostalem obiekt: "
-                    + object.getClass().getName());
+            logger.log(Level.FINEST, "Received object: {0}", object.getClass()
+                    .getName());
             receive.accept(object);
         }
         catch (ClassNotFoundException e)
         {
-            logger.log(Level.WARNING, "Ignorowanie nieznanej klasy", e);
+            logger.log(Level.WARNING, "Ignoring unknown class.", e);
         }
         finally
         {
@@ -144,11 +144,11 @@ public abstract class AbstractSocketService implements SocketService
             oos = new ObjectOutputStream(socketOutput);
             oos.writeObject(o);
             oos.flush();
-            logger.finest("Wysłałem");
+            logger.finest("Object sent.");
         }
         catch (Exception e)
         {
-            logger.log(Level.WARNING, "Błąd wysyłania", e);
+            logger.log(Level.WARNING, "Error sending.", e);
         }
         finally
         {
