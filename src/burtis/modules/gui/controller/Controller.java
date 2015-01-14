@@ -15,6 +15,7 @@ import burtis.modules.gui.events.DisconnectEvent;
 import burtis.modules.gui.events.GoEvent;
 import burtis.modules.gui.events.PassengerGenRateEvent;
 import burtis.modules.gui.events.ProgramEvent;
+import burtis.modules.gui.events.SetCycleLengthEvent;
 import burtis.modules.gui.events.ShowBusEvent;
 import burtis.modules.gui.events.ShowBusStopEvent;
 import burtis.modules.gui.events.StepEvent;
@@ -56,6 +57,8 @@ public class Controller
      */
     private void fillEventActionMap()
     {
+        eventActionMap.put(SetCycleLengthEvent.class, e -> actionExecutor
+                .setCycleLength(((SetCycleLengthEvent) e).getNewCycleLength()));
         eventActionMap.put(CreatePassengerEvent.class,
                 e -> actionExecutor.createPassenger((CreatePassengerEvent) e));
         eventActionMap.put(PassengerGenRateEvent.class, e -> actionExecutor

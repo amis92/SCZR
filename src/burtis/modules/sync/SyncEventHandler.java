@@ -8,6 +8,7 @@ import burtis.common.events.SimulationEvent;
 import burtis.common.events.flow.DoStepEvent;
 import burtis.common.events.flow.ModuleReadyEvent;
 import burtis.common.events.flow.PauseSimulationEvent;
+import burtis.common.events.flow.SetCycleLengthEvent;
 import burtis.common.events.flow.StartSimulationEvent;
 import burtis.common.events.flow.TerminateSimulationEvent;
 
@@ -83,5 +84,11 @@ class SyncEventHandler extends AbstractEventHandler
     {
         watchdogService.handleModuleResponded(event.sender(),
                 event.getIteration() == syncModule.getIteration());
+    }
+    
+    @Override
+    public void process(SetCycleLengthEvent event)
+    {
+        syncModule.setTickPeriod(event.getCycleLength());
     }
 }

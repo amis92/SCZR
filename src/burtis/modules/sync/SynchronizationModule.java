@@ -22,8 +22,14 @@ import burtis.modules.network.NetworkConfig;
  */
 public class SynchronizationModule extends AbstractNetworkModule
 {
-    private final long INITIAL_PERIOD = 1000L;
-    
+    /**
+     * Initial period between ticks in ms.
+     */
+    public static final long INITIAL_PERIOD = 1000L;
+    /**
+     * Current period between ticks in ms.
+     */
+    private long tickPeriod = INITIAL_PERIOD;
     /**
      * Synchronization module logger.
      */
@@ -47,8 +53,8 @@ public class SynchronizationModule extends AbstractNetworkModule
     }
 
     /**
-     * Creates list of modules from default network configuration, ignoring 'itself',
-     * and provides it to {@link WatchdogService}'s constructor.
+     * Creates list of modules from default network configuration, ignoring
+     * 'itself', and provides it to {@link WatchdogService}'s constructor.
      * 
      * @param syncConfig
      *            - 'itself'
@@ -100,17 +106,14 @@ public class SynchronizationModule extends AbstractNetworkModule
     }
 
     private volatile boolean isRunning = false;
-    
     /**
      * Number of iterations.
      */
     private final AtomicLong iteration = new AtomicLong(0);
-    
     /**
      * Ticking service.
      */
     private final TickService tickService;
-    
     /**
      * Watchdog service.
      */
@@ -133,8 +136,8 @@ public class SynchronizationModule extends AbstractNetworkModule
     /**
      * Makes one step of simulation.
      * 
-     * If simulation was running automatically it is paused and then one step
-     * is made.
+     * If simulation was running automatically it is paused and then one step is
+     * made.
      */
     public void doStep()
     {
@@ -178,7 +181,7 @@ public class SynchronizationModule extends AbstractNetworkModule
         if (!isRunning)
         {
             isRunning = true;
-            tickService.start(INITIAL_PERIOD);
+            tickService.start(tickPeriod);
         }
         else
         {
@@ -202,6 +205,7 @@ public class SynchronizationModule extends AbstractNetworkModule
 
     /**
      * Increases iteration count.
+     * 
      * @return new iteration number
      */
     protected long nextIteration()
@@ -210,7 +214,7 @@ public class SynchronizationModule extends AbstractNetworkModule
     }
 
     /**
-     * Stops {@link TickService}, {@link WatchdogService} and sends 
+     * Stops {@link TickService}, {@link WatchdogService} and sends
      * {@link TerminateSimulationEvent} to shutdown other modules.
      */
     @Override
@@ -221,5 +225,10 @@ public class SynchronizationModule extends AbstractNetworkModule
         watchdogService.stopWatching();
         logger.info("Sending termination signal to modules.");
         send(new TerminateSimulationEvent(moduleConfig.getModuleName()));
+    }
+
+    public void setTickPeriod(long tickPeriod)
+    {
+        this.tickPeriod = tickPeriod;
     }
 }

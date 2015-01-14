@@ -5,6 +5,7 @@ import java.io.IOException;
 import burtis.common.events.EventSender;
 import burtis.common.events.Passengers.NewPassengerEvent;
 import burtis.common.events.Passengers.PassengerGenerationRateConfigurationEvent;
+import burtis.common.events.flow.SetCycleLengthEvent;
 import burtis.modules.gui.events.CreatePassengerEvent;
 import burtis.modules.gui.events.PassengerGenRateEvent;
 import burtis.modules.network.NetworkConfig;
@@ -41,5 +42,11 @@ public class ActionExecutor extends EventSender
         logger.info("Sent new passenger gen rates.");
         clientModule.send(new PassengerGenerationRateConfigurationEvent(e
                 .getGcl(), e.getPpc(), sender));
+    }
+
+    public void setCycleLength(long newCycleLength)
+    {
+        logger.info("Sending new cycle length: " + newCycleLength);
+        clientModule.send(new SetCycleLengthEvent(sender, newCycleLength));
     }
 }
