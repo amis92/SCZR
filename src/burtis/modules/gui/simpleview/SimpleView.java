@@ -3,10 +3,7 @@ package burtis.modules.gui.simpleview;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridLayout;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.event.WindowListener;
-import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -22,45 +19,39 @@ import javax.swing.JToolBar;
 import burtis.common.mockups.Mockup;
 import burtis.common.mockups.MockupBus;
 import burtis.common.mockups.MockupBusStop;
-import burtis.modules.gui.AbstractView;
+import burtis.modules.gui.View;
+import burtis.modules.gui.events.ConnectEvent;
+import burtis.modules.gui.events.DisconnectEvent;
 import burtis.modules.gui.events.GoEvent;
 import burtis.modules.gui.events.ProgramEvent;
 import burtis.modules.gui.events.StepEvent;
 import burtis.modules.gui.events.StopEvent;
-import burtis.modules.gui.view.View;
 
-public class SimpleView extends AbstractView
+public class SimpleView implements View
 {
     private long currentTime = 0;
-    private boolean connected = false;
-    private final JFrame frame = new JFrame();
+    private boolean isConnected = false;
     private final BusStopInfoPanel busStopInfoPanel = new BusStopInfoPanel();
-    private final ButtonPanel buttonPanel;
     private final static Logger logger = Logger.getLogger(View.class.getName());
     private final LinkedBlockingQueue<ProgramEvent> bQueue;
-    private List<MockupBusStop> busStops;
+    // private List<MockupBusStop> busStops;
     /**
      * Toolbar and buttons
      */
-    private JButton connectionButton = new JButton("Connect");
-    private final JToolBar toolbar = new JToolBar();
-    private final JButton goButton = new JButton("Go");
-    private final JButton stepButton = new JButton("Step");
-    private final JButton stopButton = new JButton("Stop");
+    private final JButton connectionButton = new JButton("Connect");
     private final JLabel timeLabel = new JLabel("    Time: "
             + Long.toString(currentTime));
     private final JLabel connectedLabel = new JLabel("    Connected: "
-            + connected);
+            + isConnected);
     private ProgressBarPanel progressBarPanel;
     private BusStopButtonPanel busStopButtonPanel;
-    private JScrollPane topScrollPane;
     private Mockup mockup;
-    int howManyBuses = 20;
 
     public SimpleView(LinkedBlockingQueue<ProgramEvent> bQueue,
             WindowListener exitListener)
     {
         this.bQueue = bQueue;
+        final JFrame frame = new JFrame();
         if (exitListener == null)
         {
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -74,32 +65,15 @@ public class SimpleView extends AbstractView
         frame.setVisible(true);
         frame.setSize(800, 600);
         frame.setTitle("burtis");
-        connectionButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent ev)
-            {
-                if (connected)
-                {
-                    // putInQueue(new DisconnectEvent());
-                    connectionButton.setText("Connect");
-                    connectionButton.setBackground(Color.GREEN);
-                    connected = false;
-                    connectedLabel.setText("    Connected: " + connected);
-                }
-                else
-                {
-                    // putInQueue(new ConnectEvent());
-                    connectionButton.setText("Disconnect");
-                    connectionButton.setBackground(Color.RED);
-                    connected = true;
-                    connectedLabel.setText("    Connected: " + connected);
-                }
-            }
-        });
+        JButton goButton = new JButton("Go");
+        JButton stepButton = new JButton("Step");
+        JButton stopButton = new JButton("Stop");
         stopButton.addActionListener(e -> putInQueue(new StopEvent()));
         goButton.addActionListener(e -> putInQueue(new GoEvent()));
         stepButton.addActionListener(e -> putInQueue(new StepEvent()));
+        connectionButton.addActionListener(e -> tryChangeConnectionStatus());
         connectionButton.setBackground(Color.GREEN);
+        JToolBar toolbar = new JToolBar();
         toolbar.setLayout(new GridLayout(1, 5));
         toolbar.add(connectionButton);
         toolbar.add(stopButton);
@@ -108,10 +82,10 @@ public class SimpleView extends AbstractView
         toolbar.add(timeLabel);
         toolbar.add(connectedLabel);
         toolbar.setRollover(true);
-        topScrollPane = new JScrollPane();
+        JScrollPane topScrollPane = new JScrollPane();
         progressBarPanel = new ProgressBarPanel(bQueue);
         busStopButtonPanel = new BusStopButtonPanel(bQueue);
-        buttonPanel = new ButtonPanel(bQueue);
+        ButtonPanel buttonPanel = new ButtonPanel(bQueue);
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(busStopButtonPanel, BorderLayout.PAGE_START);
         panel.add(progressBarPanel, BorderLayout.CENTER);
@@ -127,26 +101,26 @@ public class SimpleView extends AbstractView
     {
         for (MockupBus mb : mockup.getBuses())
         {
-            if (mb.getId() == i)
+            if (mb.getId().equals(i))
             {
                 busStopInfoPanel.setCurrentBus(i, mb.getPassengerList());
                 return;
             }
         }
-        System.out.println("No such bus");
+        logger.warning("Can't show BusInfoPanel for busId=" + i.toString());
     }
 
     public void updateBusStopInfoPanel(String s)
     {
         for (MockupBusStop mbs : mockup.getBusStops())
         {
-            if (mbs.getName() == s)
+            if (mbs.getName().equals(s))
             {
                 busStopInfoPanel.setCurrentBusStop(s, mbs.getPassengerList());
                 return;
             }
         }
-        System.out.println("No such bus stop");
+        logger.warning("Can't show BusStopInfoPanel for busStop=" + s);
     }
 
     public void refresh(Mockup mockup)
@@ -154,14 +128,24 @@ public class SimpleView extends AbstractView
         // doing cleanup
         progressBarPanel.removeAll();
         busStopButtonPanel.removeAll();
-        
         this.mockup = mockup;
-        
         progressBarPanel.refreshProgressBarPanel(mockup.getBuses());
         busStopButtonPanel.refreshBusStopButtonPanel(mockup.getBusStops());
-        
         currentTime = mockup.getCurrentTime();
         timeLabel.setText("    Time: " + Long.toString(currentTime));
+    }
+
+    private void tryChangeConnectionStatus()
+    {
+        putInQueue(isConnected ? new DisconnectEvent() : new ConnectEvent());
+    }
+
+    public void setConnectionStatus(boolean isConnected)
+    {
+        this.isConnected = isConnected;
+        connectionButton.setText(isConnected ? "Disconnect" : "Connect");
+        connectionButton.setBackground(isConnected ? Color.RED : Color.GREEN);
+        connectedLabel.setText("    Connected: " + isConnected);
     }
 
     /**

@@ -35,7 +35,7 @@ public class GuiModule extends AbstractNetworkModule
 {
     private static final Logger logger = Logger.getLogger(GuiModule.class);
     private final LinkedBlockingQueue<ProgramEvent> queue = new LinkedBlockingQueue<ProgramEvent>();
-    private AbstractView view;
+    private View view;
     private Controller controller;
     private final ActionExecutor actionExecutor;
 

@@ -36,18 +36,15 @@ public class GuiTest
             ArrayList<MockupBus> buses = new ArrayList<MockupBus>();
             ArrayList<MockupBusStop> schedule = new ArrayList<MockupBusStop>();
             ArrayList<MockupPassenger> passengerList = new ArrayList<MockupPassenger>();
-            
             for (int i = 0; i != 6; i++)
                 passengerList.add(new MockupPassenger(i, "Wloclawek" + i,
                         "Wloclawek" + i + 1));
-            
             for (int i = 0; i != 12; i++)
             {
                 MockupBus tmp = new MockupBus(i, 90);
                 tmp.setPassengerList(passengerList);
                 buses.add(tmp);
             }
-            
             for (int i = 0; i != 6; i++)
             {
                 MockupBusStop tmp = new MockupBusStop("Wloclawek" + i);

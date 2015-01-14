@@ -22,33 +22,31 @@ import javax.swing.UnsupportedLookAndFeelException;
 import burtis.common.mockups.Mockup;
 import burtis.common.mockups.MockupBus;
 import burtis.common.mockups.MockupBusStop;
-import burtis.modules.gui.AbstractView;
+import burtis.modules.gui.View;
 import burtis.modules.gui.events.ConnectEvent;
 import burtis.modules.gui.events.GoEvent;
 import burtis.modules.gui.events.ProgramEvent;
 import burtis.modules.gui.events.StepEvent;
 import burtis.modules.gui.events.StopEvent;
 
-public class View extends AbstractView
+public class OldView implements View
 {
-    private final static Logger logger = Logger.getLogger(View.class.getName());
+    private final static Logger logger = Logger.getLogger(OldView.class
+            .getName());
     private final AnimationPanel animationPanel;
-    
-    /** 
-     * Kolejka, do ktorej wrzucamy obiekty odpowiadajace eventom 
+    /**
+     * Kolejka, do ktorej wrzucamy obiekty odpowiadajace eventom
      */
     private final LinkedBlockingQueue<ProgramEvent> bQueue;
-    
     /**
-     * Panel informacyjny z przyciskami aktywującymi wyświetlenie informacji o przystanku
+     * Panel informacyjny z przyciskami aktywującymi wyświetlenie informacji o
+     * przystanku
      */
     private final BusStopInfoPanel busStopInfoPanel = new BusStopInfoPanel();
-    
     /**
      * Lista Mockupów z przystankami
      */
     private List<MockupBusStop> busStops;
-    
     private final JPanel buttonPanel = new JPanel(new FlowLayout());
     private final JButton connectButton = new JButton("Connect");
     private long currentTime = 0;
@@ -64,12 +62,11 @@ public class View extends AbstractView
     private BusStationButton tmpBusStationButton;
     private final JToolBar toolbar = new JToolBar();
 
-    public View(LinkedBlockingQueue<ProgramEvent> bQueue,
+    public OldView(LinkedBlockingQueue<ProgramEvent> bQueue,
             WindowListener exitListener)
     {
         frame = new JFrame();
         this.bQueue = bQueue;
-        
         if (exitListener == null)
         {
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -104,8 +101,6 @@ public class View extends AbstractView
         scrollPane.getViewport().add(mainPanel);
         frame.add(splitPaneHorizontal, BorderLayout.CENTER);
         frame.add(toolbar, BorderLayout.PAGE_START);
-        
-        
         try
         {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -115,15 +110,14 @@ public class View extends AbstractView
         {
             e.printStackTrace();
         }
-        
         frame.setTitle("burtis");
         frame.setVisible(true);
         frame.setSize(800, 600);
     }
 
     /**
-     * Metoda odpowiada za jednorazowe odświeżenie gui bazując na Mockupie z argumentu
-     * (absolutely no magic, really)
+     * Metoda odpowiada za jednorazowe odświeżenie gui bazując na Mockupie z
+     * argumentu (absolutely no magic, really)
      * 
      * @param mockup
      */
@@ -160,7 +154,8 @@ public class View extends AbstractView
         {
             if (bus.getId() == i)
             {
-                busStopInfoPanel.setCurrentBus(i, bus.getCurrentBusStop(), bus.getPassengerList());
+                busStopInfoPanel.setCurrentBus(i, bus.getCurrentBusStop(),
+                        bus.getPassengerList());
                 return;
             }
         }
@@ -183,7 +178,7 @@ public class View extends AbstractView
             }
         }
     }
-    
+
     /**
      * Metoda operuje na Panelu informacji i wyświetlna dane
      * 
@@ -196,7 +191,8 @@ public class View extends AbstractView
     }
 
     /**
-     * Metoda pozwalająca na włożenie obiektu odpowiadającego za zdarzenie do kolejki akcji do wykonania
+     * Metoda pozwalająca na włożenie obiektu odpowiadającego za zdarzenie do
+     * kolejki akcji do wykonania
      * 
      * @param e
      */
@@ -211,5 +207,11 @@ public class View extends AbstractView
             logger.log(Level.WARNING,
                     "Couldn't put event in queue: " + e.getClass(), e1);
         }
+    }
+
+    @Override
+    public void setConnectionStatus(boolean isConnected)
+    {
+        // no gui element to update here
     }
 }

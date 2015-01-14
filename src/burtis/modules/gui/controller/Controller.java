@@ -8,7 +8,7 @@ import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import burtis.modules.gui.AbstractView;
+import burtis.modules.gui.View;
 import burtis.modules.gui.events.ConnectEvent;
 import burtis.modules.gui.events.DisconnectEvent;
 import burtis.modules.gui.events.GoEvent;
@@ -22,7 +22,7 @@ public class Controller
 {
     private final static Logger logger = Logger.getLogger(Controller.class
             .getName());
-    private final AbstractView view;
+    private final View view;
     /** Kolejka dla obiektow ProgramEvent. */
     private final BlockingQueue<ProgramEvent> blockingQueue;
     /** odwzorowanie obiektow ProgramEvent na obiekty ProgramAction */
@@ -39,8 +39,7 @@ public class Controller
      * @param blockingQueue
      *            kolejka do otrzymywania komunikatow z Widoku
      */
-    public Controller(AbstractView view,
-            BlockingQueue<ProgramEvent> blockingQueue,
+    public Controller(View view, BlockingQueue<ProgramEvent> blockingQueue,
             ActionExecutor actionExecutor)
     {
         this.actionExecutor = actionExecutor;
@@ -65,24 +64,22 @@ public class Controller
             try
             {
                 actionExecutor.connect();
+                view.setConnectionStatus(true);
             }
             catch (Exception e1)
             {
-                e1.printStackTrace();
+                view.setConnectionStatus(false);
             }
         });
-        eventActionMap.put(DisconnectEvent.class,
-                e -> actionExecutor.disconnect());
-        eventActionMap.put(ShowBusEvent.class, e ->
+        eventActionMap.put(DisconnectEvent.class, e ->
         {
-            // logger.info("Show Bus " + ((ShowBusEvent) e).getId());
-                view.updateBusInfoPanel(((ShowBusEvent) e).getId());
-            });
-        eventActionMap.put(ShowBusStopEvent.class, e ->
-        {
-            // logger.info("Show Bus Stop ");
-                view.updateBusStopInfoPanel(((ShowBusStopEvent) e).getName());
-            });
+            actionExecutor.disconnect();
+            view.setConnectionStatus(false);
+        });
+        eventActionMap.put(ShowBusEvent.class,
+                e -> view.updateBusInfoPanel(((ShowBusEvent) e).getId()));
+        eventActionMap.put(ShowBusStopEvent.class, e -> view
+                .updateBusStopInfoPanel(((ShowBusStopEvent) e).getName()));
     }
 
     /**
@@ -107,7 +104,7 @@ public class Controller
     /**
      * funkcja obslugujca komunikaty z widoku w nieskonczonej petki <br>
      * tzn pobieajaca obiekt z kolejki(blockingQueue) i na jego podstawie
-     * uruchamiajaca odpowiednie dzialannie z mapy zadan(eventActionMap) <br>
+     * uruchamiajaca odpowiednie dzialanie z mapy zadan(eventActionMap) <br>
      * -normalne dzialanie kontrolera :)
      */
     private void work()
