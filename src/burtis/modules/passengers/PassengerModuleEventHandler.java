@@ -70,6 +70,12 @@ public class PassengerModuleEventHandler extends AbstractEventHandler
         logger.log(Level.WARNING, "Unknown event {0}",
                 event.getClass().getSimpleName());
     }
+    
+    @Override
+    public void process(ModuleReadyEvent event)
+    {
+        // ignoring silently
+    }
 
     /**
      * {@link TerminateSimulationEvent} handler.

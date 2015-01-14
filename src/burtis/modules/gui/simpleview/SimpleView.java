@@ -66,7 +66,7 @@ public class SimpleView implements View
         frame.setSize(800, 600);
         frame.setTitle("burtis");
         JButton goButton = new JButton("Go");
-        JButton stepButton = new JButton("Step");
+        JButton stepButton = new JButton("Pause/Step");
         JButton stopButton = new JButton("Stop");
         stopButton.addActionListener(e -> putInQueue(new StopEvent()));
         goButton.addActionListener(e -> putInQueue(new GoEvent()));

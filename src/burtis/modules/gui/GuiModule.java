@@ -16,6 +16,7 @@ import burtis.common.events.MainMockupEvent;
 import burtis.common.events.SimulationEvent;
 import burtis.common.events.flow.CycleCompletedEvent;
 import burtis.common.events.flow.ModuleReadyEvent;
+import burtis.common.events.flow.TickEvent;
 import burtis.modules.AbstractNetworkModule;
 import burtis.modules.gui.controller.ActionExecutor;
 import burtis.modules.gui.controller.Controller;
@@ -116,6 +117,12 @@ public class GuiModule extends AbstractNetworkModule
      */
     private class EventHandler extends AbstractEventHandler
     {
+        @Override
+        public void process(TickEvent event)
+        {
+            // ignoring silently, waiting for mockup
+        }
+        
         @Override
         public void process(CycleCompletedEvent event)
         {
