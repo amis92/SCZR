@@ -22,7 +22,7 @@ import burtis.modules.gui.events.PassengerGenRateEvent;
 import burtis.modules.gui.events.ProgramEvent;
 import burtis.modules.gui.events.SetCycleLengthEvent;
 
-public class FlowToolbar extends JToolBar
+public class SettingsToolbar extends JToolBar
 {
     private static final long serialVersionUID = 2056234272927438906L;
     private final static Logger logger = Logger.getLogger(View.class.getName());
@@ -30,7 +30,7 @@ public class FlowToolbar extends JToolBar
     private final Supplier<Mockup> mockup;
     private final Supplier<Boolean> isConnected;
 
-    public FlowToolbar(BlockingQueue<ProgramEvent> bQueue,
+    public SettingsToolbar(BlockingQueue<ProgramEvent> bQueue,
             Supplier<Mockup> mockup, Supplier<Boolean> isConnected)
     {
         this.mockup = mockup;
@@ -52,6 +52,11 @@ public class FlowToolbar extends JToolBar
 
     private void setSimulationCycleLength()
     {
+        if (!isConnected.get())
+        {
+            JOptionPane.showMessageDialog(null, "Not connected!");
+            return;
+        }
         final SpinnerNumberModel model = new SpinnerNumberModel(0, 0,
                 Integer.MAX_VALUE, 250);
         final JSpinner lengthField = new JSpinner(model);
@@ -75,6 +80,7 @@ public class FlowToolbar extends JToolBar
         if (mockup == null || !isConnected.get())
         {
             JOptionPane.showMessageDialog(null, "Not connected!");
+            return;
         }
         // prepare combo boxes
         final List<MockupBusStop> stops = mockup.getBusStops();
@@ -116,6 +122,11 @@ public class FlowToolbar extends JToolBar
 
     private void setPassengerGenParamsDialog()
     {
+        if (!isConnected.get())
+        {
+            JOptionPane.showMessageDialog(null, "Not connected!");
+            return;
+        }
         final JSpinner gclField = new JSpinner(new SpinnerNumberModel(1, -1,
                 Integer.MAX_VALUE, 1));
         final JSpinner ppcField = new JSpinner(new SpinnerNumberModel(5, 0,

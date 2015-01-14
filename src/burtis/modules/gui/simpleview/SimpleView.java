@@ -75,11 +75,11 @@ public class SimpleView implements View
         statusFlowToolbar.add(connectedLabel);
         statusFlowToolbar.setRollover(true);
         // management toolbar
-        final FlowToolbar buttonPanel = new FlowToolbar(bQueue, () -> mockup,
+        final SettingsToolbar settingsToolbar = new SettingsToolbar(bQueue, () -> mockup,
                 isConnected);
         final JPanel toolbars = new JPanel(new GridLayout(0, 1));
         toolbars.add(statusFlowToolbar, BorderLayout.PAGE_START);
-        toolbars.add(buttonPanel, BorderLayout.CENTER);
+        toolbars.add(settingsToolbar, BorderLayout.CENTER);
         // bus and stops panels
         final JScrollPane busScrollPanel = new JScrollPane();
         busProgressPanel = new BusProgressPanel(bQueue);

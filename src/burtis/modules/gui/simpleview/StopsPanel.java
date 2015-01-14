@@ -16,7 +16,7 @@ import burtis.modules.gui.events.ShowBusStopEvent;
 public class StopsPanel extends JPanel
 {
     private static final long serialVersionUID = -2853079806846633380L;
-    BlockingQueue<ProgramEvent> bQueue;
+    private final BlockingQueue<ProgramEvent> bQueue;
 
     public StopsPanel(BlockingQueue<ProgramEvent> bQueue)
     {
