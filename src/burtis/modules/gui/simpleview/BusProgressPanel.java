@@ -16,7 +16,7 @@ import burtis.modules.gui.View;
 import burtis.modules.gui.events.ProgramEvent;
 import burtis.modules.gui.events.ShowBusEvent;
 
-public class ProgressBarPanel extends JPanel
+public class BusProgressPanel extends JPanel
 {
     private static final long serialVersionUID = 7949410421119596681L;
     private BlockingQueue<ProgramEvent> bQueue;
@@ -24,7 +24,7 @@ public class ProgressBarPanel extends JPanel
     private List<MockupBus> lastUsedList;
     private List<MyProgressBar> progressBars;
 
-    public ProgressBarPanel(BlockingQueue<ProgramEvent> bQueue)
+    public BusProgressPanel(BlockingQueue<ProgramEvent> bQueue)
     {
         this.bQueue = bQueue;
     }

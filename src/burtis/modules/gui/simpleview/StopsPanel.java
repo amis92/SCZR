@@ -13,12 +13,12 @@ import burtis.common.mockups.MockupBusStop;
 import burtis.modules.gui.events.ProgramEvent;
 import burtis.modules.gui.events.ShowBusStopEvent;
 
-public class BusStopButtonPanel extends JPanel
+public class StopsPanel extends JPanel
 {
     private static final long serialVersionUID = -2853079806846633380L;
     BlockingQueue<ProgramEvent> bQueue;
 
-    public BusStopButtonPanel(BlockingQueue<ProgramEvent> bQueue)
+    public StopsPanel(BlockingQueue<ProgramEvent> bQueue)
     {
         this.bQueue = bQueue;
     }

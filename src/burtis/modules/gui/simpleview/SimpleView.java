@@ -43,8 +43,8 @@ public class SimpleView implements View
     private final JLabel timeLabel = new JLabel("    Time: "
             + Long.toString(currentTime));
     private final JLabel connectedLabel = new JLabel();
-    private final ProgressBarPanel busProgressPanel;
-    private final BusStopButtonPanel stopsPanel;
+    private final BusProgressPanel busProgressPanel;
+    private final StopsPanel stopsPanel;
     private Mockup mockup;
     private final Supplier<Boolean> isConnected;
 
@@ -75,15 +75,15 @@ public class SimpleView implements View
         statusFlowToolbar.add(connectedLabel);
         statusFlowToolbar.setRollover(true);
         // management toolbar
-        final ButtonPanel buttonPanel = new ButtonPanel(bQueue, () -> mockup,
+        final FlowToolbar buttonPanel = new FlowToolbar(bQueue, () -> mockup,
                 isConnected);
         final JPanel toolbars = new JPanel(new GridLayout(0, 1));
         toolbars.add(statusFlowToolbar, BorderLayout.PAGE_START);
         toolbars.add(buttonPanel, BorderLayout.CENTER);
         // bus and stops panels
         final JScrollPane busScrollPanel = new JScrollPane();
-        busProgressPanel = new ProgressBarPanel(bQueue);
-        stopsPanel = new BusStopButtonPanel(bQueue);
+        busProgressPanel = new BusProgressPanel(bQueue);
+        stopsPanel = new StopsPanel(bQueue);
         final JPanel busInfoPanel = new JPanel(new BorderLayout());
         busInfoPanel.add(stopsPanel, BorderLayout.PAGE_START);
         busInfoPanel.add(busProgressPanel, BorderLayout.CENTER);

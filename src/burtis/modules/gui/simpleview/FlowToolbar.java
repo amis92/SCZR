@@ -22,7 +22,7 @@ import burtis.modules.gui.events.PassengerGenRateEvent;
 import burtis.modules.gui.events.ProgramEvent;
 import burtis.modules.gui.events.SetCycleLengthEvent;
 
-public class ButtonPanel extends JToolBar
+public class FlowToolbar extends JToolBar
 {
     private static final long serialVersionUID = 2056234272927438906L;
     private final static Logger logger = Logger.getLogger(View.class.getName());
@@ -30,7 +30,7 @@ public class ButtonPanel extends JToolBar
     private final Supplier<Mockup> mockup;
     private final Supplier<Boolean> isConnected;
 
-    public ButtonPanel(BlockingQueue<ProgramEvent> bQueue,
+    public FlowToolbar(BlockingQueue<ProgramEvent> bQueue,
             Supplier<Mockup> mockup, Supplier<Boolean> isConnected)
     {
         this.mockup = mockup;
