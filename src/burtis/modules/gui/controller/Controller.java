@@ -8,6 +8,7 @@ import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import burtis.modules.gui.AbstractView;
 import burtis.modules.gui.events.ConnectEvent;
 import burtis.modules.gui.events.DisconnectEvent;
 import burtis.modules.gui.events.GoEvent;
@@ -16,7 +17,6 @@ import burtis.modules.gui.events.ShowBusEvent;
 import burtis.modules.gui.events.ShowBusStopEvent;
 import burtis.modules.gui.events.StepEvent;
 import burtis.modules.gui.events.StopEvent;
-import burtis.modules.gui.view.AbstractView;
 
 public class Controller
 {

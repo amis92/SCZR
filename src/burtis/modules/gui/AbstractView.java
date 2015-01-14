@@ -1,4 +1,4 @@
-package burtis.modules.gui.view;
+package burtis.modules.gui;
 
 import burtis.common.mockups.Mockup;
 

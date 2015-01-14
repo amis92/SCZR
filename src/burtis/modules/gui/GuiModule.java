@@ -21,7 +21,6 @@ import burtis.modules.gui.controller.ActionExecutor;
 import burtis.modules.gui.controller.Controller;
 import burtis.modules.gui.events.ProgramEvent;
 import burtis.modules.gui.simpleview.SimpleView;
-import burtis.modules.gui.view.AbstractView;
 import burtis.modules.network.NetworkConfig;
 
 import com.sun.istack.internal.logging.Logger;

@@ -22,11 +22,11 @@ import javax.swing.JToolBar;
 import burtis.common.mockups.Mockup;
 import burtis.common.mockups.MockupBus;
 import burtis.common.mockups.MockupBusStop;
+import burtis.modules.gui.AbstractView;
 import burtis.modules.gui.events.GoEvent;
 import burtis.modules.gui.events.ProgramEvent;
 import burtis.modules.gui.events.StepEvent;
 import burtis.modules.gui.events.StopEvent;
-import burtis.modules.gui.view.AbstractView;
 import burtis.modules.gui.view.View;
 
 public class SimpleView extends AbstractView

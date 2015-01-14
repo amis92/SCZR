@@ -22,6 +22,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 import burtis.common.mockups.Mockup;
 import burtis.common.mockups.MockupBus;
 import burtis.common.mockups.MockupBusStop;
+import burtis.modules.gui.AbstractView;
 import burtis.modules.gui.events.ConnectEvent;
 import burtis.modules.gui.events.GoEvent;
 import burtis.modules.gui.events.ProgramEvent;
