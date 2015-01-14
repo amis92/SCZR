@@ -55,6 +55,15 @@ public class ClientConnection<T>
         {
             logger.info("Resetting connection.");
             close();
+            try
+            {
+                Thread.sleep(500);
+            }
+            catch (InterruptedException e)
+            {
+                // oh well
+                logger.info("Interrupted pausing before connection.");
+            }
             logger.info("Awaiting connection from server on port " + port);
             socketService.connect();
             listenerExecutor.execute(listener::listen);

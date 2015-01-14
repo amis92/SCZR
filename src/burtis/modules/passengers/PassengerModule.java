@@ -32,7 +32,7 @@ public class PassengerModule extends AbstractNetworkModule
      * Logger.
      */
     private Logger logger = Logger
-            .getLogger(PassengerModule.class.getSimpleName());
+            .getLogger(PassengerModule.class.getName());
         
     /**
      * Managers.

@@ -36,12 +36,15 @@ public class ListenerImpl implements Listener
     public void listen()
     {
         final int port = socketService.getPort();
+        isInterrupted = false;
         logger.log(Level.INFO, "Starting listening on port " + port);
         while (!isInterrupted && socketService.isConnected())
         {
             awaitAndAccept();
         }
-        logger.log(Level.INFO, "Ending listening on port " + port);
+        logger.log(Level.INFO, String.format(
+                "Ending listening on port %d, interrupted: %b", port,
+                isInterrupted));
     }
 
     private void awaitAndAccept()

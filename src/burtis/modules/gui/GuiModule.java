@@ -89,8 +89,8 @@ public class GuiModule extends AbstractNetworkModule
     @Override
     protected void terminate()
     {
-        closeModule();
         controller.stop();
+        closeModule();
     }
 
     public static void main(String[] args)

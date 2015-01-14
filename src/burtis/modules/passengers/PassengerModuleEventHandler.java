@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 import burtis.common.events.AbstractEventHandler;
 import burtis.common.events.MainMockupEvent;
 import burtis.common.events.SimulationEvent;
+import burtis.common.events.Passengers.NewPassengerEvent;
 import burtis.common.events.Passengers.PassengerGenerationRateConfigurationEvent;
 import burtis.common.events.Passengers.WaitingPassengersRequestEvent;
 import burtis.common.events.Simulator.BusArrivalEvent;
@@ -17,6 +18,7 @@ import burtis.common.mockups.Mockup;
 import burtis.modules.passengers.exceptions.NoSuchBusStopException;
 import burtis.modules.passengers.model.Bus;
 import burtis.modules.passengers.model.BusStop;
+import burtis.modules.passengers.model.BusStopManager;
 import burtis.modules.passengers.model.PassengerManager;
 
 /**
@@ -84,6 +86,23 @@ public class PassengerModuleEventHandler extends AbstractEventHandler
     public void process(TerminateSimulationEvent event)
     {
         passengerModule.shutdown();
+    }
+    
+    @Override
+    public void process(NewPassengerEvent event)
+    {
+        BusStopManager stopManager = managers.getBusStopManager();
+        PassengerManager passManager = managers.getPassengerManager();
+        try
+        {
+            BusStop origin = stopManager.getBusStopByName(event.getOrigin());
+            BusStop destination = stopManager.getBusStopByName(event.getDestination());
+            passManager.addPassenger(origin, destination);
+        }
+        catch (NoSuchBusStopException e)
+        {
+            logger.warning("Failed to find stops sent for new passenger.");
+        }
     }
 
     /**

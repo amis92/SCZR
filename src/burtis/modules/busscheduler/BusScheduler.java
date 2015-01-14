@@ -12,12 +12,15 @@ import burtis.common.events.Simulator.BusStopsListEvent;
 import burtis.common.events.Simulator.BusStopsListRequestEvent;
 import burtis.common.events.Simulator.ChangeReleasingFrequencyEvent;
 import burtis.common.events.flow.ModuleReadyEvent;
+import burtis.common.events.flow.TerminateSimulationEvent;
+import burtis.common.events.flow.TickEvent;
 import burtis.common.mockups.Mockup;
 import burtis.common.mockups.MockupBus;
 import burtis.common.mockups.MockupBusStop;
 import burtis.common.mockups.MockupPassenger;
 import burtis.modules.network.ModuleConfig;
 import burtis.modules.network.NetworkConfig;
+import burtis.modules.network.server.Action;
 import burtis.modules.simulation.models.Bus;
 
 import com.sun.istack.internal.logging.Logger;
@@ -39,8 +42,9 @@ public class BusScheduler extends AbstractEventHandler
     private final String moduleName;
     private final String[] receiverNames;
     private final Consumer<SimulationEvent> sender;
+    private final Action onExit;
 
-    public BusScheduler(ModuleConfig config, Consumer<SimulationEvent> sender)
+    public BusScheduler(ModuleConfig config, Consumer<SimulationEvent> sender, Action onExit)
     {
         List<ModuleConfig> configs = NetworkConfig.defaultConfig()
                 .getModuleConfigs();
@@ -49,6 +53,25 @@ public class BusScheduler extends AbstractEventHandler
                 .getModuleName();
         this.receiverNames = new String[] { receiverName };
         this.sender = sender;
+        this.onExit = onExit;
+    }
+
+    @Override
+    public void process(ModuleReadyEvent event)
+    {
+        // ignoring
+    }
+
+    @Override
+    public void process(TickEvent event)
+    {
+        // ignoring
+    }
+    
+    @Override
+    public void process(TerminateSimulationEvent event)
+    {
+        onExit.perform();
     }
 
     @Override

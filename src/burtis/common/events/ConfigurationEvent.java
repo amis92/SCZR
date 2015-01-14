@@ -14,6 +14,11 @@ public class ConfigurationEvent extends SimulationEvent
         super(sender);
     }
 
+    public ConfigurationEvent(String sender, String[] recipients)
+    {
+        super(sender, recipients);
+    }
+
     public void visit(AbstractEventHandler eventProcessor)
     {
         eventProcessor.process(this);

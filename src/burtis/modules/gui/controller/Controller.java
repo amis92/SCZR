@@ -10,8 +10,10 @@ import java.util.logging.Logger;
 
 import burtis.modules.gui.View;
 import burtis.modules.gui.events.ConnectEvent;
+import burtis.modules.gui.events.CreatePassengerEvent;
 import burtis.modules.gui.events.DisconnectEvent;
 import burtis.modules.gui.events.GoEvent;
+import burtis.modules.gui.events.PassengerGenRateEvent;
 import burtis.modules.gui.events.ProgramEvent;
 import burtis.modules.gui.events.ShowBusEvent;
 import burtis.modules.gui.events.ShowBusStopEvent;
@@ -54,6 +56,10 @@ public class Controller
      */
     private void fillEventActionMap()
     {
+        eventActionMap.put(CreatePassengerEvent.class,
+                e -> actionExecutor.createPassenger((CreatePassengerEvent) e));
+        eventActionMap.put(PassengerGenRateEvent.class, e -> actionExecutor
+                .setPassengerGenRates((PassengerGenRateEvent) e));
         eventActionMap.put(GoEvent.class, e -> actionExecutor.sendStartEvent());
         eventActionMap.put(StepEvent.class,
                 e -> actionExecutor.sendOneStepEvent());
@@ -117,6 +123,10 @@ public class Controller
                 ProgramAction programAction = eventActionMap.get(event
                         .getClass());
                 programAction.go(event);
+            }
+            catch (InterruptedException e)
+            {
+                logger.log(Level.INFO, "Interrupted loop.");
             }
             catch (Exception e)
             {

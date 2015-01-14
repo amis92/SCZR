@@ -5,10 +5,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.logging.Logger;
 import java.util.Random;
 
 import burtis.common.constants.SimulationModuleConsts;
 import burtis.modules.passengers.Managers;
+import burtis.modules.passengers.PassengerModule;
 import burtis.modules.passengers.exceptions.NoSuchBusStopException;
 
 /**
@@ -19,6 +21,8 @@ import burtis.modules.passengers.exceptions.NoSuchBusStopException;
  */
 public class BusStopManager
 {
+    private Logger logger = Logger
+            .getLogger(PassengerModule.class.getName());
     /**
      * List of available bus stops.
      */
@@ -55,6 +59,23 @@ public class BusStopManager
     {
         return busStops;
     }
+    /**
+     * Returns bus stop of specified id.
+     * 
+     * @param id
+     *            id of the bus stop
+     * @throws NoSuchBusStopException
+     */
+    public BusStop getBusStopByName(String name) throws NoSuchBusStopException
+    {
+        for (BusStop busStop : busStops)
+        {
+            if (busStop.getName().equalsIgnoreCase(name))
+                return busStop;
+        }
+        logger.warning(String.format("Bus stop name = %s not found", name));
+        throw new NoSuchBusStopException(name);
+    }
 
     /**
      * Returns bus stop of specified id.
@@ -70,6 +91,7 @@ public class BusStopManager
             if (busStop.getId() == id)
                 return busStop;
         }
+        logger.warning(String.format("Bus stop id = %d not found", id));
         throw new NoSuchBusStopException(new Integer(id).toString());
     }
 

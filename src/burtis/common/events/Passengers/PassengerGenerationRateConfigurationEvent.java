@@ -2,6 +2,7 @@ package burtis.common.events.Passengers;
 
 import burtis.common.events.AbstractEventHandler;
 import burtis.common.events.ConfigurationEvent;
+import burtis.modules.network.NetworkConfig;
 
 /**
  *
@@ -11,13 +12,15 @@ public class PassengerGenerationRateConfigurationEvent extends
         ConfigurationEvent
 {
     private static final long serialVersionUID = 1L;
+    public static final String[] defaultRecipients = new String[] { NetworkConfig
+            .getModuleName(NetworkConfig.PSNGR_MODULE) };
     private final int generationCycleLength;
     private final int passengersPerCycle;
 
     public PassengerGenerationRateConfigurationEvent(int generationCycleLength,
             int passengersPerCycle, String sender)
     {
-        super(sender);
+        super(sender, defaultRecipients);
         this.generationCycleLength = generationCycleLength;
         this.passengersPerCycle = passengersPerCycle;
     }

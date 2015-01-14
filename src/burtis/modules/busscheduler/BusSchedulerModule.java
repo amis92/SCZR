@@ -17,7 +17,7 @@ public class BusSchedulerModule extends AbstractNetworkModule
     public BusSchedulerModule(ModuleConfig config)
     {
         super(config);
-        scheduler = new BusScheduler(config, this::send);
+        scheduler = new BusScheduler(config, this::send, this::shutdown);
         eventHandler = scheduler;
     }
 

@@ -1,5 +1,6 @@
 package burtis.common.events;
 
+import burtis.common.events.Passengers.NewPassengerEvent;
 import burtis.common.events.Passengers.PassengerGenerationRateConfigurationEvent;
 import burtis.common.events.Passengers.WaitingPassengersEvent;
 import burtis.common.events.Passengers.WaitingPassengersRequestEvent;
@@ -136,6 +137,11 @@ public abstract class AbstractEventHandler
     }
     
     public void process(BusMockupsEvent event)
+    {
+        defaultHandle(event);
+    }
+    
+    public void process(NewPassengerEvent event)
     {
         defaultHandle(event);
     }
