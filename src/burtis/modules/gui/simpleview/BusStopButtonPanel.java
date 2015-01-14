@@ -23,8 +23,9 @@ public class BusStopButtonPanel extends JPanel
         this.bQueue = bQueue;
     }
 
-    public void refreshBusStopButtonPanel(List<MockupBusStop> busStopList)
+    public void refresh(List<MockupBusStop> busStopList)
     {
+        removeAll();
         setLayout(new GridLayout(1, busStopList.size()));
         Iterator<MockupBusStop> it = busStopList.iterator();
         while (it.hasNext())

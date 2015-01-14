@@ -29,13 +29,13 @@ public class ProgressBarPanel extends JPanel
         this.bQueue = bQueue;
     }
 
-    public void refreshProgressBarPanel(List<MockupBus> freshList)
+    public void refresh(List<MockupBus> freshList)
     {
         if (busListChanged(freshList))
         {
             createBars(freshList);
         }
-        updateValues(freshList);;
+        updateValues(freshList);
     }
 
     private void updateValues(List<MockupBus> freshList)
@@ -52,6 +52,7 @@ public class ProgressBarPanel extends JPanel
 
     private void createBars(List<MockupBus> freshList)
     {
+        removeAll();
         setLayout(new GridLayout(freshList.size(), 1));
         for (int i = 0; i < freshList.size(); ++i)
         {
