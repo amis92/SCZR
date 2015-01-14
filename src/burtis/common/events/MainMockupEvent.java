@@ -10,17 +10,14 @@ import burtis.modules.network.NetworkConfig;
 public class MainMockupEvent extends SimulationEvent
 {
     private static final long serialVersionUID = 1L;
+    private static final String[] defaultRecipients = new String[] {
+            NetworkConfig.getModuleName(NetworkConfig.GUI_MODULE),
+            NetworkConfig.getModuleName(NetworkConfig.BUSSHED_MODULE) };
     private final Mockup mainMockup;
 
     public MainMockupEvent(String sender, Mockup mainMockup)
     {
-        super(sender, new String[] {NetworkConfig.getModuleName(NetworkConfig.GUI_MODULE)});
-        this.mainMockup = mainMockup;
-    }
-
-    public MainMockupEvent(String sender, String[] recipients, Mockup mainMockup)
-    {
-        super(sender, recipients);
+        super(sender, defaultRecipients);
         this.mainMockup = mainMockup;
     }
 
