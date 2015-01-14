@@ -30,7 +30,7 @@ public class ButtonPanel extends JPanel
         JButton addPassengerButton = new JButton("Add Passenger");
         JButton setPassengerGenParamsButton = new JButton(
                 "Generation Param Setup");
-        JButton setSimCycleLengthButton = new JButton("Set");
+        JButton setSimCycleLengthButton = new JButton("Set Cycle Length");
         add(addPassengerButton);
         add(setPassengerGenParamsButton);
         add(setSimCycleLengthButton);
@@ -43,10 +43,8 @@ public class ButtonPanel extends JPanel
 
     private void setSimulationCycleLength()
     {
-        SpinnerNumberModel model = new SpinnerNumberModel();
-        model.setMinimum(new Long(0l));
-        model.setMaximum(Long.MAX_VALUE);
-        model.setStepSize(new Long(500l));
+        SpinnerNumberModel model = new SpinnerNumberModel(0, 0,
+                Integer.MAX_VALUE, 250);
         JSpinner lengthField = new JSpinner(model);
         Object[] params = { new JLabel("Cycle length (in miliseconds)"),
                 lengthField };
@@ -54,7 +52,7 @@ public class ButtonPanel extends JPanel
                 "Cycle Length Setup", JOptionPane.OK_CANCEL_OPTION);
         if (d == 0)
         {
-            long cycleLength = (Long) lengthField.getValue();
+            long cycleLength = (Integer) lengthField.getValue();
             putInQueue(new SetCycleLengthEvent(cycleLength));
             String message = String.format("New cycle length: %d ms\n",
                     cycleLength);
@@ -84,8 +82,10 @@ public class ButtonPanel extends JPanel
 
     private void setPassengerGenParamsDialog()
     {
-        JSpinner gclField = new JSpinner();
-        JSpinner ppcField = new JSpinner();
+        JSpinner gclField = new JSpinner(new SpinnerNumberModel(1, -1,
+                Integer.MAX_VALUE, 1));
+        JSpinner ppcField = new JSpinner(new SpinnerNumberModel(5, 0,
+                Integer.MAX_VALUE, 1));
         Object[] params = { new JLabel("GenerationCycleLength"), gclField,
                 new JLabel("PassengersPerCycle"), ppcField };
         int d = JOptionPane.showConfirmDialog(getParent(), params,
