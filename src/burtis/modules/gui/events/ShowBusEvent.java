@@ -2,16 +2,11 @@
 
 public class ShowBusEvent extends ProgramEvent
 {
-    private Integer i;
-    private String currentBusStop = null;
-    
-    public ShowBusEvent(Integer i) {
+    private final Integer i;
+
+    public ShowBusEvent(Integer i)
+    {
         this.i = i;
-    }
-    
-    public ShowBusEvent(Integer i, String currentBusStop) {
-        this.i = i;
-        this.currentBusStop = currentBusStop;
     }
 
     public Integer getId()

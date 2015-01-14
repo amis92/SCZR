@@ -15,29 +15,24 @@ import burtis.modules.gui.events.ShowBusStopEvent;
 
 public class BusStopButtonPanel extends JPanel
 {
+    private static final long serialVersionUID = -2853079806846633380L;
     BlockingQueue<ProgramEvent> bQueue;
-    
-    public BusStopButtonPanel(BlockingQueue<ProgramEvent> bQueue) {
+
+    public BusStopButtonPanel(BlockingQueue<ProgramEvent> bQueue)
+    {
         this.bQueue = bQueue;
-        
-        
-        
     }
 
-    public void refreshBusStopButtonPanel(List<MockupBusStop> busStopList) {
+    public void refreshBusStopButtonPanel(List<MockupBusStop> busStopList)
+    {
         setLayout(new GridLayout(1, busStopList.size()));
-        
         Iterator<MockupBusStop> it = busStopList.iterator();
-        
-        while(it.hasNext())
+        while (it.hasNext())
         {
             MockupBusStop mbs = it.next();
             String stationName = mbs.getName();
-
             BusStopButton bsb = new BusStopButton(stationName, bQueue);
-            
             bsb.getButton().addMouseListener(new MouseAdapter() {
-                
                 @Override
                 public void mouseClicked(MouseEvent event)
                 {
@@ -51,7 +46,6 @@ public class BusStopButtonPanel extends JPanel
                     }
                 }
             });
-            
             add(bsb);
         }
     }

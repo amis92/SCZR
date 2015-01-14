@@ -15,17 +15,12 @@ import burtis.modules.gui.events.ShowBusStopEvent;
 class BusStationButton extends JPanel
 {
     private static final long serialVersionUID = 1L;
-    /* Kolejka, do ktorej wrzucamy obiekty odpowidajace eventom */
-    private LinkedBlockingQueue<ProgramEvent> bQueue;
-    private final String stationName;
     final JButton button;
 
     public BusStationButton(final String stationName,
             final LinkedBlockingQueue<ProgramEvent> bQueue)
     {
         super(new FlowLayout());
-        this.bQueue = bQueue;
-        this.stationName = stationName;
         ImageIcon icon = new ImageIcon("bus_stop.png");
         button = new JButton(stationName, icon);
         button.addMouseListener(new MouseAdapter() {

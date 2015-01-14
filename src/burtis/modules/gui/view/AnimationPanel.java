@@ -64,7 +64,7 @@ class AnimationPanel extends JPanel
         try
         {
             if (tmp != null)
-                bQueue.put(new ShowBusEvent(tmp.getId(), tmp.getCurrentBusStop()));
+                bQueue.put(new ShowBusEvent(tmp.getId()));
         }
         catch (InterruptedException e)
         {
