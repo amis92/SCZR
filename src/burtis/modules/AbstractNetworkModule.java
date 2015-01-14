@@ -96,9 +96,17 @@ public abstract class AbstractNetworkModule
 
     protected void initializeModule() throws IOException
     {
+        initializeModule(true);
+    }
+    
+    protected void initializeModule(boolean startConnection) throws IOException
+    {
         logger.info("Initializing resources in " + moduleConfig.getModuleName());
         listenerExecutor.execute(this::listenOnClient);
-        client.connect();
+        if (startConnection)
+        {
+            client.connect();
+        }
     }
 
     private void listenOnClient()

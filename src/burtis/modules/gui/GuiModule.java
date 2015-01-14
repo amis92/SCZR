@@ -58,10 +58,11 @@ public class GuiModule extends AbstractNetworkModule
         controller.start();
         try
         {
-            initializeModule();
+            initializeModule(false);
         }
         catch (IOException e)
         {
+            //can't happen, we don't try to connect
             throw new RuntimeException(e);
         }
     }
