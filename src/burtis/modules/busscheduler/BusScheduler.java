@@ -86,11 +86,11 @@ public class BusScheduler extends AbstractEventHandler
         optimize(event.getMainMockup());
     }
 
-    @Override
-    public void process(BusStopsListEvent event)
-    {
-        busStopCount = event.getBusStops().size();
-    }
+    //@Override
+    //public void process(BusStopsListEvent event)
+    //{
+    //    busStopCount = event.getBusStops().size();
+    //}
 
     private int countPassengersSitting(List<MockupBus> busList)
     {
@@ -173,7 +173,8 @@ public class BusScheduler extends AbstractEventHandler
      */
     public void init()
     {
-        sender.accept(new BusStopsListRequestEvent(moduleName));
+        busStopCount = SimulationModuleConsts.getDefaultBusStops().size();
+        //sender.accept(new BusStopsListRequestEvent(moduleName));
     }
 
     public void terminate()
