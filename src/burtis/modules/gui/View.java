@@ -7,18 +7,18 @@ public interface View
     /**
      * Update info with passengers from bus.
      * 
-     * @param id
+     * @param busId
      *            - id of bus to read passengers from.
      */
-    public void updatePassengerInfoPanel(Integer id);
+    public void updatePassengerInfoPanel(Integer busId);
 
     /**
      * Update info with passengers from stop.
      * 
-     * @param name
+     * @param stopName
      *            - name of the stop to read passengers from.
      */
-    public void updatePassengerInfoPanel(String name);
+    public void updatePassengerInfoPanel(String stopName);
 
     /**
      * Load new mockup containing status of current iteration.

@@ -18,8 +18,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 
 import burtis.common.mockups.Mockup;
-import burtis.common.mockups.MockupBus;
-import burtis.common.mockups.MockupBusStop;
 import burtis.modules.gui.View;
 import burtis.modules.gui.events.ConnectEvent;
 import burtis.modules.gui.events.DisconnectEvent;
@@ -75,8 +73,8 @@ public class SimpleView implements View
         statusFlowToolbar.add(connectedLabel);
         statusFlowToolbar.setRollover(true);
         // management toolbar
-        final SettingsToolbar settingsToolbar = new SettingsToolbar(bQueue, () -> mockup,
-                isConnected);
+        final SettingsToolbar settingsToolbar = new SettingsToolbar(bQueue,
+                () -> mockup, isConnected);
         final JPanel toolbars = new JPanel(new GridLayout(0, 1));
         toolbars.add(statusFlowToolbar, BorderLayout.PAGE_START);
         toolbars.add(settingsToolbar, BorderLayout.CENTER);
@@ -108,30 +106,14 @@ public class SimpleView implements View
         frame.add(passengerInfoPanel, BorderLayout.PAGE_END);
     }
 
-    public void updatePassengerInfoPanel(Integer i)
+    public void updatePassengerInfoPanel(Integer busId)
     {
-        for (MockupBus mb : mockup.getBuses())
-        {
-            if (mb.getId().equals(i))
-            {
-                passengerInfoPanel.showForBus(i, mb.getPassengerList());
-                return;
-            }
-        }
-        logger.warning("Can't show BusInfoPanel for busId=" + i.toString());
+        passengerInfoPanel.showForBus(busId);
     }
 
-    public void updatePassengerInfoPanel(String s)
+    public void updatePassengerInfoPanel(String stopName)
     {
-        for (MockupBusStop mbs : mockup.getBusStops())
-        {
-            if (mbs.getName().equals(s))
-            {
-                passengerInfoPanel.showForBusStop(s, mbs.getPassengerList());
-                return;
-            }
-        }
-        logger.warning("Can't show BusStopInfoPanel for busStop=" + s);
+        passengerInfoPanel.showForBusStop(stopName);
     }
 
     public void refresh(Mockup mockup)
@@ -139,8 +121,9 @@ public class SimpleView implements View
         this.mockup = mockup;
         busProgressPanel.refresh(mockup.getBuses());
         stopsPanel.refresh(mockup.getBusStops());
+        passengerInfoPanel.refresh(mockup);
         currentTime = mockup.getCurrentTime();
-        timeLabel.setText("    Time: " + Long.toString(currentTime));
+        setCurrentTimeLabel(currentTime);
     }
 
     private void tryChangeConnectionStatus()
@@ -166,6 +149,11 @@ public class SimpleView implements View
         connectedLabel.setText("    Connection status: " + status);
     }
 
+    private void setCurrentTimeLabel(long currentTime)
+    {
+        timeLabel.setText("    Time: " + Long.toString(currentTime));
+    }
+
     /**
      * Metoda pozwalająca na włożenie obiektu odpowiadającego za zdarzenie do
      * kolejki akcji do wykonania
@@ -180,8 +168,8 @@ public class SimpleView implements View
         }
         catch (InterruptedException err)
         {
-            logger.log(Level.WARNING,
-                    "Couldn't put event in queue: " + ev.getClass(), err);
+            logger.log(Level.WARNING, "Couldn't put event in queue: "
+                    + ev.getClass().getName());
         }
     }
 }

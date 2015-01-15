@@ -7,14 +7,14 @@ import burtis.modules.passengers.model.Passenger;
 public class MockupPassenger implements Serializable
 {
     private static final long serialVersionUID = 6872262177092264743L;
-    private int Id;
+    private int id;
     private String origin;
     private String destination;
     private long waitingTime;
 
     public MockupPassenger(Integer Id, String origin, String destination)
     {
-        this.Id = Id;
+        this.id = Id;
         this.destination = destination;
         this.origin = origin;
         this.waitingTime = 0;
@@ -22,7 +22,7 @@ public class MockupPassenger implements Serializable
 
     public MockupPassenger(Passenger passenger)
     {
-        this.Id = passenger.getId();
+        this.id = passenger.getId();
         this.origin = passenger.getOrigin().getName();
         this.destination = passenger.getDestination().getName();
         this.waitingTime = passenger.getWaitingTime();
@@ -30,7 +30,7 @@ public class MockupPassenger implements Serializable
 
     public int getId()
     {
-        return Id;
+        return id;
     }
 
     public String getDestination()
@@ -47,8 +47,22 @@ public class MockupPassenger implements Serializable
     {
         return waitingTime;
     }
-    
-    public void print() {
-        System.out.println("| * " + Id + " from: " + origin + " to: " + destination);
+
+    @Override
+    public String toString()
+    {
+        String format = "%d\tfrom: %s\t to: %s";
+        return String.format(format, id, origin, destination);
+    }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (!(obj instanceof MockupPassenger))
+        {
+            return false;
+        }
+        MockupPassenger other = (MockupPassenger) obj;
+        return other.id == id;
     }
 }
