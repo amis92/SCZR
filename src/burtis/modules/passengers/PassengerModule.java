@@ -1,11 +1,16 @@
 ﻿package burtis.modules.passengers;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.FileHandler;
+import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import burtis.common.logging.LogFormatter;
 import burtis.common.mockups.Mockup;
 import burtis.common.mockups.MockupBus;
 import burtis.common.mockups.MockupBusStop;
@@ -68,6 +73,20 @@ public class PassengerModule extends AbstractNetworkModule
                 this, 
                 actionExecutor, 
                 managers);
+        
+        Handler handler;
+        try
+        {
+            handler = new FileHandler(this.getClass().getName());
+            handler.setFormatter(new LogFormatter());
+            logger.addHandler(handler);
+        }
+        catch (SecurityException | IOException e)
+        {
+            logger.severe(e.getMessage());
+            terminate();            
+        }
+        
     }
     
 /* ##############################################

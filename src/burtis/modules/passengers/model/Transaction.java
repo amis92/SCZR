@@ -99,4 +99,12 @@ public class Transaction
     {
         return iterations <= 0;
     }
+    
+    /**
+     * Returns string describing transaction.
+     */
+    @Override
+    public String toString() {
+        return "Bus " + bus.getId() + " at " + busStop.getName() + " left " + iterations;
+    }
 }

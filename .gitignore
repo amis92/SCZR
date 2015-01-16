@@ -6,3 +6,9 @@ bin/
 /bin/
 *.db
 burtis.jar
+run_burtis
+/run_burtis~
+/run_burtis_ss
+*.txt
+/burtis.modules.simulation.Simulation
+/burtis.modules.passengers.PassengerModule

@@ -1,5 +1,13 @@
 package burtis.modules.passengers.model;
 
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -30,7 +38,7 @@ public class TransactionManager
      */
     public TransactionManager(Managers managers) {
         this.managers = managers;
-        this.managers.setTransactionManager(this);  
+        this.managers.setTransactionManager(this);       
     }
     
     /**
@@ -39,6 +47,9 @@ public class TransactionManager
     public void tickTransactions() {
         
         for(Transaction transaction : transactions) {
+            
+            managers.getLogger().info(transaction.toString());
+            
             transaction.nextIteration();
             
             if(transaction.isFinished()) {
@@ -46,7 +57,7 @@ public class TransactionManager
                 transaction.getBusStop().departBus();
             }
         }
-        
+                
         removeFinishedTransactions();
         
     }
@@ -59,6 +70,7 @@ public class TransactionManager
         
         for(Transaction transaction : transactions) {
             if(transaction.isFinished()) {
+                managers.getLogger().info("TREM: " + transaction);
                 transactions.remove(transaction);
             }
         }
@@ -71,6 +83,7 @@ public class TransactionManager
      * @param transaction transaction to be added
      */
     public void addTransaction(Transaction transaction) {
+        managers.getLogger().info("ADD: " + transaction);
         transactions.add(transaction);
     }
     

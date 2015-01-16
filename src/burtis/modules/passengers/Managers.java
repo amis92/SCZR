@@ -1,5 +1,7 @@
 package burtis.modules.passengers;
 
+import java.util.logging.Logger;
+
 import burtis.modules.passengers.model.BusManager;
 import burtis.modules.passengers.model.BusStopManager;
 import burtis.modules.passengers.model.PassengerManager;
@@ -27,6 +29,21 @@ public class Managers
      * Reference to the passenger manager.
      */
     private PassengerManager passengerManager;
+    
+    /**
+     * Reference to the logger.
+     */
+    private Logger logger;
+  
+    public Logger getLogger()
+    {
+        return logger;
+    }
+
+    public void setLogger(Logger logger)
+    {
+        this.logger = logger;
+    }
 
     /**
      * @return the busStopManager

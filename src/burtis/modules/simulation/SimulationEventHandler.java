@@ -48,11 +48,11 @@ class SimulationEventHandler extends AbstractEventHandler
      * Reference to the terminus.
      */
     private final Terminus terminus;
+    
     /**
      * Event handler's logger.
      */
-    private final Logger logger = Logger.getLogger(SimulationEventHandler.class
-            .getName());
+    private final Logger logger;
 
     /**
      * Constructor.
@@ -63,9 +63,13 @@ class SimulationEventHandler extends AbstractEventHandler
      * @param busStopManager
      * @param depot
      */
-    public SimulationEventHandler(final Simulation simulation,
-            final ActionExecutor actionExecutor, final BusManager busManager,
-            final BusStopManager busStopManager, final Depot depot)
+    public SimulationEventHandler(
+            final Simulation simulation,
+            final ActionExecutor actionExecutor, 
+            final BusManager busManager,
+            final BusStopManager busStopManager, 
+            final Depot depot,
+            final Logger logger)
     {
         this.simulation = simulation;
         this.actionExecutor = actionExecutor;
@@ -73,6 +77,8 @@ class SimulationEventHandler extends AbstractEventHandler
         // this.busStopManager = busStopManager;
         // this.depot = depot;
         this.terminus = busStopManager.getTerminus();
+        
+        this.logger = logger;
     }
 
     @Override
@@ -91,6 +97,7 @@ class SimulationEventHandler extends AbstractEventHandler
     @Override
     public void process(TerminateSimulationEvent event)
     {
+        logger.info("TerminateSimulationEvent");
         simulation.shutdown();
     }
 
@@ -147,6 +154,7 @@ class SimulationEventHandler extends AbstractEventHandler
     public void process(WaitingPassengersEvent event)
     {
         logger.info("WaitingPassengersEvent");
+        
         try
         {
             busManager.processWaitingPassengersQueryResponse(event

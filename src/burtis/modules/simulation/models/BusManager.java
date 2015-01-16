@@ -24,7 +24,7 @@ public class BusManager
     /**
      * Logger of the BusManager class.
      */
-    private final Logger logger = Logger.getLogger(this.getClass().getName());
+    private final Logger logger;
     /**
      * List of buses in the simulation.
      */
@@ -53,8 +53,9 @@ public class BusManager
      *            number of buses to create
      */
     public BusManager(BusStopManager busStopManager, int numberOfBuses,
-            Depot depot)
+            Depot depot, Logger logger)
     {
+        this.logger = logger;
         this.busStopManager = busStopManager;
         // this.depot = depot;
         Bus bus;
@@ -248,7 +249,7 @@ public class BusManager
      */
     public Map<Integer, Integer> getBusArrivalsList()
     {
-        Map<Integer, Integer> listCopy = busArrivalsList;
+        Map<Integer, Integer> listCopy = new HashMap<>(busArrivalsList);
         busArrivalsList.clear();
         return listCopy;
     }

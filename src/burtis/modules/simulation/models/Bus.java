@@ -4,6 +4,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import burtis.common.constants.SimulationModuleConsts;
+import burtis.modules.simulation.Simulation;
 import burtis.modules.simulation.exceptions.NoSuchBusStopException;
 
 /**
@@ -157,7 +158,7 @@ public class Bus
     public Bus(BusStopManager busStopManager, BusManager busManager)
     {
         this.id = IDGenerator.getNextId();
-        this.logger = Logger.getLogger(this.getClass().getSimpleName() + " id:" + id);
+        this.logger = Logger.getLogger(Simulation.class.getName());
         this.state = State.DEPOT;
         this.position = 0;
         this.busStopManager = busStopManager;

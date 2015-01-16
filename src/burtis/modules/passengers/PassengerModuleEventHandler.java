@@ -20,6 +20,7 @@ import burtis.modules.passengers.model.Bus;
 import burtis.modules.passengers.model.BusStop;
 import burtis.modules.passengers.model.BusStopManager;
 import burtis.modules.passengers.model.PassengerManager;
+import burtis.modules.simulation.Simulation;
 
 /**
  * Event handler for Passenger Module.
