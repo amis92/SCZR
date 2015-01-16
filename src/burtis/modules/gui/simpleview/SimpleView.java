@@ -15,7 +15,9 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
+import javax.swing.ScrollPaneConstants;
 
 import burtis.common.mockups.Mockup;
 import burtis.modules.gui.View;
@@ -51,6 +53,8 @@ public class SimpleView implements View
     {
         this.bQueue = bQueue;
         this.isConnected = isConnected;
+        stopsPanel = new StopsPanel(bQueue);
+        busProgressPanel = new BusProgressPanel(bQueue);
         // status flow toolbar
         final JButton stopButton = new JButton("Stop");
         final JButton pauseButton = new JButton("Pause");
@@ -72,20 +76,13 @@ public class SimpleView implements View
         statusFlowToolbar.add(timeLabel);
         statusFlowToolbar.add(connectedLabel);
         statusFlowToolbar.setRollover(true);
-        // management toolbar
+        // settings
         final SettingsToolbar settingsToolbar = new SettingsToolbar(bQueue,
                 () -> mockup, isConnected);
+        // upper group
         final JPanel toolbars = new JPanel(new GridLayout(0, 1));
-        toolbars.add(statusFlowToolbar, BorderLayout.PAGE_START);
-        toolbars.add(settingsToolbar, BorderLayout.CENTER);
-        // bus and stops panels
-        busProgressPanel = new BusProgressPanel(bQueue);
-        stopsPanel = new StopsPanel(bQueue);
-        final JPanel busInfoPanel = new JPanel(new BorderLayout());
-        busInfoPanel.add(stopsPanel, BorderLayout.PAGE_START);
-        busInfoPanel.add(busProgressPanel, BorderLayout.CENTER);
-        final JScrollPane busScrollPanel = new JScrollPane();
-        busScrollPanel.getViewport().add(busInfoPanel);
+        toolbars.add(statusFlowToolbar);
+        toolbars.add(settingsToolbar);
         // frame setup
         final JFrame frame = new JFrame();
         if (exitListener == null)
@@ -102,8 +99,17 @@ public class SimpleView implements View
         frame.setSize(800, 600);
         frame.setTitle("burtis");
         frame.add(toolbars, BorderLayout.PAGE_START);
-        frame.add(busScrollPanel, BorderLayout.CENTER);
-        frame.add(passengerInfoPanel, BorderLayout.PAGE_END);
+        final JScrollPane stopsScroll = new JScrollPane(stopsPanel);
+        stopsScroll
+                .setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+        final JSplitPane horizontalSplit = new JSplitPane(
+                JSplitPane.HORIZONTAL_SPLIT, true, new JScrollPane(
+                        busProgressPanel), passengerInfoPanel);
+        horizontalSplit.setDividerLocation(frame.getWidth() / 8 * 5);
+        final JSplitPane veritcalSplit = new JSplitPane(
+                JSplitPane.VERTICAL_SPLIT, true, stopsScroll, horizontalSplit);
+        veritcalSplit.setDividerLocation(frame.getHeight() / 8);
+        frame.add(veritcalSplit, BorderLayout.CENTER);
     }
 
     public void updatePassengerInfoPanel(Integer busId)
@@ -131,7 +137,7 @@ public class SimpleView implements View
         boolean isConnected = this.isConnected.get();
         connectionButton.setText(isConnected ? "Disconnecting..."
                 : "Connecting...");
-        connectionButton.setBackground(Color.YELLOW);
+        connectionButton.setForeground(Color.YELLOW);
         setConnectionStatusText("WAITING");
         putInQueue(isConnected ? new DisconnectEvent() : new ConnectEvent());
     }
@@ -140,7 +146,8 @@ public class SimpleView implements View
     {
         boolean isConnected = this.isConnected.get();
         connectionButton.setText(isConnected ? "Disconnect" : "Connect");
-        connectionButton.setBackground(isConnected ? Color.RED : Color.GREEN);
+        connectionButton.setForeground(isConnected ? Color.RED : new Color(0,
+                130, 0)/* dark green */);
         setConnectionStatusText((isConnected ? "OK" : "NO CONNECTION"));
     }
 

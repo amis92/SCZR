@@ -12,9 +12,9 @@ import java.util.logging.Logger;
 
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JToolBar;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 
@@ -24,7 +24,7 @@ import burtis.common.mockups.MockupBusStop;
 import burtis.common.mockups.MockupPassenger;
 import burtis.modules.gui.View;
 
-class PassengerInfoPanel extends JToolBar
+class PassengerInfoPanel extends JPanel
 {
     private static final long serialVersionUID = 1L;
     private static final Logger logger = Logger.getLogger(View.class.getName());

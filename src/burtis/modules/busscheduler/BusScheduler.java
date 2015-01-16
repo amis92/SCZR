@@ -8,8 +8,6 @@ import burtis.common.constants.SimulationModuleConsts;
 import burtis.common.events.AbstractEventHandler;
 import burtis.common.events.MainMockupEvent;
 import burtis.common.events.SimulationEvent;
-import burtis.common.events.Simulator.BusStopsListEvent;
-import burtis.common.events.Simulator.BusStopsListRequestEvent;
 import burtis.common.events.Simulator.ChangeReleasingFrequencyEvent;
 import burtis.common.events.flow.ModuleReadyEvent;
 import burtis.common.events.flow.TerminateSimulationEvent;
@@ -44,7 +42,8 @@ public class BusScheduler extends AbstractEventHandler
     private final Consumer<SimulationEvent> sender;
     private final Action onExit;
 
-    public BusScheduler(ModuleConfig config, Consumer<SimulationEvent> sender, Action onExit)
+    public BusScheduler(ModuleConfig config, Consumer<SimulationEvent> sender,
+            Action onExit)
     {
         List<ModuleConfig> configs = NetworkConfig.defaultConfig()
                 .getModuleConfigs();
@@ -67,7 +66,7 @@ public class BusScheduler extends AbstractEventHandler
     {
         // ignoring
     }
-    
+
     @Override
     public void process(TerminateSimulationEvent event)
     {
@@ -86,12 +85,11 @@ public class BusScheduler extends AbstractEventHandler
         optimize(event.getMainMockup());
     }
 
-    //@Override
-    //public void process(BusStopsListEvent event)
-    //{
-    //    busStopCount = event.getBusStops().size();
-    //}
-
+    // @Override
+    // public void process(BusStopsListEvent event)
+    // {
+    // busStopCount = event.getBusStops().size();
+    // }
     private int countPassengersSitting(List<MockupBus> busList)
     {
         int passengersSittingTotal = 0;
@@ -174,7 +172,6 @@ public class BusScheduler extends AbstractEventHandler
     public void init()
     {
         busStopCount = SimulationModuleConsts.getDefaultBusStops().size();
-        //sender.accept(new BusStopsListRequestEvent(moduleName));
     }
 
     public void terminate()
