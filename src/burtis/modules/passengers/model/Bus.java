@@ -99,7 +99,7 @@ public class Bus
 /* ##############################################
  * END OF GETTERS AND SETTERS
  * ########################################### */   
-
+  
     /**
      * Returns number of free places in the bus.
      * @return number of free places

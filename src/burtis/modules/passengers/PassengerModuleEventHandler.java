@@ -172,7 +172,7 @@ public class PassengerModuleEventHandler extends AbstractEventHandler
             bus.arrive();
             try
             {
-                BusStop busStop = managers.getBusStopManager().getBusStopById(event.getBusArrivalList().get(busId));
+                BusStop busStop = managers.getBusStopManager().getBusStopByName(event.getBusArrivalList().get(busId));
                 // Transactions are created here
                 busStop.enqueueBus(bus);
             }

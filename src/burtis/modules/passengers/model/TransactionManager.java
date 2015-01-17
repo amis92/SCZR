@@ -83,7 +83,7 @@ public class TransactionManager
      * @param transaction transaction to be added
      */
     public void addTransaction(Transaction transaction) {
-        managers.getLogger().info("ADD: " + transaction);
+        //managers.getLogger().info("ADD: " + transaction);
         transactions.add(transaction);
     }
     

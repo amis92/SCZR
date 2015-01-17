@@ -38,7 +38,7 @@ public class BusManager
      * 
      * Key is bus id, value bus stop id.
      */
-    private final Map<Integer, Integer> busArrivalsList = new HashMap<>();
+    private final Map<Integer, String> busArrivalsList = new HashMap<>();
 
     /**
      * Reference to the depot.
@@ -238,7 +238,7 @@ public class BusManager
     {
         logger.info("Adding bus " + bus.getId() + " to the bus stop "
                 + busStop.getName());
-        busArrivalsList.put(bus.getId(), busStop.getId());
+        busArrivalsList.put(bus.getId(), busStop.getName());
     }
 
     /**
@@ -247,9 +247,9 @@ public class BusManager
      * 
      * List of arrivals is cleared upon retrieval.
      */
-    public Map<Integer, Integer> getBusArrivalsList()
+    public Map<Integer, String> getBusArrivalsList()
     {
-        Map<Integer, Integer> listCopy = new HashMap<>(busArrivalsList);
+        Map<Integer, String> listCopy = new HashMap<>(busArrivalsList);
         busArrivalsList.clear();
         return listCopy;
     }

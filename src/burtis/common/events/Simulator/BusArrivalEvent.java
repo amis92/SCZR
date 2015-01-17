@@ -19,15 +19,15 @@ public class BusArrivalEvent extends SimulationEvent
     /**
      * List of buses IDs.
      */
-    private final Map<Integer,Integer> busArrivalList;
+    private final Map<Integer,String> busArrivalList;
 
-    public BusArrivalEvent(String sender, Map<Integer,Integer> busArrivalList)
+    public BusArrivalEvent(String sender, Map<Integer,String> busArrivalList)
     {
         super(sender, new String[] {NetworkConfig.getModuleName(NetworkConfig.PSNGR_MODULE)});
         this.busArrivalList = busArrivalList;
     }
 
-    public Map<Integer,Integer> getBusArrivalList()
+    public Map<Integer,String> getBusArrivalList()
     {
         return busArrivalList;
     }

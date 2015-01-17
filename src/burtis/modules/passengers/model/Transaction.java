@@ -44,16 +44,22 @@ public class Transaction
         this.bus = bus;
         this.busStop = busStop;
         // this.managers = managers;
+        
+        // Processing passengers in the bus
         int unloadedPassengers = 0;
         for (Passenger passenger : bus.getPassengers())
         {
             if (passenger.getDestination() == busStop)
             {
-                managers.getPassengerManager().killPassenger(passenger);
+                // If this is passenger's destination - bye!
                 bus.getPassengers().remove(passenger);
+                managers.getPassengerManager().killPassenger(passenger);
+                
                 unloadedPassengers++;
             }
         }
+        
+        // Processing passengers at the bus stop
         int loadedPassengers = 0;
         while (bus.getFreePlaces() != 0)
         {
@@ -65,7 +71,8 @@ public class Transaction
     }
 
     /*
-     * ############################################## GETTERS AND SETTERS
+     * ############################################## 
+     * GETTERS AND SETTERS
      * ###########################################
      */
     public Bus getBus()
@@ -79,7 +86,8 @@ public class Transaction
     }
 
     /*
-     * ############################################## END OF GETTERS AND SETTERS
+     * ############################################## 
+     * END OF GETTERS AND SETTERS
      * ###########################################
      */
     /**

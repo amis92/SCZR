@@ -24,7 +24,7 @@ public class ActionExecutor extends EventSender
         super(clientModule, netConfig);
     }
 
-    public void sendBusArrivalEvent(Map<Integer, Integer> busArrivalList)
+    public void sendBusArrivalEvent(Map<Integer, String> busArrivalList)
     {
         clientModule.send(new BusArrivalEvent(sender, busArrivalList));
     }
