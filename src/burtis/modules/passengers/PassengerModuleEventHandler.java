@@ -146,6 +146,7 @@ public class PassengerModuleEventHandler extends AbstractEventHandler
     {   
         logger.info("TickEvent, iteration " + event.iteration());
         managers.getPassengerManager().generatePassengers();
+        managers.getPassengerManager().updateWaitingTime();
         managers.getTransactionManager().tickTransactions();
         passengerModule.setCurrentCycle(event.iteration());
     }

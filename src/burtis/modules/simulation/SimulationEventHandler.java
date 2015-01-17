@@ -195,6 +195,7 @@ class SimulationEventHandler extends AbstractEventHandler
         logger.info("BusDeparturesEvent");
         try
         {
+            // TODO: Gdzieś tu jest błąd...
             busManager.processBusDeparturesList(event.getDeparturesList());
             actionExecutor.sendBusMockupEvent(simulation.getCurrentCycle(),
                     busManager.getBusMockups());

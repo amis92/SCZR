@@ -110,7 +110,22 @@ public class PassengerManager
             leftToGeneration--;
         }
     }
+    
+    /**
+     * Updates waiting time of passengers.
+     */
+    public void updateWaitingTime() {
+        for(Passenger passenger : passengers) {
+            passenger.tickPassenger();
+        }
+    }
 
+    /**
+     * Adds passenger with given destination to the given bus stop.
+     * 
+     * @param origin
+     * @param destination
+     */
     public void addPassenger(BusStop origin, BusStop destination)
     {
         Passenger passenger = new Passenger(origin, destination);

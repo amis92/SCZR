@@ -135,16 +135,15 @@ public class PassengerModule extends AbstractNetworkModule
             
             try {
                 bus = managers.getBusManager().getBusById(busMockup.getId());
-                logger.info(bus.toString());
                 for (Passenger passenger : bus.getPassengers())
                 {
-                    logger.info(passenger.toString());
                     passengerList.add(new MockupPassenger(passenger));
                 }
                 busMockup.setPassengerList(passengerList);
             }
             catch (NoSuchBusException ex) {
-                logger.severe("No such bus " + ex.getBusId() + "!");
+                // This is not a problem at all!
+                //logger.severe("No such bus " + ex.getBusId() + "!");
             }
             
         }

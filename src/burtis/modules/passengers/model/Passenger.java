@@ -33,7 +33,7 @@ public class Passenger
     /**
      * Bus assigned to the passenger.
      */
-    private Bus bus;
+    private Bus bus = null;
     
     /**
      * Generates passenger ids.
@@ -91,12 +91,21 @@ public class Passenger
     {
         this.bus = bus;
     }
-    
-    
-    
+
 /* ##############################################
  * END OF GETTERS AND SETTERS
  * ########################################### */
+    
+    /**
+     * Increases waiting time.
+     * 
+     * Increases waiting time if bus is null.
+     */
+    public void tickPassenger() {
+        if(bus == null) {
+            waitingTime++;
+        }
+    }
     
     @Override
     public String toString() {
