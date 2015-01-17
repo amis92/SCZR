@@ -88,8 +88,7 @@ public class BusManager
         List<BusDepartureInfo> list = new ArrayList<>();
         for (Bus bus : departingBuses)
         {
-            list.add(new BusDepartureInfo(bus.getId(), bus.getNextBusStop()
-                    .getId()));
+            list.add(new BusDepartureInfo(bus.getId(), bus.getNextBusStop().getName()));
         }
         departingBuses.clear();
         return list;

@@ -12,16 +12,16 @@ import burtis.modules.passengers.Managers;
  */
 public class BusStop 
 {
-   
-    /**
-     * Bus stop id.
-     */
-    private final int id;
     
     /**
      * Bus stop name.
      */
     private final String name;
+    
+    /**
+     * Position of the bus stop.
+     */
+    private final int position;
     
     /**
      * Queue of waiting passengers.
@@ -50,22 +50,23 @@ public class BusStop
      * @param name bus stop name
      * @param mangers Managers object
      */
-    BusStop(int id, String name, Managers mangers) {
-        this.id = id;
+    BusStop(String name, int position, Managers mangers) {
         this.name = name;
         this.managers = mangers;
+        this.position = position;
     }
     
 /* ##############################################
  * GETTERS AND SETTERS
  * ########################################### */
-        
-    public int getId() {
-        return id;
-    }
-
+    
     public String getName() {
         return name;
+    }
+
+    public int getPosition()
+    {
+        return position;
     }
 
     public Queue<Passenger> getPassengerQueue() {

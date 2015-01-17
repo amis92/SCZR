@@ -264,7 +264,7 @@ public class BusManager
     {
         for (BusDepartureInfo departureInfo : departureList)
         {
-            departBus(departureInfo.busId, departureInfo.nexBusStopId);
+            departBus(departureInfo.busId, departureInfo.nexBusStopName);
         }
     }
 
@@ -278,10 +278,10 @@ public class BusManager
      * 
      * @throws NoSuchBusStopException
      */
-    private void departBus(int busId, int nextBusStopId)
+    private void departBus(int busId, String nextBusStopName)
             throws NoSuchBusStopException
     {
-        getBusById(busId).depart(busStopManager.getBusStopById(nextBusStopId));
+        getBusById(busId).depart(busStopManager.getBusStopByName(nextBusStopName));
     }
 
     /**

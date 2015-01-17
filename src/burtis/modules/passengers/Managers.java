@@ -35,11 +35,17 @@ public class Managers
      */
     private Logger logger;
   
+        /**
+     * @return the logger
+     */
     public Logger getLogger()
     {
         return logger;
     }
 
+    /**
+     * @param logger the logger to set
+     */
     public void setLogger(Logger logger)
     {
         this.logger = logger;

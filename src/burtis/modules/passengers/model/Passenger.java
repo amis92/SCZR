@@ -87,14 +87,20 @@ public class Passenger
         return waitingTime;
     }
     
+    public void setBus(Bus bus)
+    {
+        this.bus = bus;
+    }
+    
+    
+    
 /* ##############################################
  * END OF GETTERS AND SETTERS
  * ########################################### */
     
-        
     @Override
     public String toString() {
-        return "Passenger{" + "id=" + id + ", origin=" + origin + ", destination=" + destination + ", waitingTime=" + waitingTime + ", bus=" + bus + '}';
+        return "Passenger{" + "id=" + id + ", origin=" + origin.getName() + ", destination=" + destination.getName() + ", waitingTime=" + waitingTime + ", bus=" + bus.getId() + '}';
     }    
         
 }

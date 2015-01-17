@@ -63,7 +63,11 @@ public class Transaction
         int loadedPassengers = 0;
         while (bus.getFreePlaces() != 0)
         {
-            bus.getPassengers().add(busStop.getNextPassenger());
+            Passenger passengerToAdd = busStop.getNextPassenger();
+            if(passengerToAdd == null) break;
+            
+            passengerToAdd.setBus(bus);
+            bus.getPassengers().add(passengerToAdd);
             loadedPassengers++;
         }
         this.iterations = (unloadedPassengers + loadedPassengers)

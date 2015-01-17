@@ -126,15 +126,15 @@ public class BusStopManager
      * 
      * @throws NoSuchBusStopException
      */
-    public BusStop getBusStopById(int id) throws NoSuchBusStopException
+    public BusStop getBusStopByName(String name) throws NoSuchBusStopException
     {
         for (BusStop busStop : busStops)
         {
-            if (busStop.getId() == id)
+            if (busStop.getName() == name)
             {
                 return busStop;
             }
         }
-        throw new NoSuchBusStopException(new Integer(id).toString());
+        throw new NoSuchBusStopException(name);
     }
 }

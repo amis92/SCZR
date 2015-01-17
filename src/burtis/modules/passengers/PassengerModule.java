@@ -64,6 +64,7 @@ public class PassengerModule extends AbstractNetworkModule
         managers.setBusManager(new BusManager(managers));
         managers.setPassengerManager(new PassengerManager(managers));
         managers.setTransactionManager(new TransactionManager(managers));
+        managers.setLogger(logger);
         
         this.actionExecutor = new ActionExecutor(
                 this.client, 
@@ -134,10 +135,10 @@ public class PassengerModule extends AbstractNetworkModule
             
             try {
                 bus = managers.getBusManager().getBusById(busMockup.getId());
-                
-                List<Passenger> passengersInBus = bus.getPassengers();
-                for (Passenger passenger : passengersInBus)
+                logger.info(bus.toString());
+                for (Passenger passenger : bus.getPassengers())
                 {
+                    logger.info(passenger.toString());
                     passengerList.add(new MockupPassenger(passenger));
                 }
                 busMockup.setPassengerList(passengerList);

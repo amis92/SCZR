@@ -47,8 +47,7 @@ public class BusStopManager
         for (Entry<Integer, String> busStopData : SimulationModuleConsts
                 .getDefaultBusStops())
         {
-            busStops.add(new BusStop(busStopData.getKey(), busStopData
-                    .getValue(), managers));
+            busStops.add(new BusStop(busStopData.getValue(), busStopData.getKey(), managers));
         }
     }
 
@@ -77,23 +76,7 @@ public class BusStopManager
         throw new NoSuchBusStopException(name);
     }
 
-    /**
-     * Returns bus stop of specified id.
-     * 
-     * @param id
-     *            id of the bus stop
-     * @throws NoSuchBusStopException
-     */
-    public BusStop getBusStopById(int id) throws NoSuchBusStopException
-    {
-        for (BusStop busStop : busStops)
-        {
-            if (busStop.getId() == id)
-                return busStop;
-        }
-        logger.warning(String.format("Bus stop id = %d not found", id));
-        throw new NoSuchBusStopException(new Integer(id).toString());
-    }
+    
 
     /**
      * Returns random bus stop, except last one.
@@ -126,15 +109,15 @@ public class BusStopManager
     /**
      * Returns number of passengers waiting at the bus stop of given id.
      * 
-     * @param busStopId
-     *            bus stop id
+     * @param busStopName
+     *            bus stop name
      * @return number of waiting passengers
      * 
      * @throws NoSuchBusStopException
      */
-    public int waitingPassengers(int busStopId) throws NoSuchBusStopException
+    public int waitingPassengers(String busStopName) throws NoSuchBusStopException
     {
-        return getBusStopById(busStopId).waitingPassengers();
+        return getBusStopByName(busStopName).waitingPassengers();
     }
 
     /**

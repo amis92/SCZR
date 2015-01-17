@@ -12,3 +12,5 @@ run_burtis
 *.txt
 /burtis.modules.simulation.Simulation
 /burtis.modules.passengers.PassengerModule
+/burtis.modules.simulation.Simulation.lck
+/burtis.modules.passengers.PassengerModule.lck

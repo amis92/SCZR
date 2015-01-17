@@ -126,11 +126,33 @@ public class Bus
     }
 
     /**
-     * Changes state of the bus to {@link State#RUNNING} and adds bus to the
-     * list of buses departing at current iteration ({@link BusManager#addToDepartingList(Bus)}).
+     * Order bus to depart from the bus stop.
+     * 
+     * Changes state of the bus to {@link State#RUNNING}, adds bus to the
+     * list of buses departing at current iteration ({@link BusManager#addToDepartingList(Bus)})
+     * and sets field {@link Bus#requestedBusStop}.
      */
     public void depart()
     {
+        BusStop nearestRequestedBusStop = null;
+        
+        if(passengers.size() > 0) {
+            nearestRequestedBusStop = passengers.get(0).getDestination();
+        }
+        else {
+            requestedBusStop = null;
+        }
+        
+        if(passengers.size() > 1) {
+            for(int i=1; i<passengers.size(); i++) {
+                if(passengers.get(i).getDestination().getPosition() < nearestRequestedBusStop.getPosition()) {
+                    nearestRequestedBusStop = passengers.get(i).getDestination();
+                }
+            }
+            requestedBusStop = nearestRequestedBusStop;
+        }
+        
+        
         managers.getBusManager().addToDepartingList(this);
         state = State.RUNNING;
     }
