@@ -155,14 +155,14 @@ public class Bus
      * @param capacity
      *            bus capacity
      */
-    public Bus(BusStopManager busStopManager, BusManager busManager)
+    public Bus(BusStopManager busStopManager, BusManager busManager, Logger logger)
     {
         this.id = IDGenerator.getNextId();
-        this.logger = Logger.getLogger(Simulation.class.getName());
         this.state = State.DEPOT;
         this.position = 0;
         this.busStopManager = busStopManager;
         this.busManager = busManager;
+        this.logger = logger;
     }
     
 /* ##############################################
@@ -287,6 +287,7 @@ public class Bus
         if(state != State.BUSSTOP) {
             throw new Exception("Invalid bus state!");
         }
+        
         state = State.RUNNING;
         try {
             this.requestedBusStop = busStopManager.getBusStopByName(requestedBusStopName);
@@ -351,12 +352,7 @@ public class Bus
             return false;
         }
         else {
-            if(position >= nearestBusStop.getPosition()) {
-                return true;
-            }
-            else {
-                return false;
-            }
+            return position >= nearestBusStop.getPosition();
         }
         
     }
@@ -375,6 +371,8 @@ public class Bus
         busStopQueryRequest = null;
         
         if(reachesBusStop()) {
+            
+            logger.info("Bus " + id + " reaches bus stop.");
             
             if(nearestBusStop instanceof Terminus) {
                 arriveAtTerminus();

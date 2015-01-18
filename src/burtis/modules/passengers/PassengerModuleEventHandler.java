@@ -1,5 +1,6 @@
 ﻿package burtis.modules.passengers;
 
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -10,6 +11,7 @@ import burtis.common.events.Passengers.NewPassengerEvent;
 import burtis.common.events.Passengers.PassengerGenerationRateConfigurationEvent;
 import burtis.common.events.Passengers.WaitingPassengersRequestEvent;
 import burtis.common.events.Simulator.BusArrivalEvent;
+import burtis.common.events.Simulator.BusDepartureInfo;
 import burtis.common.events.Simulator.BusMockupsEvent;
 import burtis.common.events.flow.ModuleReadyEvent;
 import burtis.common.events.flow.TerminateSimulationEvent;
@@ -144,10 +146,16 @@ public class PassengerModuleEventHandler extends AbstractEventHandler
     @Override
     public void process(TickEvent event)
     {   
-        logger.info("TickEvent, iteration " + event.iteration());
+        logger.info("TickEvent \n\nIteration " + event.iteration() + "\n\n");
+        
         managers.getPassengerManager().generatePassengers();
         managers.getPassengerManager().updateWaitingTime();
-        managers.getTransactionManager().tickTransactions();
+        
+        // New transactions are created here!
+        managers.getBusStopManager().callNextBus();
+        managers.getTransactionManager().tickAndRemoveTransactions();
+        managers.getTransactionManager().logListOfTransactions();
+        
         passengerModule.setCurrentCycle(event.iteration());
     }
 
@@ -162,11 +170,8 @@ public class PassengerModuleEventHandler extends AbstractEventHandler
     @Override
     public void process(BusArrivalEvent event)
     {
-        logger.info("BusArrivalEvent, listSize=" + event.getBusArrivalList().size());
+        logger.info("BusArrivalEvent, listSize=" + event.getBusArrivalList().size() + "\n" + event.getBusArrivalList());
         
-        // Remove finished transactions
-        // managers.getTransactionManager().removeFinishedTransactions();
-
         // Enqueue buses and create transactions
         for(Integer busId : event.getBusArrivalList().keySet()) {
             Bus bus = managers.getBusManager().add(busId);
@@ -174,17 +179,18 @@ public class PassengerModuleEventHandler extends AbstractEventHandler
             try
             {
                 BusStop busStop = managers.getBusStopManager().getBusStopByName(event.getBusArrivalList().get(busId));
-                // Transactions are created here
                 busStop.enqueueBus(bus);
             }
             catch (NoSuchBusStopException e)
             {
-                logger.log(Level.SEVERE, "No bus stop of id " + event.getBusArrivalList().get(busId));
+                logger.log(Level.SEVERE, "No bus: " + event.getBusArrivalList().get(busId));
                 passengerModule.terminate();
             }
         }
         
-        actionExecutor.sendDeparturesList(managers.getBusManager().getBusDepartureInfoList());
+        List<BusDepartureInfo> departureList = managers.getBusManager().getBusDepartureInfoList();
+        logger.info("Sending departure list:\n" + departureList);
+        actionExecutor.sendDeparturesList(departureList);
     }
 
     /**

@@ -84,13 +84,11 @@ public class BusStop
     /**
      * Puts bus to the FIFO queue of buses waiting at the bus stop.
      * 
-     * After adding {@link BusStop#nextBus() } is called.
-     * 
      * @param bus Bus to be enqueued
      */
     public void enqueueBus(Bus bus) {
         busQueue.add(bus);
-        nextBus();
+        //nextBus();
     }
     
     /**
@@ -103,11 +101,10 @@ public class BusStop
     }
     
     /**
-     * Empties bus stop and calls {@link BusStop#nextBus() }.
+     * Empties bus stop.
      */
     public void departBus() {
         busAtBusStop = null;
-        nextBus();
     }
     
     /**

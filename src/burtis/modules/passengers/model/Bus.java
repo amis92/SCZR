@@ -128,12 +128,22 @@ public class Bus
     /**
      * Order bus to depart from the bus stop.
      * 
-     * Changes state of the bus to {@link State#RUNNING}, adds bus to the
-     * list of buses departing at current iteration ({@link BusManager#addToDepartingList(Bus)})
+     * Changes state of the bus to {@link State#RUNNING}
      * and sets field {@link Bus#requestedBusStop}.
      */
     public void depart()
     {
+        requestedBusStop = getNearestRequestedBusStop();
+        state = State.RUNNING;
+    }
+    
+    /**
+     * Gets nearest bus stop requested by the passengers.
+     * 
+     * @return nearest requested {@link BusStop}
+     */
+    private BusStop getNearestRequestedBusStop() {
+        
         BusStop nearestRequestedBusStop = null;
         
         if(passengers.size() > 0) {
@@ -149,12 +159,10 @@ public class Bus
                     nearestRequestedBusStop = passengers.get(i).getDestination();
                 }
             }
-            requestedBusStop = nearestRequestedBusStop;
         }
         
+        return requestedBusStop;
         
-        managers.getBusManager().addToDepartingList(this);
-        state = State.RUNNING;
     }
 
     /**

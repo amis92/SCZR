@@ -61,7 +61,7 @@ public class BusManager
         Bus bus;
         for (int i = 0; i < numberOfBuses; i++)
         {
-            bus = new Bus(busStopManager, this);
+            bus = new Bus(busStopManager, this, logger);
             buses.put(bus.getId(), bus);
             depot.putBus(bus);
         }
@@ -88,7 +88,7 @@ public class BusManager
      */
     public Bus add(int capacity)
     {
-        Bus newBus = new Bus(busStopManager, this);
+        Bus newBus = new Bus(busStopManager, this, logger);
         buses.put(newBus.getId(), newBus);
         return newBus;
     }

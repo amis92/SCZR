@@ -18,7 +18,8 @@ public class LogFormatter extends Formatter
     @Override
     public String format(LogRecord record)
     {
-        String resultString = record.getLevel() + ": " + record.getMessage() + "(" + record.getSourceClassName() + ")\n";
+        //String resultString = "\n" + record.getLevel() + ": " + record.getMessage() + "(" + record.getSourceClassName() + ")\n";
+        String resultString = "\n" + record.getLevel() + ": " + record.getMessage() + "\n";
         if(record.getThrown() != null) {
             StringWriter errors = new StringWriter();
             record.getThrown().printStackTrace(new PrintWriter(errors));

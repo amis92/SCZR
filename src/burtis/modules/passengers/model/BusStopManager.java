@@ -135,4 +135,13 @@ public class BusStopManager
         }
         return map;
     }
+    
+    /**
+     * Iterates over all bus stops and calls {@link BusStop#nextBus()} on every bus stop.
+     */
+    public void callNextBus() {
+        for(BusStop busStop : busStops) {
+            busStop.nextBus();
+        }
+    }
 }

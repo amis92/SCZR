@@ -1,5 +1,6 @@
 package burtis.modules.passengers.model;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -36,25 +37,24 @@ public class TransactionManager
     /**
      * Ticks all transactions, departs buses and removes finished transactions.
      */
-    public void tickTransactions() {
-        
+    public void tickAndRemoveTransactions() {
+                
         for(int i=0; i<transactions.size(); i++) 
         {            
             Transaction transaction = transactions.get(i);
-            
-            managers.getLogger().info("TSTA: " + transaction);
-            
+                       
             transaction.nextIteration();
             
             // Removal of finished transactions and departing buses.
             if(transaction.isFinished()) {
                 transaction.getBus().depart();
                 transaction.getBusStop().departBus();
+                managers.getBusManager().addToDepartingList(transaction.getBus());
                 transactions.remove(i);
-                managers.getLogger().info("TREM: " + transaction);
                 i--;
+                managers.getLogger().info("TREM: " + transaction);
             }
-        }  
+        }
     }
         
     /**
@@ -65,6 +65,16 @@ public class TransactionManager
     public void addTransaction(Transaction transaction) {
         managers.getLogger().info("TADD: " + transaction);
         transactions.add(transaction);
+    }
+    
+    public void logListOfTransactions() {
+        String infoString = "Transactions:\n";
+        
+        for(Transaction transaction : transactions) {
+            infoString += transaction + "\n";
+        }
+        
+        managers.getLogger().info(infoString + "\n");
     }
     
 }
