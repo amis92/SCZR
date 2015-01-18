@@ -81,7 +81,8 @@ public class Simulation extends AbstractNetworkModule
         
         this.busStopManager = new BusStopManager(
                 SimulationModuleConsts.getDefaultBusStops(),
-                depot);
+                depot,
+                logger);
         
         this.busManager = new BusManager(
                 busStopManager,

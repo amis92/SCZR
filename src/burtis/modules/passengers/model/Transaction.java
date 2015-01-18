@@ -1,5 +1,7 @@
 ﻿package burtis.modules.passengers.model;
 
+import java.util.List;
+
 import burtis.common.constants.PassengersModuleConsts;
 import burtis.modules.passengers.Managers;
 
@@ -47,13 +49,15 @@ public class Transaction
         
         // Processing passengers in the bus
         int unloadedPassengers = 0;
-        for (Passenger passenger : bus.getPassengers())
+        List<Passenger> passengers = bus.getPassengers();
+        for (int i=0; i<passengers.size(); i++)
         {
-            if (passenger.getDestination() == busStop)
+            if (passengers.get(i).getDestination() == busStop)
             {
                 // If this is passenger's destination - bye!
-                bus.getPassengers().remove(passenger);
-                managers.getPassengerManager().killPassenger(passenger);
+                managers.getPassengerManager().killPassenger(passengers.get(i));
+                bus.getPassengers().remove(i);
+                i--;
                 
                 unloadedPassengers++;
             }

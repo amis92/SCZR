@@ -165,7 +165,7 @@ public class PassengerModuleEventHandler extends AbstractEventHandler
         logger.info("BusArrivalEvent, listSize=" + event.getBusArrivalList().size());
         
         // Remove finished transactions
-        managers.getTransactionManager().removeFinishedTransactions();
+        // managers.getTransactionManager().removeFinishedTransactions();
 
         // Enqueue buses and create transactions
         for(Integer busId : event.getBusArrivalList().keySet()) {

@@ -192,18 +192,19 @@ class SimulationEventHandler extends AbstractEventHandler
     @Override
     public void process(BusDeparturesEvent event)
     {
-        logger.info("BusDeparturesEvent");
+        logger.info("BusDeparturesEvent: " + event.getDeparturesList());
         try
         {
-            // TODO: Gdzieś tu jest błąd...
             busManager.processBusDeparturesList(event.getDeparturesList());
             actionExecutor.sendBusMockupEvent(simulation.getCurrentCycle(),
                     busManager.getBusMockups());
+            logger.info(busManager.getBusMockups().toString());
             actionExecutor.sendModuleReadyEvent(simulation.getCurrentCycle());
         }
         catch (Exception ex)
         {
-            logger.log(Level.SEVERE, "BDE " + ex.getClass().getSimpleName());
+            logger.log(Level.SEVERE, "(" + simulation.getCurrentCycle() + ")" + " BDE: " 
+                    + ex.getMessage() + " " + ex.getClass().getSimpleName(), ex);
             simulation.shutdown();
         }
     }

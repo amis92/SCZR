@@ -86,4 +86,9 @@ public class BusStop
     {
         waitingBuses.add(bus);
     }
+    
+    @Override
+    public String toString() {
+        return name;
+    }
 }

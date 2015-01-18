@@ -1,13 +1,5 @@
 package burtis.modules.passengers.model;
 
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -46,44 +38,32 @@ public class TransactionManager
      */
     public void tickTransactions() {
         
-        for(Transaction transaction : transactions) {
+        for(int i=0; i<transactions.size(); i++) 
+        {            
+            Transaction transaction = transactions.get(i);
             
-            managers.getLogger().info(transaction.toString());
+            managers.getLogger().info("TSTA: " + transaction);
             
             transaction.nextIteration();
             
+            // Removal of finished transactions and departing buses.
             if(transaction.isFinished()) {
                 transaction.getBus().depart();
                 transaction.getBusStop().departBus();
-            }
-        }
-                
-        removeFinishedTransactions();
-        
-    }
-    
-    /**
-     * Removes finished transactions.
-     * @param transactions list of transactions
-     */
-    public void removeFinishedTransactions() {
-        
-        for(Transaction transaction : transactions) {
-            if(transaction.isFinished()) {
+                transactions.remove(i);
                 managers.getLogger().info("TREM: " + transaction);
-                transactions.remove(transaction);
+                i--;
             }
-        }
-        
+        }  
     }
-    
+        
     /**
      * Adds new transaction to the transactions list.
      * 
      * @param transaction transaction to be added
      */
     public void addTransaction(Transaction transaction) {
-        //managers.getLogger().info("ADD: " + transaction);
+        managers.getLogger().info("TADD: " + transaction);
         transactions.add(transaction);
     }
     

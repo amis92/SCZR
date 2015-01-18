@@ -282,10 +282,18 @@ public class Bus
      * @param requestedBusStop bus stop requested by passenger, can be null
      * @throws NoSuchBusStopException if current bus stop does not exist
      */
-    public void depart(BusStop requestedBusStop) throws NoSuchBusStopException
+    public void depart(String requestedBusStopName) throws NoSuchBusStopException, Exception
     {
+        if(state != State.BUSSTOP) {
+            throw new Exception("Invalid bus state!");
+        }
         state = State.RUNNING;
-        this.requestedBusStop = requestedBusStop;
+        try {
+            this.requestedBusStop = busStopManager.getBusStopByName(requestedBusStopName);
+        }
+        catch (NoSuchBusStopException ex) {
+            this.requestedBusStop = null;            
+        }
         this.nearestBusStop = busStopManager.getNextBusStop(currentBusStop);
         this.currentBusStop = null;
     }

@@ -3,6 +3,7 @@ package burtis.modules.simulation.models;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.logging.Logger;
 
 import burtis.modules.simulation.exceptions.NoSuchBusStopException;
 
@@ -17,8 +18,7 @@ public class BusStopManager
     /**
      * Logger of the BusManager class.
      */
-    // private final Logger logger =
-    // Logger.getLogger(this.getClass().getName());
+    private final Logger logger;
     /**
      * List of buses in the simulation.
      */
@@ -35,7 +35,7 @@ public class BusStopManager
      * @param depot
      *            reference to the depot object
      */
-    public BusStopManager(List<Entry<Integer, String>> busStopsList, Depot depot)
+    public BusStopManager(List<Entry<Integer, String>> busStopsList, Depot depot, Logger logger)
     {
         for (int i = 0; i < busStopsList.size(); i++)
         {
@@ -51,6 +51,7 @@ public class BusStopManager
                         .getValue(), depot));
             }
         }
+        this.logger = logger;
     }
 
     /**
@@ -80,6 +81,7 @@ public class BusStopManager
         {
             return currentBusStop;
         }
+        
         int currentIndex = busStops.indexOf(currentBusStop);
         if (currentIndex >= 0)
         {
@@ -87,7 +89,7 @@ public class BusStopManager
         }
         else
         {
-            throw new NoSuchBusStopException(currentBusStop.getName());
+            throw new NoSuchBusStopException(currentBusStop.toString());
         }
     }
 

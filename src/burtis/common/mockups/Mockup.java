@@ -61,7 +61,7 @@ public final class Mockup implements Serializable
                 "=========================\n";
         
         for(MockupBus mockupBus : schedule) {
-            mockupString += mockupBus;
+            mockupString += mockupBus.toString();
         }
         
         for(MockupBusStop mockupBusStop : busStops) {

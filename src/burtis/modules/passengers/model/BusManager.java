@@ -38,13 +38,17 @@ public class BusManager
     }
 
     /*
-     * ############################################## GETTERS AND SETTERS
+     * ############################################## 
+     * GETTERS AND SETTERS
      * ###########################################
      */
+    
     /*
-     * ############################################## END OF GETTERS AND SETTERS
+     * ############################################## 
+     * END OF GETTERS AND SETTERS
      * ###########################################
      */
+    
     /**
      * Add bus of specified id to the list of known buses. If bus of given id
      * exists it is not recreated.
@@ -88,7 +92,12 @@ public class BusManager
         List<BusDepartureInfo> list = new ArrayList<>();
         for (Bus bus : departingBuses)
         {
-            list.add(new BusDepartureInfo(bus.getId(), bus.getNextBusStop().getName()));
+            if(bus.getRequestedBusStop() != null) {
+                list.add(new BusDepartureInfo(bus.getId(), bus.getRequestedBusStop().getName()));
+            }
+            else {
+                list.add(new BusDepartureInfo(bus.getId(), null));
+            }
         }
         departingBuses.clear();
         return list;

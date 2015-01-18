@@ -91,7 +91,7 @@ public class Bus
         return passengers;
     }
 
-    public BusStop getNextBusStop()
+    public BusStop getRequestedBusStop()
     {
         return requestedBusStop;
     }

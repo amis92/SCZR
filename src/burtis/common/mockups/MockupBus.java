@@ -3,6 +3,7 @@ package burtis.common.mockups;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import burtis.common.constants.SimulationModuleConsts;
 import burtis.modules.simulation.models.Bus;
 
 /**
@@ -46,14 +47,16 @@ public class MockupBus implements Serializable
     {
         this.Id = bus.getId();
         this.passengerList = new ArrayList<MockupPassenger>();
-        if (bus.getClosestBusStop() == null)
-        {
-            this.currentBusStop = null;
-        }
-        else
-        {
-            this.currentBusStop = bus.getClosestBusStop().getName();
-        }
+        this.currentBusStop = ( bus.getCurrentBusStop() == null ) ? "NULL" : bus.getCurrentBusStop().getName();
+//        if (bus.getClosestBusStop() == null)
+//        {
+//            this.currentBusStop = null;
+//        }
+//        else
+//        {
+//            this.currentBusStop = bus.getClosestBusStop().getName();
+//        }
+        
         this.lengthPassed = bus.getPosition();
         this.busState = bus.getState();
     }
@@ -139,8 +142,11 @@ public class MockupBus implements Serializable
     @Override
     public String toString()
     {
-        String busString = "\tBus ID:" + Id + ", Pos:" + lengthPassed + ", S:"
-                + busState + "\n\t\tPas: ";
+        String format = "Bus Id: %s, Progress: %d, Bus State: %s, Current Bus Stop: %s\n\t";
+        String busString;
+        
+        busString = String.format(format, Id, lengthPassed, busState, currentBusStop);
+        
         for (MockupPassenger passenger : passengerList)
         {
             busString += passenger.getId() + " ";

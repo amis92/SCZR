@@ -1,5 +1,7 @@
 package burtis.common.logging;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
 
@@ -16,6 +18,12 @@ public class LogFormatter extends Formatter
     @Override
     public String format(LogRecord record)
     {
-        return record.getLevel() + ": " + record.getMessage() + "(" + record.getSourceClassName() + ")\n";
+        String resultString = record.getLevel() + ": " + record.getMessage() + "(" + record.getSourceClassName() + ")\n";
+        if(record.getThrown() != null) {
+            StringWriter errors = new StringWriter();
+            record.getThrown().printStackTrace(new PrintWriter(errors));
+            resultString += errors.toString() + "\n";            
+        }
+        return resultString;
     }
 }
