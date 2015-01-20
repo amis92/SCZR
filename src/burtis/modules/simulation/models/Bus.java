@@ -397,6 +397,8 @@ public class Bus
      */
     public void processQueryResult() throws NoSuchBusStopException {
         
+        if(state != State.RUNNING) return;
+        
         if(queryResult) {
             arrive(); // Arrives at the nearest bus stop
         } 
@@ -459,7 +461,10 @@ public class Bus
     }
     
     public String toString() {
-        return "Bus: " + id + " pos: " + position + " state:" + state + "\n";
+        String currentBusStopName = currentBusStop == null ? "none" : currentBusStop.getName();
+        String nearestBusStopName = nearestBusStop == null ? "none" : nearestBusStop.getName();
+        String requestedBusStopName = requestedBusStop == null ? "none" : requestedBusStop.getName();
+        return "Bus: " + id + " pos: " + position + " state:" + state + " nbs: " + nearestBusStopName + " cbs: " + currentBusStopName + "\n";
     }
 
 }

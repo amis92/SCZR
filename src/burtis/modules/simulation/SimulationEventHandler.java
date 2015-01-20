@@ -151,7 +151,7 @@ class SimulationEventHandler extends AbstractEventHandler
     @Override
     public void process(WaitingPassengersEvent event)
     {
-        logger.info("WaitingPassengersEvent");
+        logger.info("WaitingPassengersEvent " + event.getBusIdWaitingPassengersList());
         
         try
         {
