@@ -157,60 +157,62 @@ class PassengerInfoPanel extends JPanel
         {
             // just create new content
             lastOldRow = -1; // no strikethrough
-            fillRowsFromTo(0, passengers.size(), passengers);
+            firstNewRow = Integer.MAX_VALUE;
+            fillRowsFromTo(0, passengers.size(), passengers, 0);
+            currentPassengers = passengers;
+            return;
         }
-        else
+        final int listSize = currentPassengers.size();
+        int oldCount = 0;
+        // currentPassengers & passengers != null
+        if (!currentPassengers.isEmpty())
         {
-            final int listSize = currentPassengers.size();
-            int oldCount = 0;
-            // currentPassengers & passengers != null
-            if (!currentPassengers.isEmpty())
+            // find first index of passenger who stayed
+            int index = 0;
+            final MockupPassenger firstPresentPassenger = passengers.isEmpty() ? null
+                    : passengers.get(0);
+            while (index < listSize
+                    && !currentPassengers.get(index).equals(
+                            firstPresentPassenger))
             {
-                // count passengers which are no longer on the stop
-                final MockupPassenger firstNewPassenger = passengers.isEmpty() ? null
-                        : passengers.get(0);
-                while (oldCount < listSize
-                        && !currentPassengers.get(oldCount).equals(
-                                firstNewPassenger))
-                {
-                    ++oldCount;
-                }
+                ++index;
             }
-            lastOldRow = oldCount - 1;
-            int notNewCount = 0;
-            if (!passengers.isEmpty())
-            {
-                final int newSize = passengers.size();
-                final MockupPassenger lastOldPassenger = currentPassengers
-                        .isEmpty() ? null : currentPassengers.get(listSize - 1);
-                while (notNewCount < newSize
-                        && !passengers.get(notNewCount)
-                                .equals(lastOldPassenger))
-                {
-                    ++notNewCount;
-                }
-            }
-            ++notNewCount;
-            firstNewRow = oldCount + notNewCount;
-            fillRowsFromTo(0, lastOldRow + 1, currentPassengers);
-            fillRowsFromTo(lastOldRow + 1, firstNewRow, passengers);
-            fillRowsFromTo(firstNewRow, oldCount + passengers.size(),
-                    passengers);
+            oldCount = index;
         }
+        int stayedCount = 0;
+        if (!passengers.isEmpty())
+        {
+            final int newSize = passengers.size();
+            // find index of last passenger who waited last time
+            int index = 0;
+            final MockupPassenger lastOldPassenger = currentPassengers
+                    .isEmpty() ? null : currentPassengers.get(listSize - 1);
+            while (index < newSize
+                    && !passengers.get(index).equals(lastOldPassenger))
+            {
+                ++index;
+            }
+            stayedCount = index < newSize ? /*true-ostatni pasażerowie są równi*/ index + 1
+                    : /*false - ostatni pasażerowie się różnili*/ index;
+        }
+        lastOldRow = oldCount - 1;
+        firstNewRow = oldCount + stayedCount;
+        fillRowsFromTo(0, oldCount, currentPassengers, 0);
+        fillRowsFromTo(oldCount, firstNewRow, passengers, 0);
+        fillRowsFromTo(firstNewRow, oldCount + passengers.size(), passengers, stayedCount);
         currentPassengers = passengers;
     }
 
     /**
      * Fills table from start row to end row (exclusive) with values passengers
-     * from the list starting at index 0.
+     * from the list starting at index startIndex.
      */
     private void fillRowsFromTo(int startRow, int endRow,
-            List<MockupPassenger> passengerList)
+            List<MockupPassenger> passengerList, int startIndex)
     {
-        int i = 0;
-        for (int row = startRow; row < endRow; ++row)
+        for (int row = startRow, i = startIndex; row < endRow; ++row, ++i)
         {
-            fillRow(row, passengerList.get(i++));
+            fillRow(row, passengerList.get(i));
         }
     }
 
