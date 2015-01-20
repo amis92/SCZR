@@ -57,7 +57,7 @@ public class MockupBus implements Serializable
 //            this.currentBusStop = bus.getClosestBusStop().getName();
 //        }
         
-        this.lengthPassed = bus.getPosition();
+        this.lengthPassed = Math.round(((float)bus.getPosition())/SimulationModuleConsts.getLineLength()*100.0F);
         this.busState = bus.getState();
     }
 

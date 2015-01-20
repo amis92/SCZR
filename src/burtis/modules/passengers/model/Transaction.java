@@ -74,8 +74,7 @@ public class Transaction
             bus.getPassengers().add(passengerToAdd);
             loadedPassengers++;
         }
-        this.iterations = (unloadedPassengers + loadedPassengers)
-                * Math.round(PassengersModuleConsts.ITER_PER_PASSENGER);
+        this.iterations = (int)Math.ceil((unloadedPassengers + loadedPassengers)*(PassengersModuleConsts.ITER_PER_PASSENGER));
     }
 
     /*

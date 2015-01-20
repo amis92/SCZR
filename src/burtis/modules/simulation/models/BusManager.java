@@ -43,7 +43,7 @@ public class BusManager
     /**
      * Reference to the depot.
      */
-    // private final Depot depot;
+    private final Depot depot;
     /**
      * Constructor.
      * 
@@ -57,7 +57,7 @@ public class BusManager
     {
         this.logger = logger;
         this.busStopManager = busStopManager;
-        // this.depot = depot;
+        this.depot = depot;
         Bus bus;
         for (int i = 0; i < numberOfBuses; i++)
         {
@@ -94,7 +94,7 @@ public class BusManager
     }
 
     /**
-     * Executes {@link Bus#updatePosition} on every bus which state is running.
+     * Executes {@link Bus#updatePosition} on every bus which state is running and withdraws buses to the depot.
      * 
      * @throws NoSuchBusStopException
      */
@@ -103,6 +103,10 @@ public class BusManager
         for (Bus bus : buses.values())
         {
             bus.updateBusPosition();
+            if(bus.isGoToDepot() && bus.getState() == Bus.State.TERMINUS) {
+                depot.putBus(bus);
+                bus.setState(Bus.State.DEPOT);
+            }
         }
     }
 

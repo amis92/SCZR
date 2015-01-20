@@ -11,7 +11,7 @@ package burtis.common.constants;
  */
 public class PassengersModuleConsts {
 
-    public final static int ITER_PER_PASSENGER = 2;
+    public final static float ITER_PER_PASSENGER = 0.7F;
     
     public final static int PASSENGER_GENERATION_CYCLE_LENGTH = 1;
     public final static int PASSENGERS_PER_GENERATION_CYCLE = 3;

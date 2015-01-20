@@ -43,4 +43,9 @@ public class SimulationModuleConsts {
         
     }
     
+    public static int getLineLength() {
+        List<Entry<Integer,String>> busStops = getDefaultBusStops();
+        return busStops.get(busStops.size()-1).getKey();
+    }
+    
 }
