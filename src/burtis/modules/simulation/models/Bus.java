@@ -393,6 +393,9 @@ public class Bus
      * 
      *  If anyone is waiting calls {@link Bus#arrive()}, if not,
      *  calls {@link Bus#omitBusStop()}.
+     *  
+     *  Executes only in running state.
+     *  
      * @throws NoSuchBusStopException if current bus stop does not exist
      */
     public void processQueryResult() throws NoSuchBusStopException {
