@@ -149,10 +149,7 @@ public class Bus
         if(passengers.size() > 0) {
             nearestRequestedBusStop = passengers.get(0).getDestination();
         }
-        else {
-            requestedBusStop = null;
-        }
-        
+                
         if(passengers.size() > 1) {
             for(int i=1; i<passengers.size(); i++) {
                 if(passengers.get(i).getDestination().getPosition() < nearestRequestedBusStop.getPosition()) {
@@ -161,7 +158,7 @@ public class Bus
             }
         }
         
-        return requestedBusStop;
+        return nearestRequestedBusStop;
         
     }
 
@@ -173,5 +170,15 @@ public class Bus
         passengers.clear();
         state = State.RUNNING;
     }
+    
+    @Override
+    public String toString() {
+        String passengersString = "";
+        for(Passenger passenger : passengers) {
+            passengersString += passenger.getId() + " ";
+        }
+        return "Bus: " + id + " passengers: " + passengersString + "\n";
+    }
+    
 
 }

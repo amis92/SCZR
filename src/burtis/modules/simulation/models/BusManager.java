@@ -102,10 +102,7 @@ public class BusManager
     {
         for (Bus bus : buses.values())
         {
-            if (bus.getState() == Bus.State.RUNNING)
-            {
-                bus.updateBusPosition();
-            }
+            bus.updateBusPosition();
         }
     }
 
@@ -218,7 +215,6 @@ public class BusManager
             if (bus.getBusStopQueryRequest() != null)
             {
                 // set an answer
-                System.out.println(response.toString());
                 bus.setQueryResult(response.get(bus.getBusStopQueryRequest()
                         .getName()));
                 // and make bus process it
@@ -297,5 +293,13 @@ public class BusManager
             list.add(new MockupBus(bus));
         }
         return list;
+    }
+    
+    public String toString() {
+        String out = "\n";
+        for(Bus bus : buses.values()) {
+            out += bus.toString();            
+        }
+        return out;
     }
 }

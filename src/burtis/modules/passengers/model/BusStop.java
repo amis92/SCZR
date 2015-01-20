@@ -137,4 +137,16 @@ public class BusStop
         return passengerQueue.size();
     }
     
+    @Override
+    public String toString() {
+        String currnetBusIdString = busAtBusStop == null ? "none" : (new Integer(busAtBusStop.getId())).toString();  
+        String busStopString = "Bus stop: " + name + " current bus: " + currnetBusIdString +"\n\tBuses: ";
+        
+        for(Bus bus : busQueue) {
+            busStopString += bus.getId();
+        }
+        
+        return busStopString+"\n";
+    }
+    
 }

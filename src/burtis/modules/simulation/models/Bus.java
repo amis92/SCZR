@@ -336,27 +336,10 @@ public class Bus
      * @throws NoSuchBusStopException if nearest bus stop does not exist
      */
     public void omitBusStop() throws NoSuchBusStopException {
+        logger.info("Bus " + id + " ommits bus stop " + nearestBusStop.getName());
         nearestBusStop = busStopManager.getNextBusStop(nearestBusStop);
     }
     
-    /**
-     * Determines if bus reaches nearest bus stop in current iteration.
-     * 
-     * If bus state is other than RUNNING returns false.
-     * 
-     * @return whether bus reaches bus stop or not
-     */
-    public boolean reachesBusStop() {
-        
-        if(state != State.RUNNING) {
-            return false;
-        }
-        else {
-            return position >= nearestBusStop.getPosition();
-        }
-        
-    }
-
     /**
      * Updates bus position and checks bus stop interaction.
      * 
@@ -367,10 +350,13 @@ public class Bus
     public void updateBusPosition() throws NoSuchBusStopException
     {
         
+        // This can be done only in running state
+        if(state != State.RUNNING) return;
+        
         position += busSpeed;
         busStopQueryRequest = null;
         
-        if(reachesBusStop()) {
+        if(position >= nearestBusStop.getPosition()) {
             
             logger.info("Bus " + id + " reaches bus stop.");
             
@@ -470,6 +456,10 @@ public class Bus
             nearestBusStop = busStopManager.getFirstBusStop();
             currentBusStop = null;
         }
+    }
+    
+    public String toString() {
+        return "Bus: " + id + " pos: " + position + " state:" + state + "\n";
     }
 
 }

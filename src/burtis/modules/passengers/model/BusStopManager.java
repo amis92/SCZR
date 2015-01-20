@@ -144,4 +144,13 @@ public class BusStopManager
             busStop.nextBus();
         }
     }
+    
+    @Override
+    public String toString() {
+        String out = "";
+        for(BusStop busStop : busStops) {
+            out += busStop.toString();
+        }
+        return out;
+    }
 }

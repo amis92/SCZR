@@ -156,6 +156,9 @@ public class PassengerModuleEventHandler extends AbstractEventHandler
         managers.getTransactionManager().tickAndRemoveTransactions();
         managers.getTransactionManager().logListOfTransactions();
         
+        logger.info(managers.getBusStopManager().toString());
+        logger.info(managers.getBusManager().toString());
+        
         passengerModule.setCurrentCycle(event.iteration());
     }
 
@@ -203,7 +206,7 @@ public class PassengerModuleEventHandler extends AbstractEventHandler
     {
         logger.info("BusMockupEvent");
         Mockup mockup = passengerModule.buildMockup(event.getBusMockups());
-        logger.info(mockup.toString());
+        //logger.info(mockup.toString());
         actionExecutor.sendMainMockupEvent(mockup);
         actionExecutor.sendModuleReadyEvent(passengerModule.getCurrentCycle());
     }

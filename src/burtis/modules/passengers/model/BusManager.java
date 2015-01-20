@@ -121,4 +121,13 @@ public class BusManager
         }
         throw new NoSuchBusException(id);
     }
+    
+    @Override
+    public String toString() {
+        String out = "";
+        for(Bus bus : buses) {
+            out += bus.toString();
+        }
+        return out;
+    }
 }

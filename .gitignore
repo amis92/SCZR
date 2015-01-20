@@ -17,3 +17,4 @@ run_burtis
 /burtis.modules.simulation.Simulation~
 /burtis.modules.passengers.PassengerModule.1
 /burtis.modules.simulation.Simulation.1
+/run_burtis_ss~

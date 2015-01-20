@@ -117,15 +117,13 @@ class SimulationEventHandler extends AbstractEventHandler
         long iteration = event.iteration();
         try
         {
-            // Sync check
-            // if(iteration != simulation.getCurrentCycle()+1) {
-            // throw new OutOfSyncException("Simulation");
-            // }
-            // else {
             simulation.setCurrentCycle(iteration);
-            // }
+
             terminus.departBus();
             busManager.updateBusPositions();
+            
+            logger.info(busManager.toString());
+            
             // This is "interiteration sync point" with PassengerModule.
             // Iteration will be continued after receiving response from
             // PassengerModule, namely it will be continued in the
@@ -198,7 +196,7 @@ class SimulationEventHandler extends AbstractEventHandler
             busManager.processBusDeparturesList(event.getDeparturesList());
             actionExecutor.sendBusMockupEvent(simulation.getCurrentCycle(),
                     busManager.getBusMockups());
-            logger.info(busManager.getBusMockups().toString());
+            //logger.info(busManager.getBusMockups().toString());
             actionExecutor.sendModuleReadyEvent(simulation.getCurrentCycle());
         }
         catch (Exception ex)
