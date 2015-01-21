@@ -324,9 +324,14 @@ public class Bus
      */
     public void arriveAtTerminus() {
         currentBusStop = nearestBusStop;
-        state = State.TERMINUS;
         if(cycle >= maxCycles) {
             goToDepot = true;
+            state = State.DEPOT;
+        }
+        else {
+            Terminus terminus = ((Terminus)nearestBusStop);
+            terminus.enqueueBus(this);
+            state = State.TERMINUS;
         }
     }
     
