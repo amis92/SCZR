@@ -18,6 +18,7 @@ import javax.swing.JTable;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 
+import burtis.common.constants.SimulationModuleConsts;
 import burtis.common.mockups.Mockup;
 import burtis.common.mockups.MockupBus;
 import burtis.common.mockups.MockupBusStop;
@@ -28,7 +29,7 @@ class PassengerInfoPanel extends JPanel
 {
     private static final long serialVersionUID = 1L;
     private static final Logger logger = Logger.getLogger(View.class.getName());
-    public static final int TABLE_ROWS = 60;
+    public static final int TABLE_ROWS = SimulationModuleConsts.BUS_CAPACITY * 2;
     private final JTable table;
     private final JLabel title = new JLabel();
     private final String[] columnNames = { "Id", "Depot", "Destination" };

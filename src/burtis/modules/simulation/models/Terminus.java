@@ -73,6 +73,7 @@ public class Terminus extends BusStop
     public void changeReleasingFrequency(long newFrequency)
     {
         releasingFrequency = newFrequency;
+        logger.info(String.format("New releasing frequency: %d", releasingFrequency));
     }
 
     /**
@@ -109,6 +110,7 @@ public class Terminus extends BusStop
             if (bus != null)
             {
                 bus.sendFromTerminus();
+                logger.info(String.format("Sent bus from TERMINUS, bus ID = %d", bus.getId()));
             }
             // If there is no bus at the terminus
             else
@@ -118,6 +120,7 @@ public class Terminus extends BusStop
                 if (bus != null)
                 {
                     bus.sendFromDepot();
+                    logger.info(String.format("Sent bus from DEPOT, bus ID = %d", bus.getId()));
                 }
                 // No bus at all
                 else
