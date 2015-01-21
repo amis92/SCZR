@@ -229,6 +229,7 @@ public class SynchronizationModule extends AbstractNetworkModule
 
     public void setTickPeriod(long tickPeriod)
     {
+        logger.info(String.format("New Cycle Length: %dms", tickPeriod));
         this.tickPeriod = tickPeriod;
     }
 }
