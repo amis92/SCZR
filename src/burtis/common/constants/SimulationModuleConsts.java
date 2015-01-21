@@ -16,10 +16,9 @@ import java.util.Map.Entry;
  */
 public class SimulationModuleConsts {
     
-    public static final int BUS_CAPACITY = 70;
+    public static final int BUS_CAPACITY = 50;
     public static final int NUMBER_OF_BUSES = 10;
     public static final int BUS_SPEED = 15;
-    public static final int BUS_START_INTERVAL = 300;
     public static final int BUS_MAX_CYCLES = 4;
     public static final int TERMINUS_RELEASING_FREQUENCY = 20;
     
@@ -27,17 +26,17 @@ public class SimulationModuleConsts {
         
         List<Entry<Integer,String>> busStops = new LinkedList<>();
         
-        busStops.add(new AbstractMap.SimpleEntry<Integer, String>(30, "Plac Zamkowy"));
-        busStops.add(new AbstractMap.SimpleEntry<Integer, String>(60, "Hotel Bristol"));
-        busStops.add(new AbstractMap.SimpleEntry<Integer, String>(90, "Uniwersytet"));
-        busStops.add(new AbstractMap.SimpleEntry<Integer, String>(120, "Ordynacka"));
-        busStops.add(new AbstractMap.SimpleEntry<Integer, String>(150, "Foksal"));
-        busStops.add(new AbstractMap.SimpleEntry<Integer, String>(180, "Plac Trzech Krzyży"));
-        busStops.add(new AbstractMap.SimpleEntry<Integer, String>(210, "Plac na Rozdrożu"));
-        busStops.add(new AbstractMap.SimpleEntry<Integer, String>(240, "Plac Unii Lubelskiej"));
-        busStops.add(new AbstractMap.SimpleEntry<Integer, String>(270, "Rakowiecka"));
+        busStops.add(new AbstractMap.SimpleEntry<Integer, String>(30, "Żerań"));
+        busStops.add(new AbstractMap.SimpleEntry<Integer, String>(60, "Dw. Gdański"));
+        busStops.add(new AbstractMap.SimpleEntry<Integer, String>(90, "Centrum"));
+        busStops.add(new AbstractMap.SimpleEntry<Integer, String>(120, "Filtry"));
+        busStops.add(new AbstractMap.SimpleEntry<Integer, String>(150, "Centrum"));
+        busStops.add(new AbstractMap.SimpleEntry<Integer, String>(180, "Rondo ONZ"));
+        busStops.add(new AbstractMap.SimpleEntry<Integer, String>(210, "Złota"));
+        busStops.add(new AbstractMap.SimpleEntry<Integer, String>(240, "GUS"));
+        busStops.add(new AbstractMap.SimpleEntry<Integer, String>(270, "Och-Teatr"));
         // This will be TERMINUS!
-        busStops.add(new AbstractMap.SimpleEntry<Integer, String>(300, "Bielańska"));
+        busStops.add(new AbstractMap.SimpleEntry<Integer, String>(300, "Banacha"));
         
         return busStops;
         
