@@ -28,7 +28,7 @@ class PassengerInfoPanel extends JPanel
 {
     private static final long serialVersionUID = 1L;
     private static final Logger logger = Logger.getLogger(View.class.getName());
-    public static final int TABLE_ROWS = 30;
+    public static final int TABLE_ROWS = 60;
     private final JTable table;
     private final JLabel title = new JLabel();
     private final String[] columnNames = { "Id", "Depot", "Destination" };
@@ -192,14 +192,15 @@ class PassengerInfoPanel extends JPanel
             {
                 ++index;
             }
-            stayedCount = index < newSize ? /*true-ostatni pasażerowie są równi*/ index + 1
-                    : /*false - ostatni pasażerowie się różnili*/ index;
+            stayedCount = index < newSize ? /* true-ostatni pasażerowie są równi */index + 1
+                    : /* false - ostatni pasażerowie się różnili */index;
         }
         lastOldRow = oldCount - 1;
         firstNewRow = oldCount + stayedCount;
         fillRowsFromTo(0, oldCount, currentPassengers, 0);
         fillRowsFromTo(oldCount, firstNewRow, passengers, 0);
-        fillRowsFromTo(firstNewRow, oldCount + passengers.size(), passengers, stayedCount);
+        fillRowsFromTo(firstNewRow, oldCount + passengers.size(), passengers,
+                stayedCount);
         currentPassengers = passengers;
     }
 
@@ -210,7 +211,8 @@ class PassengerInfoPanel extends JPanel
     private void fillRowsFromTo(int startRow, int endRow,
             List<MockupPassenger> passengerList, int startIndex)
     {
-        for (int row = startRow, i = startIndex; row < endRow; ++row, ++i)
+        for (int row = startRow, i = startIndex; row < endRow
+                && row < TABLE_ROWS && i < passengerList.size(); ++row, ++i)
         {
             fillRow(row, passengerList.get(i));
         }
