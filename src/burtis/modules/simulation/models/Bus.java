@@ -322,7 +322,7 @@ public class Bus
      * reached goToDepot is set true.
      */
     public void arriveAtTerminus() {
-        currentBusStop = nearestBusStop;
+        //currentBusStop = nearestBusStop;
         if(cycle >= maxCycles) {
             goToDepot = true;
             state = State.DEPOT;
@@ -365,7 +365,7 @@ public class Bus
             logger.info("Bus " + id + " reaches bus stop.");
             
             if(nearestBusStop instanceof Terminus) {
-                arriveAtTerminus();
+                arrive();
             }
             
             // If anyone ordered stopping here...

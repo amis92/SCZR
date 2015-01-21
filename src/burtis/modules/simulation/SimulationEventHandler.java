@@ -194,6 +194,7 @@ class SimulationEventHandler extends AbstractEventHandler
         try
         {
             busManager.processBusDeparturesList(event.getDeparturesList());
+            busManager.moveBusesToDepot();
             actionExecutor.sendBusMockupEvent(simulation.getCurrentCycle(),
                     busManager.getBusMockups());
             //logger.info(busManager.getBusMockups().toString());
@@ -221,4 +222,6 @@ class SimulationEventHandler extends AbstractEventHandler
                 + event.getNewReleasingFrequency());
         terminus.changeReleasingFrequency(event.getNewReleasingFrequency());
     }
+    
+    
 }

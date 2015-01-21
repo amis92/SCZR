@@ -11,12 +11,13 @@ import burtis.common.events.SimulationEvent;
 public class ChangeReleasingFrequencyEvent extends SimulationEvent
 {
     private static final long serialVersionUID = 1L;
-    private long newReleasingFrequency;
+    private final long newReleasingFrequency;
 
     public ChangeReleasingFrequencyEvent(String sender, String[] recipients,
             long newReleasingFrequency)
     {
         super(sender, recipients);
+        this.newReleasingFrequency = newReleasingFrequency;
     }
 
     public long getNewReleasingFrequency()

@@ -103,10 +103,7 @@ public class BusManager
         for (Bus bus : buses.values())
         {
             bus.updateBusPosition();
-            if(bus.isGoToDepot() && bus.getState() == Bus.State.TERMINUS) {
-                depot.putBus(bus);
-                bus.setState(Bus.State.DEPOT);
-            }
+
         }
     }
 
@@ -263,8 +260,14 @@ public class BusManager
             throws NoSuchBusStopException, Exception
     {
         for (int i=0; i<departureList.size(); i++)
-        {   
-            departBus(departureList.get(i).busId, departureList.get(i).nextBusStopName);
+        {
+            Bus bus = getBusById(departureList.get(i).busId);
+            if(bus.getCurrentBusStop() instanceof Terminus) {
+                bus.arriveAtTerminus();
+            }
+            else {
+                departBus(departureList.get(i).busId, departureList.get(i).nextBusStopName);
+            }
         }
     }
 
@@ -297,6 +300,20 @@ public class BusManager
             list.add(new MockupBus(bus));
         }
         return list;
+    }
+    
+    /**
+     * Withdraws buses with goToDepot set true to the depot.
+     */
+    public void moveBusesToDepot() {
+        
+        for(Bus bus : buses.values()) {
+            if(bus.isGoToDepot()) {
+                depot.putBus(bus);
+                bus.setState(Bus.State.DEPOT);
+            }
+        }
+        
     }
     
     public String toString() {
