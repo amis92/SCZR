@@ -58,7 +58,7 @@ public class Bus
     /**
      * Reference to managers.
      */
-    private final Managers managers;
+    //private final Managers managers;
     
     /**
      * Constructor.
@@ -68,7 +68,7 @@ public class Bus
     public Bus(int id, Managers managers)
     {
         this.id = id;
-        this.managers = managers;
+        //this.managers = managers;
     }
 
     

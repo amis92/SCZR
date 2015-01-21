@@ -18,7 +18,7 @@ public class BusStopManager
     /**
      * Logger of the BusManager class.
      */
-    private final Logger logger;
+    //private final Logger logger;
     /**
      * List of buses in the simulation.
      */
@@ -51,7 +51,7 @@ public class BusStopManager
                         .getValue(), depot));
             }
         }
-        this.logger = logger;
+        //this.logger = logger;
     }
 
     /**

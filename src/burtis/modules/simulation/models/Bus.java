@@ -4,7 +4,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import burtis.common.constants.SimulationModuleConsts;
-import burtis.modules.simulation.Simulation;
 import burtis.modules.simulation.exceptions.NoSuchBusStopException;
 
 /**
@@ -471,7 +470,7 @@ public class Bus
     public String toString() {
         String currentBusStopName = currentBusStop == null ? "none" : currentBusStop.getName();
         String nearestBusStopName = nearestBusStop == null ? "none" : nearestBusStop.getName();
-        String requestedBusStopName = requestedBusStop == null ? "none" : requestedBusStop.getName();
+        //String requestedBusStopName = requestedBusStop == null ? "none" : requestedBusStop.getName();
         return "Bus: " + id + " pos: " + position + " state:" + state + " nbs: " + nearestBusStopName + " cbs: " + currentBusStopName + "\n";
     }
 
