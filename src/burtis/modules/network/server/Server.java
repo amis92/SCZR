@@ -15,9 +15,9 @@ import burtis.modules.network.NetworkConfig;
 import burtis.modules.network.server.impl.ServerSender;
 
 /**
- * Performs traffic forwarding according to configuration provided. All traffic
- * from given module is forwarded to all recipients of that module, except of
- * {@link ServerOrder}s which are executed and not forwarded. </br></br>
+ * Performs traffic forwarding according to configuration provided. Every event
+ * received is sent to all recipients listed in that event. If none, the event
+ * is broadcasted to every connected module.<br><br>
  * 
  * Each connection listens on separate thread for incoming traffic. All outgoing
  * traffic is sent through another thread with blocking queue.

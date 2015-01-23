@@ -9,6 +9,7 @@
  * SCZR 2014Z course project
  * 
  * Each module has it's responsibilities:
+ * <ul>
  * <li><b>busscheduler</b> - optimization of bus traffic;</li>
  * <li><b>gui</b> - displays important information;</li>
  * <li><b>network</b> - enables communication across network,
@@ -17,6 +18,7 @@
  * <li><b>simulation</b> - manages model of simulation;
  *  without it simulation doesn't work;</li>
  * <li><b>sync</b> - synchronizes modules to work in the same time frames;</li>
+ * </ul>
  * 
 
  * @author Rafał Braun

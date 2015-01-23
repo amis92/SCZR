@@ -11,11 +11,12 @@ import java.util.logging.Logger;
 import burtis.modules.sync.WatchedModule.State;
 
 /**
- * Implements thread controlling liveness of modules. Checks all modules that
- * have state set false and if one of them is critical terminate simulation. If
- * modules with false state are not critical they are added to ignored modules
- * list (program will not wait for the response from them anymore). </br> The
- * check is performed if either happens:
+ * Implements thread controlling liveness of modules. In case of some going out
+ * of sync, the simulation will be either terminated (if module was critical) or
+ * left running. <br>
+ * <br>
+ * 
+ * The check is performed if either happens:
  * <ul>
  * <li>{@link #acceptTick()} is called after scheduled period was reached;</li>
  * <li>scheduled period was reached again and no {@link #acceptTick()} call was
@@ -57,10 +58,14 @@ class WatchdogService
 
     /**
      * Find's appropriate {@link WatchedModule} and calls it's
-     * {@link WatchedModule#setStateReady()}.
+     * {@link WatchedModule#setStateReady()}, or if it's out of sync,
+     * {@link #handleModuleOutOfSync(WatchedModule)} is called.
      * 
      * @param moduleName
      *            - module name to be found and handled.
+     * @param isSynced
+     *            - informs whether the module responded in sync with current
+     *            iteration (true if response was in sync).
      */
     public void handleModuleResponded(String moduleName, boolean isSynced)
     {

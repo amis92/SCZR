@@ -17,7 +17,8 @@ import burtis.modules.simulation.models.BusStopManager;
 import burtis.modules.simulation.models.Depot;
 
 /**
- * Simulation module. </br></br>
+ * Simulation module. <br>
+ * <br>
  * 
  * Contains depot, terminus, buses and bus stops. No passengers here.
  * Communicates with passenger module to obtain information on passengers
@@ -34,6 +35,7 @@ public class Simulation extends AbstractNetworkModule
      * @param args
      *            No parameters are expected.
      * @throws Exception
+     *             - when simulation setup failed.
      */
     public static void main(String[] args) throws Exception
     {
@@ -76,6 +78,8 @@ public class Simulation extends AbstractNetworkModule
      * @param netConfig
      *            network configuration
      * @throws Exception
+     *             - when the file logger handle couldn't be created. Only if
+     *             the handle is used (normally it's not).
      */
     private Simulation(NetworkConfig netConfig) throws Exception
     {

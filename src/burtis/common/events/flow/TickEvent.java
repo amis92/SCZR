@@ -3,6 +3,9 @@ package burtis.common.events.flow;
 import burtis.common.events.AbstractEventHandler;
 
 /**
+ * Represents clock tick and informs on the new iteration, providing current
+ * iteration index.
+ * 
  * @author Mikołaj Sowiński
  *
  */

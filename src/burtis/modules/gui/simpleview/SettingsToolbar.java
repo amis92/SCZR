@@ -148,10 +148,11 @@ public class SettingsToolbar extends JToolBar
     }
 
     /**
-     * Metoda pozwalająca na włożenie obiektu odpowiadającego za zdarzenie do
-     * kolejki akcji do wykonania
+     * Wraps event insertion to not throw exceptions. Any thrown exceptions are
+     * logged.
      * 
-     * @param e
+     * @param ev
+     *            - the event to be inserted into queue.
      */
     private void putInQueue(ProgramEvent ev)
     {

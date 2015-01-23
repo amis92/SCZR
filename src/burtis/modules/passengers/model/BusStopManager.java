@@ -21,8 +21,7 @@ import burtis.modules.passengers.exceptions.NoSuchBusStopException;
  */
 public class BusStopManager
 {
-    private Logger logger = Logger
-            .getLogger(PassengerModule.class.getName());
+    private Logger logger = Logger.getLogger(PassengerModule.class.getName());
     /**
      * List of available bus stops.
      */
@@ -32,38 +31,31 @@ public class BusStopManager
      */
     private final Random randomGenerator = new Random();
 
-    /**
-     * Reference to managers container.
-     */
-    // private final Managers managers;
-    /**
-     * Constructor.
-     */
     public BusStopManager(Managers managers)
     {
-        // this.managers = managers;
         managers.setBusStopManager(this);
         // Build list of bus stops from the default configuration
         for (Entry<Integer, String> busStopData : SimulationModuleConsts
                 .getDefaultBusStops())
         {
-            busStops.add(new BusStop(busStopData.getValue(), busStopData.getKey(), managers));
+            busStops.add(new BusStop(busStopData.getValue(), busStopData
+                    .getKey(), managers));
         }
     }
 
-    /**
-     * @return the busStops
-     */
     public List<BusStop> getBusStops()
     {
         return busStops;
     }
+
     /**
-     * Returns bus stop of specified id.
+     * Searches for bus stop with the specified name.
      * 
-     * @param id
-     *            id of the bus stop
+     * @param name
+     *            - name of the bus stop.
      * @throws NoSuchBusStopException
+     *             - when such a stop wasn't found.
+     * @return found bus stop.
      */
     public BusStop getBusStopByName(String name) throws NoSuchBusStopException
     {
@@ -75,8 +67,6 @@ public class BusStopManager
         logger.warning(String.format("Bus stop name = %s not found", name));
         throw new NoSuchBusStopException(name);
     }
-
-    
 
     /**
      * Returns random bus stop, except last one.
@@ -107,15 +97,17 @@ public class BusStopManager
     }
 
     /**
-     * Returns number of passengers waiting at the bus stop of given id.
+     * Counts passengers waiting at the bus stop.
      * 
      * @param busStopName
-     *            bus stop name
-     * @return number of waiting passengers
+     *            - name of the bus stop.
+     * @return number of waiting passengers.
      * 
      * @throws NoSuchBusStopException
+     *             - when such a bus stop wasn't found.
      */
-    public int waitingPassengers(String busStopName) throws NoSuchBusStopException
+    public int waitingPassengers(String busStopName)
+            throws NoSuchBusStopException
     {
         return getBusStopByName(busStopName).waitingPassengers();
     }
@@ -135,20 +127,25 @@ public class BusStopManager
         }
         return map;
     }
-    
+
     /**
-     * Iterates over all bus stops and calls {@link BusStop#nextBus()} on every bus stop.
+     * Iterates over all bus stops and calls {@link BusStop#nextBus()} on every
+     * bus stop.
      */
-    public void callNextBus() {
-        for(BusStop busStop : busStops) {
+    public void callNextBus()
+    {
+        for (BusStop busStop : busStops)
+        {
             busStop.nextBus();
         }
     }
-    
+
     @Override
-    public String toString() {
+    public String toString()
+    {
         String out = "";
-        for(BusStop busStop : busStops) {
+        for (BusStop busStop : busStops)
+        {
             out += busStop.toString();
         }
         return out;

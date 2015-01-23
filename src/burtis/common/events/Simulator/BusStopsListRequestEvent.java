@@ -18,7 +18,9 @@ public class BusStopsListRequestEvent extends SimulationEvent
 
     /**
      * Sends to default recipient.
+     * 
      * @param sender
+     *            - the sender of the event.
      */
     public BusStopsListRequestEvent(String sender)
     {

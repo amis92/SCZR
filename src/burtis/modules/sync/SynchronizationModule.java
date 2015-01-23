@@ -110,20 +110,9 @@ public class SynchronizationModule extends AbstractNetworkModule
      * Current period between ticks in ms.
      */
     private long tickPeriod = INITIAL_PERIOD;
-    /**
-     * Ticking service.
-     */
     private final TickService tickService;
-    /**
-     * Watchdog service.
-     */
     private final WatchdogService watchdogService;
 
-    /**
-     * Constructor.
-     * 
-     * @param config
-     */
     public SynchronizationModule(ModuleConfig config)
     {
         super(config);

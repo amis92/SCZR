@@ -3,8 +3,9 @@ package burtis.common.events.flow;
 import burtis.common.events.AbstractEventHandler;
 
 /**
- *
- * @author Mikołaj Sowiński <mikolaj.sowinski@gmail.com>
+ * Requests to pause continuous ticking.
+ * 
+ * @author Mikołaj Sowiński
  */
 public class PauseSimulationEvent extends FlowEvent
 {

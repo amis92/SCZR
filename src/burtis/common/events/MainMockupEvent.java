@@ -4,8 +4,9 @@ import burtis.common.mockups.Mockup;
 import burtis.modules.network.NetworkConfig;
 
 /**
+ * Contains new mockup representing current state of whole simulation.
  *
- * @author Mikołaj
+ * @author Mikołaj Sowiński
  */
 public class MainMockupEvent extends SimulationEvent
 {

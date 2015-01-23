@@ -39,18 +39,22 @@ public class BusManager
      * Key is bus id, value bus stop id.
      */
     private final Map<Integer, String> busArrivalsList = new HashMap<>();
-
     /**
      * Reference to the depot.
      */
     private final Depot depot;
+
     /**
      * Constructor.
      * 
      * @param busStopManager
-     *            reference to BusStopManager
+     *            - reference to BusStopManager.
      * @param numberOfBuses
-     *            number of buses to create
+     *            - number of buses to create.
+     * @param depot
+     *            - the depot to initially put all buses into.
+     * @param logger
+     *            - the logger to be used.
      */
     public BusManager(BusStopManager busStopManager, int numberOfBuses,
             Depot depot, Logger logger)
@@ -94,16 +98,16 @@ public class BusManager
     }
 
     /**
-     * Executes {@link Bus#updatePosition} on every bus which state is running and withdraws buses to the depot.
+     * Executes {@link Bus#updateBusPosition()} on every bus.
      * 
      * @throws NoSuchBusStopException
+     *             - when updating fails because of stop list error.
      */
     public void updateBusPositions() throws NoSuchBusStopException
     {
         for (Bus bus : buses.values())
         {
             bus.updateBusPosition();
-
         }
     }
 
@@ -135,6 +139,7 @@ public class BusManager
      *            id of the bus
      * 
      * @throws NoSuchBusStopException
+     *             - when sending fails because of stop list error.
      */
     public void sendFromDepot(int busId) throws NoSuchBusStopException
     {
@@ -187,6 +192,8 @@ public class BusManager
     /**
      * Builds list of ids of bus stops that are to be queried for waiting
      * passengers.
+     * 
+     * @return list of bus stop numerical identifiers.
      */
     public List<Integer> getBusStopsIdsList()
     {
@@ -205,7 +212,11 @@ public class BusManager
      * Sets response bits in bus objects and triggers response processing on
      * every bus that requested information.
      * 
+     * @param response
+     *            - updated with new response if requested by given bus.
+     * 
      * @throws NoSuchBusStopException
+     *             - when there is error with incorrect bus stop list.
      */
     public void processWaitingPassengersQueryResponse(
             Map<String, Boolean> response) throws NoSuchBusStopException
@@ -229,7 +240,9 @@ public class BusManager
      * iteration.
      * 
      * @param bus
-     *            bus to be added
+     *            - bus to be added.
+     * @param busStop
+     *            - stop on which the bus will arrive.
      */
     public void addBusArrival(Bus bus, BusStop busStop)
     {
@@ -239,10 +252,10 @@ public class BusManager
     }
 
     /**
-     * Returns map of IDs of buses that arrives at the bus stop in the current
-     * iteration together with corresponding bus stops ids.
-     * 
      * List of arrivals is cleared upon retrieval.
+     * 
+     * @return map of IDs of buses that arrives at the bus stop in the current
+     *         iteration together with corresponding bus stops ids
      */
     public Map<Integer, String> getBusArrivalsList()
     {
@@ -252,36 +265,45 @@ public class BusManager
     }
 
     /**
-     * Processes bus departures list.
+     * Sends buses to terminus or departs them to next bus stop if appropriate.
      * 
+     * @param departureList
+     *            - list of departure information.
      * @throws NoSuchBusStopException
+     *             - when there is error with bus stop list.
      */
     public void processBusDeparturesList(List<BusDepartureInfo> departureList)
-            throws NoSuchBusStopException, Exception
+            throws NoSuchBusStopException
     {
-        for (int i=0; i<departureList.size(); i++)
+        for (int i = 0; i < departureList.size(); i++)
         {
             Bus bus = getBusById(departureList.get(i).busId);
-            if(bus.getCurrentBusStop() instanceof Terminus) {
+            if (bus.getCurrentBusStop() instanceof Terminus)
+            {
                 bus.arriveAtTerminus();
             }
-            else {
-                departBus(departureList.get(i).busId, departureList.get(i).nextBusStopName);
+            else
+            {
+                departBus(departureList.get(i).busId,
+                        departureList.get(i).nextBusStopName);
             }
         }
     }
 
     /**
-     * Calls {@link Bus#depart(BusStop)} at bus of given id.
+     * Calls {@link Bus#depart(String)} at bus of given id, with bus stop name
+     * parameter.
      * 
      * @param busId
-     *            id of bus that is to be departed
-     * @param nextBusStopId
-     *            id of next bus stop that is requested by passengers
+     *            - id of bus that is to be departed
+     * @param nextBusStopName
+     *            - name of next bus stop that is requested by passengers
      * 
      * @throws NoSuchBusStopException
+     *             - when there is error with bus stop list.
      */
-    private void departBus(int busId, String nextBusStopName) throws NoSuchBusStopException, Exception
+    private void departBus(int busId, String nextBusStopName)
+            throws NoSuchBusStopException
     {
         getBusById(busId).depart(nextBusStopName);
     }
@@ -290,7 +312,7 @@ public class BusManager
      * Returns list of @{link {@link MockupBus} objects corresponding to the
      * current state of the buses.
      * 
-     * @return List<MockupBus> list of bus mockups
+     * @return list of bus mockups.
      */
     public List<MockupBus> getBusMockups()
     {
@@ -301,25 +323,28 @@ public class BusManager
         }
         return list;
     }
-    
+
     /**
      * Withdraws buses with goToDepot set true to the depot.
      */
-    public void moveBusesToDepot() {
-        
-        for(Bus bus : buses.values()) {
-            if(bus.isGoToDepot()) {
+    public void moveBusesToDepot()
+    {
+        for (Bus bus : buses.values())
+        {
+            if (bus.isGoToDepot())
+            {
                 depot.putBus(bus);
                 bus.setState(Bus.State.DEPOT);
             }
         }
-        
     }
-    
-    public String toString() {
+
+    public String toString()
+    {
         String out = "\n";
-        for(Bus bus : buses.values()) {
-            out += bus.toString();            
+        for (Bus bus : buses.values())
+        {
+            out += bus.toString();
         }
         return out;
     }

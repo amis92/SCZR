@@ -18,7 +18,7 @@ public class BusStopManager
     /**
      * Logger of the BusManager class.
      */
-    //private final Logger logger;
+    // private final Logger logger;
     /**
      * List of buses in the simulation.
      */
@@ -31,11 +31,14 @@ public class BusStopManager
      * stops will be of terminus class.
      * 
      * @param busStopsList
-     *            list of entries describing bus stops
+     *            - list of entries describing bus stops.
      * @param depot
-     *            reference to the depot object
+     *            - reference to the depot object.
+     * @param logger
+     *            - the logger to be used.
      */
-    public BusStopManager(List<Entry<Integer, String>> busStopsList, Depot depot, Logger logger)
+    public BusStopManager(List<Entry<Integer, String>> busStopsList,
+            Depot depot, Logger logger)
     {
         for (int i = 0; i < busStopsList.size(); i++)
         {
@@ -51,7 +54,7 @@ public class BusStopManager
                         .getValue(), depot));
             }
         }
-        //this.logger = logger;
+        // this.logger = logger;
     }
 
     /**
@@ -65,14 +68,17 @@ public class BusStopManager
     }
 
     /**
-     * Returns bus stop next to the one given as argument.
+     * Searches for bus stop next to the one given as argument.
      * 
      * If terminus is given as an argument terminus is returned.
+     * 
+     * @param currentBusStop
+     *            - the bus stop to start search from, and find next to it.
      * 
      * @throws NoSuchBusStopException
      *             if bus stop given as argument does not exist
      * 
-     * @returns next bus stop
+     * @return next bus stop on the route.
      */
     public BusStop getNextBusStop(BusStop currentBusStop)
             throws NoSuchBusStopException
@@ -81,7 +87,6 @@ public class BusStopManager
         {
             return currentBusStop;
         }
-        
         int currentIndex = busStops.indexOf(currentBusStop);
         if (currentIndex >= 0)
         {
@@ -96,10 +101,13 @@ public class BusStopManager
     /**
      * Checks if given bus stop exists.
      * 
+     * @param busStop
+     *            - the bus stop to be checked.
+     * 
      * @throws NoSuchBusStopException
      *             if bus stop does not exist
      * 
-     * @return bus stop
+     * @return the bus stop given as argument, for chaining methods.
      */
     public BusStop busStopExists(BusStop busStop) throws NoSuchBusStopException
     {
@@ -114,7 +122,7 @@ public class BusStopManager
     }
 
     /**
-     * Returns reference to the terminus.
+     * @return reference to the terminus.
      */
     public Terminus getTerminus()
     {
@@ -122,11 +130,14 @@ public class BusStopManager
     }
 
     /**
-     * Returns bus stop of given id.
+     * Searches for a bus stop with given name.
      * 
-     * Exception is thrown if bus stop does not exists.
+     * @param name
+     *            - the name of the bus stop to be found.
+     * @return bus stop of given id.
      * 
      * @throws NoSuchBusStopException
+     *             - when there is no bus stop with given name.
      */
     public BusStop getBusStopByName(String name) throws NoSuchBusStopException
     {

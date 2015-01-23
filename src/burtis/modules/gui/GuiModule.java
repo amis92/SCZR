@@ -65,8 +65,6 @@ public class GuiModule extends AbstractNetworkModule
 
     /**
      * Creates view which handles gui termination.
-     * 
-     * @param queue
      */
     private void createView()
     {

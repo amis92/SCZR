@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="javadoc">
+    <target name="javadoc">
+        <javadoc access="private" additionalparam=" -encoding UTF-8 -charset UTF-8 -docencoding UTF-8" author="true" classpath="." destdir="../doc" doctitle="BURTIS documentation" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" overview="./doc/SZCZR README.html" packagenames="burtis.common.events.flow,burtis.modules.busscheduler,burtis.modules.simulation.models,burtis.modules.passengers.exceptions,burtis.modules.gui.simpleview,burtis.common.logging,burtis.modules.network.server,burtis.modules.sync,burtis.modules.passengers.model,burtis.modules.network.server.impl,burtis.modules.simulation,burtis.modules.passengers,burtis,burtis.common.constants,burtis.modules.gui,burtis.common.events,burtis.modules.gui.controller,burtis.modules.network,burtis.common.events.Simulator,burtis.modules.simulation.exceptions,burtis.modules.network.client,burtis.modules,burtis.tests.events,burtis.common.mockups,burtis.common.events.Passengers,burtis.modules.gui.events" source="1.8" sourcepath="src" splitindex="true" use="true" version="true"/>
+    </target>
+</project>

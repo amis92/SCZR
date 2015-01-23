@@ -162,10 +162,10 @@ public class SimpleView implements View
     }
 
     /**
-     * Metoda pozwalająca na włożenie obiektu odpowiadającego za zdarzenie do
-     * kolejki akcji do wykonania
+     * Wraps event insertion in try catch. Any exceptions caught will be logged.
      * 
-     * @param e
+     * @param ev
+     *            - the event to be inserted into the queue.
      */
     private void putInQueue(ProgramEvent ev)
     {

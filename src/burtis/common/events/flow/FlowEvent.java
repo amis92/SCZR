@@ -1,16 +1,17 @@
 package burtis.common.events.flow;
 
-import burtis.common.events.AbstractEventHandler;
 import burtis.common.events.SimulationEvent;
 import burtis.modules.network.NetworkConfig;
 
 /**
- * Event directed to Sync module.
+ * Event directed to Sync module. No meaning of itself, provides base to inherit
+ * from. Inherited classes can use convenient constructor with default recipient
+ * list.
  * 
  * @author Amadeusz Sadowski
  *
  */
-public class FlowEvent extends SimulationEvent
+public abstract class FlowEvent extends SimulationEvent
 {
     private static final long serialVersionUID = 1091627095230885704L;
     /**
@@ -41,11 +42,5 @@ public class FlowEvent extends SimulationEvent
     public FlowEvent(String sender, String[] recipients)
     {
         super(sender, recipients);
-    }
-
-    @Override
-    public void visit(AbstractEventHandler eventProcessor)
-    {
-        eventProcessor.process(this);
     }
 }

@@ -33,7 +33,7 @@ public class MockupBus implements Serializable
      */
     private final Integer Id;
     /**
-     * Bus state as given in {@link Bus#State}.
+     * Bus state as given in {@link Bus.State}.
      */
     private final Bus.State busState;
 
@@ -41,23 +41,16 @@ public class MockupBus implements Serializable
      * Constructor from the simulation {@link Bus} object.
      * 
      * @param bus
-     *            bus object
+     *            - the bus object.
      */
     public MockupBus(Bus bus)
     {
         this.Id = bus.getId();
         this.passengerList = new ArrayList<MockupPassenger>();
-        this.currentBusStop = ( bus.getCurrentBusStop() == null ) ? "NULL" : bus.getCurrentBusStop().getName();
-//        if (bus.getClosestBusStop() == null)
-//        {
-//            this.currentBusStop = null;
-//        }
-//        else
-//        {
-//            this.currentBusStop = bus.getClosestBusStop().getName();
-//        }
-        
-        this.lengthPassed = Math.round(((float)bus.getPosition())/SimulationModuleConsts.getLineLength()*100.0F);
+        this.currentBusStop = (bus.getCurrentBusStop() == null) ? "NULL" : bus
+                .getCurrentBusStop().getName();
+        this.lengthPassed = Math.round(((float) bus.getPosition())
+                / SimulationModuleConsts.getLineLength() * 100.0F);
         this.busState = bus.getState();
     }
 
@@ -79,61 +72,36 @@ public class MockupBus implements Serializable
         this.busState = Bus.State.RUNNING;
     }
 
-    /**
-     * @return list of passengers mockups
-     */
     public ArrayList<MockupPassenger> getPassengerList()
     {
         return passengerList;
     }
 
-    /**
-     * @return the lengthPassed
-     */
     public int getLengthPassed()
     {
         return lengthPassed;
     }
 
-    /**
-     * @param lengthPassed
-     *            the lengthPassed to set
-     */
     public void setLengthPassed(int lengthPassed)
     {
         this.lengthPassed = lengthPassed;
     }
 
-    /**
-     * @return the currentBusStop
-     */
     public String getCurrentBusStop()
     {
         return currentBusStop;
     }
 
-    /**
-     * @return the id
-     */
     public Integer getId()
     {
         return Id;
     }
 
-    /**
-     * @return the busState
-     */
     public Bus.State getBusState()
     {
         return busState;
     }
 
-    /**
-     * Sets list of passengers of the bus.
-     * 
-     * @param list
-     *            of passengers to set
-     */
     public void setPassengerList(ArrayList<MockupPassenger> passengerList)
     {
         this.passengerList = passengerList;
@@ -144,9 +112,8 @@ public class MockupBus implements Serializable
     {
         String format = "Bus Id: %s, Progress: %d, Bus State: %s, Current Bus Stop: %s\n\t";
         String busString;
-        
-        busString = String.format(format, Id, lengthPassed, busState, currentBusStop);
-        
+        busString = String.format(format, Id, lengthPassed, busState,
+                currentBusStop);
         for (MockupPassenger passenger : passengerList)
         {
             busString += passenger.getId() + " ";

@@ -28,6 +28,10 @@ public class NetworkConfigFactory
 
     /**
      * Reads and returns full configuration.
+     * 
+     * @param properties
+     *            - the object to read configuration from.
+     * @return the config which was read.
      */
     public static NetworkConfig CreateFromProperties(final Properties properties)
     {
@@ -43,7 +47,12 @@ public class NetworkConfigFactory
     }
 
     /**
-     * Saves full configuration.
+     * Saves full configuration to provided {@link Properties} object.
+     * 
+     * @param config
+     *            - the configuration to save.
+     * @param properties
+     *            - the properties to save in.
      */
     public static void SaveToProperties(final NetworkConfig config,
             final Properties properties)
@@ -62,6 +71,16 @@ public class NetworkConfigFactory
 
     /**
      * Reads full configuration of single module.
+     * 
+     * @param properties
+     *            - the properties to read config from.
+     * @param serverAddress
+     *            - address of server for read module config.
+     * @param moduleIndex
+     *            - the index of read module, used to retrieve corect
+     *            properties.
+     * @return The new module of given index read from provided properties
+     *         object.
      */
     private static ModuleConfig ReadModuleConfig(final Properties properties,
             final String serverAddress, final int moduleIndex)
@@ -83,6 +102,14 @@ public class NetworkConfigFactory
 
     /**
      * Saves single module configuration.
+     * 
+     * @param properties
+     *            - the properties to save config to.
+     * @param moduleConfig
+     *            - the config to be saved.
+     * @param index
+     *            - index of module to differentiate multiple module configs in
+     *            singel properties object.
      */
     private static void SaveModuleToProperties(final Properties properties,
             final ModuleConfig moduleConfig, final int index)

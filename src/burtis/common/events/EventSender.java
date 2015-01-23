@@ -16,8 +16,9 @@ import burtis.modules.network.NetworkConfig;
 import burtis.modules.network.client.ClientModule;
 
 /**
+ * Base class to simplify sending events, mainly flow events.
  * 
- * @author Amaedusz Sadowski
+ * @author Amadeusz Sadowski
  *
  */
 public class EventSender
@@ -75,7 +76,7 @@ public class EventSender
         clientModule.send(new TickEvent(sender, iteration));
         logger.info("Sent TickEvent");
     }
-    
+
     public void sendMainMockupEvent(Mockup mockup)
     {
         clientModule.send(new MainMockupEvent(sender, mockup));

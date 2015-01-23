@@ -36,12 +36,15 @@ public class Controller
     private final ActionExecutor actionExecutor;
 
     /**
-     * Tworzy obiekt typu Controller
+     * Tworzy obiekt typu Controller i wypełnia mapę zadań przypisanych do
+     * poszczególnych zdarzeń.
      * 
      * @param view
-     *            referencja na widok
+     *            - widok do aktualizowania.
      * @param blockingQueue
-     *            kolejka do otrzymywania komunikatow z Widoku
+     *            - kolejka do otrzymywania komunikatow z widoku.
+     * @param actionExecutor
+     *            - wykonawca zadań zleconych przez kontroler.
      */
     public Controller(View view, BlockingQueue<ProgramEvent> blockingQueue,
             ActionExecutor actionExecutor)

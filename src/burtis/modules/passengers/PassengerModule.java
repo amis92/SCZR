@@ -38,6 +38,7 @@ public class PassengerModule extends AbstractNetworkModule
      * @param args
      *            No parameters are expected.
      * @throws Exception
+     *             - if the module setup failed.
      */
     public static void main(String[] args) throws Exception
     {
@@ -78,13 +79,17 @@ public class PassengerModule extends AbstractNetworkModule
         this.eventHandler = new PassengerModuleEventHandler(this,
                 actionExecutor, managers);
         // debug use
-        //addFileLoggerHandler();
+        // addFileLoggerHandler();
     }
 
     /**
-     * Returns mockup of the current simulation state.
+     * Creates a new mockup of current state, ready to be sent to other modules.
      * 
-     * @return mockup
+     * @param busMockups
+     *            - provides list of buses received earlier, to be resent with
+     *            main mockup.
+     * 
+     * @return mockup of the current simulation state.
      */
     public Mockup buildMockup(List<MockupBus> busMockups)
     {

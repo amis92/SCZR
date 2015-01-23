@@ -21,26 +21,11 @@ import burtis.common.events.flow.TerminateSimulationEvent;
  */
 class SyncEventHandler extends AbstractEventHandler
 {
-    /**
-     * Logger.
-     */
     private final static Logger logger = Logger
             .getLogger(SynchronizationModule.class.getName());
-    /**
-     * Reference to Synchronization Module.
-     */
     private final SynchronizationModule syncModule;
-    /**
-     * Reference to the Watchdog Service.
-     */
     private final WatchdogService watchdogService;
 
-    /**
-     * Constructor.
-     * 
-     * @param syncModule
-     * @param watchdogService
-     */
     public SyncEventHandler(SynchronizationModule syncModule,
             WatchdogService watchdogService)
     {

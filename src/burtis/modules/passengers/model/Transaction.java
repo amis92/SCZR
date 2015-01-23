@@ -13,7 +13,7 @@ import burtis.modules.passengers.Managers;
 public class Transaction
 {
     /**
-     * Number of iterations left to the end of transactions.
+     * Number of iterations left to the end of transaction.
      */
     private int iterations;
     /**
@@ -26,31 +26,25 @@ public class Transaction
     private final BusStop busStop;
 
     /**
-     * Reference to the managers.
-     */
-    // private Managers managers;
-    /**
-     * Constructor.
-     * 
-     * Calculates transaction time summing passengers that are to be loaded and
-     * unloaded and multiplying by constant
+     * Loads and unloads passengers. Calculates transaction time summing
+     * passengers that are loaded and unloaded and multiplying by constant
      * {@link PassengersModuleConsts#ITER_PER_PASSENGER}.
      * 
      * @param bus
-     *            bus involved with the transaction
+     *            - bus involved with the transaction.
      * @param busStop
-     *            bus stop involved with the transaction
+     *            - bus stop involved with the transaction.
+     * @param managers
+     *            - managers container.
      */
     public Transaction(Bus bus, BusStop busStop, Managers managers)
     {
         this.bus = bus;
         this.busStop = busStop;
-        // this.managers = managers;
-        
         // Processing passengers in the bus
         int unloadedPassengers = 0;
         List<Passenger> passengers = bus.getPassengers();
-        for (int i=0; i<passengers.size(); i++)
+        for (int i = 0; i < passengers.size(); i++)
         {
             if (passengers.get(i).getDestination() == busStop)
             {
@@ -58,28 +52,27 @@ public class Transaction
                 managers.getPassengerManager().killPassenger(passengers.get(i));
                 bus.getPassengers().remove(i);
                 i--;
-                
                 unloadedPassengers++;
             }
         }
-        
         // Processing passengers at the bus stop
         int loadedPassengers = 0;
         while (bus.getFreePlaces() != 0)
         {
             Passenger passengerToAdd = busStop.getNextPassenger();
-            if(passengerToAdd == null) break;
-            
+            if (passengerToAdd == null)
+                break;
             passengerToAdd.setBus(bus);
             bus.getPassengers().add(passengerToAdd);
             loadedPassengers++;
         }
-        this.iterations = (int)Math.ceil((unloadedPassengers + loadedPassengers)*(PassengersModuleConsts.ITER_PER_PASSENGER));
+        this.iterations = (int) Math
+                .ceil((unloadedPassengers + loadedPassengers)
+                        * (PassengersModuleConsts.ITER_PER_PASSENGER));
     }
 
     /*
-     * ############################################## 
-     * GETTERS AND SETTERS
+     * ############################################## GETTERS AND SETTERS
      * ###########################################
      */
     public Bus getBus()
@@ -93,8 +86,7 @@ public class Transaction
     }
 
     /*
-     * ############################################## 
-     * END OF GETTERS AND SETTERS
+     * ############################################## END OF GETTERS AND SETTERS
      * ###########################################
      */
     /**
@@ -114,12 +106,14 @@ public class Transaction
     {
         return iterations <= 0;
     }
-    
+
     /**
      * Returns string describing transaction.
      */
     @Override
-    public String toString() {
-        return "Bus " + bus.getId() + " at " + busStop.getName() + " left " + iterations;
+    public String toString()
+    {
+        return "Bus " + bus.getId() + " at " + busStop.getName() + " left "
+                + iterations;
     }
 }

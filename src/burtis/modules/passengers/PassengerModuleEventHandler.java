@@ -30,31 +30,12 @@ import burtis.modules.passengers.model.PassengerManager;
  */
 public class PassengerModuleEventHandler extends AbstractEventHandler
 {
-    /**
-     * Reference to passenger module's action executor.
-     */
     private final ActionExecutor actionExecutor;
-    /**
-     * Event handler's logger.
-     */
     private final Logger logger = Logger.getLogger(PassengerModule.class
             .getName());
-    /**
-     * Reference to managers.
-     */
     private final Managers managers;
-    /**
-     * Reference to the Passenger Module object.
-     */
     private final PassengerModule passengerModule;
 
-    /**
-     * Constructor.
-     * 
-     * @param passengerModule
-     * @param actionExecutor
-     * @param managers
-     */
     public PassengerModuleEventHandler(PassengerModule passengerModule,
             ActionExecutor actionExecutor, Managers managers)
     {
@@ -78,6 +59,7 @@ public class PassengerModuleEventHandler extends AbstractEventHandler
      * triggers creating transactions. Next it sends list of departing buses.
      * 
      * @param event
+     *            - the received event.
      */
     @Override
     public void process(BusArrivalEvent event)
@@ -202,6 +184,7 @@ public class PassengerModuleEventHandler extends AbstractEventHandler
      * Sends waiting passengers list.
      * 
      * @param event
+     *            - the received event.
      */
     @Override
     public void process(WaitingPassengersRequestEvent event)

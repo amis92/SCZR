@@ -97,10 +97,11 @@ public class BusProgressPanel extends JPanel
     }
 
     /**
-     * Metoda pozwalająca na włożenie obiektu odpowiadającego za zdarzenie do
-     * kolejki akcji do wykonania
+     * Wraps inserting event to queue so that exception, if thrown, is escalated
+     * into runtime exception.
      * 
-     * @param e
+     * @param ev
+     *            - event to put into queue.
      */
     private void putInQueue(ProgramEvent ev)
     {

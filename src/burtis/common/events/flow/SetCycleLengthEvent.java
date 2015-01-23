@@ -2,6 +2,12 @@ package burtis.common.events.flow;
 
 import burtis.common.events.AbstractEventHandler;
 
+/**
+ * Informs synchronization module of the new requested period between ticks.
+ * 
+ * @author Amadeusz Sadowski
+ *
+ */
 public class SetCycleLengthEvent extends FlowEvent
 {
     private static final long serialVersionUID = -7989779856296248255L;

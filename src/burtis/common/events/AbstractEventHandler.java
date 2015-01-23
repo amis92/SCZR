@@ -15,7 +15,6 @@ import burtis.common.events.Simulator.SendBusEvent;
 import burtis.common.events.Simulator.WithdrawBusEvent;
 import burtis.common.events.flow.CycleCompletedEvent;
 import burtis.common.events.flow.DoStepEvent;
-import burtis.common.events.flow.FlowEvent;
 import burtis.common.events.flow.ModuleReadyEvent;
 import burtis.common.events.flow.PauseSimulationEvent;
 import burtis.common.events.flow.SetCycleLengthEvent;
@@ -34,115 +33,117 @@ public abstract class AbstractEventHandler
 {
     /**
      * Called in every process function in {@link AbstractEventHandler}.
+     * 
      * @param event
+     *            - the event which was not handled by any overridden method.
      */
     public abstract void defaultHandle(SimulationEvent event);
-    
+
     public void process(ConfigurationEvent event)
     {
         defaultHandle(event);
     }
-    
+
     public void process(CycleCompletedEvent event)
     {
         defaultHandle(event);
     }
-    
+
     public void process(ModuleReadyEvent event)
     {
         defaultHandle(event);
     }
-    
+
     public void process(SendBusEvent event)
     {
         defaultHandle(event);
     }
-    
+
     public void process(TerminateSimulationEvent event)
     {
         defaultHandle(event);
     }
-    
+
     public void process(WithdrawBusEvent event)
     {
         defaultHandle(event);
     }
-    
+
     public void process(DoStepEvent event)
     {
         defaultHandle(event);
     }
-    
+
     public void process(PassengerGenerationRateConfigurationEvent event)
     {
         defaultHandle(event);
     }
-    
+
     public void process(PauseSimulationEvent event)
     {
         defaultHandle(event);
     }
-    
+
     public void process(StartSimulationEvent event)
     {
         defaultHandle(event);
     }
-    
+
     public void process(BusDeparturesEvent event)
     {
         defaultHandle(event);
     }
-    
+
     public void process(BusStopsListRequestEvent event)
     {
         defaultHandle(event);
     }
-    
+
     public void process(WaitingPassengersEvent event)
     {
         defaultHandle(event);
     }
-    
+
     public void process(BusArrivalEvent event)
     {
         defaultHandle(event);
     }
-    
+
     public void process(BusStopsListEvent event)
     {
         defaultHandle(event);
     }
-    
+
     public void process(WaitingPassengersRequestEvent event)
     {
         defaultHandle(event);
     }
-    
+
     public void process(TickEvent event)
     {
         defaultHandle(event);
     }
-    
+
     public void process(BusStateEvent event)
     {
         defaultHandle(event);
     }
-    
+
     public void process(MainMockupEvent event)
     {
         defaultHandle(event);
     }
-    
+
     public void process(ChangeReleasingFrequencyEvent event)
     {
         defaultHandle(event);
     }
-    
+
     public void process(BusMockupsEvent event)
     {
         defaultHandle(event);
     }
-    
+
     public void process(NewPassengerEvent event)
     {
         defaultHandle(event);
@@ -152,10 +153,4 @@ public abstract class AbstractEventHandler
     {
         defaultHandle(event);
     }
-
-    public void process(FlowEvent event)
-    {
-        defaultHandle(event);
-    }
-    
 }

@@ -24,60 +24,21 @@ import burtis.modules.simulation.models.Terminus;
  */
 class SimulationEventHandler extends AbstractEventHandler
 {
-    /**
-     * Reference to the simulation module object.
-     */
     private final Simulation simulation;
-    /**
-     * Reference to simulation's action executor.
-     */
     private final ActionExecutor actionExecutor;
-    /**
-     * Reference to bus manager.
-     */
     private final BusManager busManager;
-    /**
-     * Reference to bus stop manager.
-     */
-    // private final BusStopManager busStopManager;
-    /**
-     * Reference to the depot.
-     */
-    // private final Depot depot;
-    /**
-     * Reference to the terminus.
-     */
     private final Terminus terminus;
-    
-    /**
-     * Event handler's logger.
-     */
     private final Logger logger;
 
-    /**
-     * Constructor.
-     * 
-     * @param simulation
-     * @param actionExecutor
-     * @param busManager
-     * @param busStopManager
-     * @param depot
-     */
-    public SimulationEventHandler(
-            final Simulation simulation,
-            final ActionExecutor actionExecutor, 
-            final BusManager busManager,
-            final BusStopManager busStopManager, 
-            final Depot depot,
+    public SimulationEventHandler(final Simulation simulation,
+            final ActionExecutor actionExecutor, final BusManager busManager,
+            final BusStopManager busStopManager, final Depot depot,
             final Logger logger)
     {
         this.simulation = simulation;
         this.actionExecutor = actionExecutor;
         this.busManager = busManager;
-        // this.busStopManager = busStopManager;
-        // this.depot = depot;
         this.terminus = busStopManager.getTerminus();
-        
         this.logger = logger;
     }
 
@@ -91,9 +52,9 @@ class SimulationEventHandler extends AbstractEventHandler
     @Override
     public void process(ModuleReadyEvent event)
     {
-        //ignoring silently
+        // ignoring silently
     }
-    
+
     @Override
     public void process(TerminateSimulationEvent event)
     {
@@ -118,12 +79,9 @@ class SimulationEventHandler extends AbstractEventHandler
         try
         {
             simulation.setCurrentCycle(iteration);
-
             terminus.departBus();
             busManager.updateBusPositions();
-            
             logger.info(busManager.toString());
-            
             // This is "interiteration sync point" with PassengerModule.
             // Iteration will be continued after receiving response from
             // PassengerModule, namely it will be continued in the
@@ -151,8 +109,8 @@ class SimulationEventHandler extends AbstractEventHandler
     @Override
     public void process(WaitingPassengersEvent event)
     {
-        logger.info("WaitingPassengersEvent " + event.getBusIdWaitingPassengersList());
-        
+        logger.info("WaitingPassengersEvent "
+                + event.getBusIdWaitingPassengersList());
         try
         {
             busManager.processWaitingPassengersQueryResponse(event
@@ -197,13 +155,14 @@ class SimulationEventHandler extends AbstractEventHandler
             busManager.moveBusesToDepot();
             actionExecutor.sendBusMockupEvent(simulation.getCurrentCycle(),
                     busManager.getBusMockups());
-            //logger.info(busManager.getBusMockups().toString());
+            // logger.info(busManager.getBusMockups().toString());
             actionExecutor.sendModuleReadyEvent(simulation.getCurrentCycle());
         }
         catch (Exception ex)
         {
-            logger.log(Level.SEVERE, "(" + simulation.getCurrentCycle() + ")" + " BDE: " 
-                    + ex.getMessage() + " " + ex.getClass().getSimpleName(), ex);
+            logger.log(Level.SEVERE, "(" + simulation.getCurrentCycle() + ")"
+                    + " BDE: " + ex.getMessage() + " "
+                    + ex.getClass().getSimpleName(), ex);
             simulation.shutdown();
         }
     }
@@ -222,6 +181,4 @@ class SimulationEventHandler extends AbstractEventHandler
                 + event.getNewReleasingFrequency());
         terminus.changeReleasingFrequency(event.getNewReleasingFrequency());
     }
-    
-    
 }

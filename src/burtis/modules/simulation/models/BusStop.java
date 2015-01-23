@@ -45,10 +45,12 @@ public class BusStop
      * Constructor.
      * 
      * Assigns unique id for the new bus stop. Name parameter can be null, then
-     * name in form of "Bus stop <id>" will be set.
+     * name in form of "Bus stop &lt;id&gt;" will be set.
      * 
      * @param position
+     *            - the position on the route.
      * @param name
+     *            - name of this stop.
      */
     public BusStop(int position, String name)
     {
@@ -81,14 +83,18 @@ public class BusStop
 
     /**
      * Enqueues bus to the bus stop. Bus is put into FIFO queue.
+     * 
+     * @param bus
+     *            - the bus to be used.
      */
     public void enqueueBus(Bus bus)
     {
         waitingBuses.add(bus);
     }
-    
+
     @Override
-    public String toString() {
+    public String toString()
+    {
         return name;
     }
 }

@@ -8,7 +8,7 @@ import burtis.modules.passengers.Managers;
 import burtis.modules.passengers.exceptions.NoSuchBusException;
 
 /**
- * 
+ * Manages buses existing on the simulation on passenger side.
  * 
  * @author Mikołaj Sowiński
  *
@@ -23,38 +23,21 @@ public class BusManager
      * List of buses departing at the current iteration.
      */
     private final List<Bus> departingBuses = new ArrayList<>();
-    /**
-     * Reference to the managers.
-     */
     private final Managers managers;
 
-    /**
-     * Constructor.
-     */
     public BusManager(Managers managers)
     {
         this.managers = managers;
         managers.setBusManager(this);
     }
 
-    /*
-     * ############################################## 
-     * GETTERS AND SETTERS
-     * ###########################################
-     */
-    
-    /*
-     * ############################################## 
-     * END OF GETTERS AND SETTERS
-     * ###########################################
-     */
-    
     /**
      * Add bus of specified id to the list of known buses. If bus of given id
      * exists it is not recreated.
      * 
      * @param busId
-     * @return created Bus object or existing bus of given id
+     *            - id of the bus to be added or created.
+     * @return created Bus object or existing bus of given id.
      */
     public Bus add(int busId)
     {
@@ -76,6 +59,7 @@ public class BusManager
      * Adds bus to the list of departing buses.
      * 
      * @param bus
+     *            - the bus to be added.
      */
     public void addToDepartingList(Bus bus)
     {
@@ -83,34 +67,14 @@ public class BusManager
     }
 
     /**
-     * Returns list of ids of departing buses.
-     * 
-     * List is cleared upon retrieval.
-     */
-    public List<BusDepartureInfo> getBusDepartureInfoList()
-    {
-        List<BusDepartureInfo> list = new ArrayList<>();
-        for (Bus bus : departingBuses)
-        {
-            if(bus.getRequestedBusStop() != null) {
-                list.add(new BusDepartureInfo(bus.getId(), bus.getRequestedBusStop().getName()));
-            }
-            else {
-                list.add(new BusDepartureInfo(bus.getId(), null));
-            }
-        }
-        departingBuses.clear();
-        return list;
-    }
-
-    /**
-     * Returns bus of given id.
+     * Searches for a bus with provided id.
      * 
      * @param id
-     *            bus id
-     * @return bus of given id
+     *            - the identifier of the bus to be found.
+     * @return found bus.
      * 
      * @throws NoSuchBusException
+     *             - if such a bus wasn't found.
      */
     public Bus getBusById(int id) throws NoSuchBusException
     {
@@ -121,11 +85,37 @@ public class BusManager
         }
         throw new NoSuchBusException(id);
     }
-    
+
+    /**
+     * List is cleared upon retrieval.
+     * 
+     * @return departure information for each departing bus.
+     */
+    public List<BusDepartureInfo> getBusDepartureInfoList()
+    {
+        List<BusDepartureInfo> list = new ArrayList<>();
+        for (Bus bus : departingBuses)
+        {
+            if (bus.getRequestedBusStop() != null)
+            {
+                list.add(new BusDepartureInfo(bus.getId(), bus
+                        .getRequestedBusStop().getName()));
+            }
+            else
+            {
+                list.add(new BusDepartureInfo(bus.getId(), null));
+            }
+        }
+        departingBuses.clear();
+        return list;
+    }
+
     @Override
-    public String toString() {
+    public String toString()
+    {
         String out = "";
-        for(Bus bus : buses) {
+        for (Bus bus : buses)
+        {
             out += bus.toString();
         }
         return out;

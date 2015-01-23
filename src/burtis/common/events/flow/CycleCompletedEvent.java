@@ -5,7 +5,7 @@ import burtis.common.events.AbstractEventHandler;
 /**
  * Event to be sent upon module main loop completion.
  * 
- * @author Mikołaj Sowiński <mikolaj.sowinski@gmail.com>
+ * @author Mikołaj Sowiński
  */
 public class CycleCompletedEvent extends FlowEvent
 {

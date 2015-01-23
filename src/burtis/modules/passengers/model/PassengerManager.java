@@ -32,26 +32,14 @@ public class PassengerManager
      * Zero means moment of generation.
      */
     private int leftToGeneration = generationCycleLength;
-    /**
-     * Reference to the managers container.
-     */
     private Managers managers;
 
-    /**
-     * Constructor.
-     * 
-     * @param managers
-     */
     public PassengerManager(Managers managers)
     {
         this.managers = managers;
         managers.setPassengerManager(this);
     }
 
-    /*
-     * ############################################## GETTERS AND SETTERS
-     * ###########################################
-     */
     public void setGenerationCycleLength(int generationCycleLength)
     {
         this.generationCycleLength = generationCycleLength;
@@ -67,10 +55,6 @@ public class PassengerManager
         this.managers = managers;
     }
 
-    /*
-     * ############################################## END OF GETTERS AND SETTERS
-     * ###########################################
-     */
     /**
      * Removes passenger from the list.
      * 
@@ -110,12 +94,14 @@ public class PassengerManager
             leftToGeneration--;
         }
     }
-    
+
     /**
      * Updates waiting time of passengers.
      */
-    public void updateWaitingTime() {
-        for(Passenger passenger : passengers) {
+    public void updateWaitingTime()
+    {
+        for (Passenger passenger : passengers)
+        {
             passenger.tickPassenger();
         }
     }
@@ -124,7 +110,9 @@ public class PassengerManager
      * Adds passenger with given destination to the given bus stop.
      * 
      * @param origin
+     *            - origin stop of the passenger.
      * @param destination
+     *            - destination stop of the passenger.
      */
     public void addPassenger(BusStop origin, BusStop destination)
     {

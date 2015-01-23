@@ -15,10 +15,10 @@ import burtis.modules.network.client.ClientModule;
 /**
  * Template class for creating network-connected modules.
  * 
- * It provides main method, so in your main method you can just write:</br>
+ * It provides main method, so in your main method you can just write:<br>
  * <code>
- * MyImplementation app = new MyImplementation();</br>
- * app.main();</br>
+ * MyImplementation app = new MyImplementation();<br>
+ * app.main();<br>
  * </code>
  * 
  * @author Amadeusz Sadowski
@@ -49,6 +49,7 @@ public abstract class AbstractNetworkModule
      * Creates module ready to have {@link #main()} called.
      * 
      * @param config
+     *            - the configuration to be used for connection.
      */
     protected AbstractNetworkModule(ModuleConfig config)
     {
@@ -98,7 +99,7 @@ public abstract class AbstractNetworkModule
     {
         initializeModule(true);
     }
-    
+
     protected void initializeModule(boolean startConnection) throws IOException
     {
         logger.info("Initializing resources in " + moduleConfig.getModuleName());
@@ -137,10 +138,10 @@ public abstract class AbstractNetworkModule
      * IMPORTANT: set protected field {@link #eventHandler} before calling this
      * method.
      * 
-     * It provides main method, so in your main method you can just write:</br>
+     * It provides main method, so in your main method you can just write:<br>
      * <code>
-     * MyImplementation app = new MyImplementation();</br>
-     * app.main();</br>
+     * MyImplementation app = new MyImplementation();<br>
+     * app.main();<br>
      * </code>
      * 
      * It first initializes this base class, then calls {@link #init()}. After

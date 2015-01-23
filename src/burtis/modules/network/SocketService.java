@@ -36,8 +36,6 @@ public interface SocketService
     /**
      * Performs check whether socket is open, connected, and wasn't closed yet.
      * 
-     * @param socket
-     *            Socket to be checked.
      * @return True if connection is online.
      */
     public boolean isConnected();

@@ -9,6 +9,7 @@
  * 
  * <p>
  * Short summary of modules and their roles:
+ * </p>
  * <ul>
  * <li><i>Network</i> - provides network communication backend; Server which is
  * central to communication and client abstact classes for easy implementation
@@ -22,7 +23,6 @@
  * <li><i>Synchronization</i> - the clock of simulation; dictates ticks which
  * trigger computation of next step status in every active module.</li>
  * </ul>
- * </p>
  * 
  * <p>
  * <b>Events</b> are tokens with which modules send messages inbetween. Server

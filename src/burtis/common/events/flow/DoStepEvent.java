@@ -3,8 +3,10 @@ package burtis.common.events.flow;
 import burtis.common.events.AbstractEventHandler;
 
 /**
+ * Requests another tick to be done in stepping mode, resulting in stepping mode
+ * being activated if not yet active.
  *
- * @author Mikołaj Sowiński <mikolaj.sowinski@gmail.com>
+ * @author Mikołaj Sowiński
  */
 public class DoStepEvent extends FlowEvent
 {

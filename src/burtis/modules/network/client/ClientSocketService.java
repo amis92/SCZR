@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.nio.channels.SocketChannel;
-import java.util.function.Consumer;
 import java.util.logging.Logger;
 
 import burtis.modules.network.AbstractSocketService;
@@ -27,9 +26,10 @@ class ClientSocketService extends AbstractSocketService
      * Creates new unconnected client connection to server. Call
      * {@link #connect()} to attempt connection with server.
      * 
-     * @param receiveAction
-     *            - for every received object, accept is called on this
-     *            {@link Consumer}
+     * @param serverAddress
+     *            - the address of server to connect to.
+     * @param serverPort
+     *            - the port of the server.
      */
     public ClientSocketService(final String serverAddress, final int serverPort)
     {

@@ -84,11 +84,6 @@ class PassengerInfoPanel extends JPanel
         add(scrollPane, BorderLayout.CENTER);
     }
 
-    /**
-     * Reloads information from the new provided mockup.
-     * 
-     * @param mockup
-     */
     public void refresh(Mockup mockup)
     {
         this.mockup = mockup;
@@ -102,13 +97,6 @@ class PassengerInfoPanel extends JPanel
         }
     }
 
-    /**
-     * Changes displayed list to the list of provided bus stop. The bus is found
-     * in the last received mockup.
-     * 
-     * @param stopName
-     *            - name of the bus stop to display passengers from.
-     */
     public void showForBusStop(String stopName)
     {
         fillTable(() -> findOnStop(stopName),
@@ -116,13 +104,6 @@ class PassengerInfoPanel extends JPanel
                 !(isCurrentListFromStop && stopName.equals(currentStopName)));
     }
 
-    /**
-     * Changes displayed list to the list of provided bus. The bus is found in
-     * the last received mockup.
-     * 
-     * @param busId
-     *            - id of the bus to display passengers from.
-     */
     public void showForBus(Integer busId)
     {
         fillTable(() -> findInBus(busId),
@@ -206,8 +187,17 @@ class PassengerInfoPanel extends JPanel
     }
 
     /**
-     * Fills table from start row to end row (exclusive) with values passengers
-     * from the list starting at index startIndex.
+     * Fills table from start row to end row (exclusive) with passengers from
+     * the list starting at index startIndex.
+     * 
+     * @param startRow
+     *            - the first row of gui table to be filled.
+     * @param endRow
+     *            - the bounding end row, will not be filled.
+     * @param passengerList
+     *            - source of passengers.
+     * @param startIndex
+     *            - first index to start from on passenger list.
      */
     private void fillRowsFromTo(int startRow, int endRow,
             List<MockupPassenger> passengerList, int startIndex)

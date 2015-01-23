@@ -4,6 +4,14 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The abstract superclass of all events being sent between modules during
+ * simulation, representing all kinds of communication. Each event describes at
+ * least two fields: the sender and list of recipients.
+ * 
+ * @author Amadeusz Sadowski
+ *
+ */
 public abstract class SimulationEvent implements Serializable
 {
     private static final long serialVersionUID = 1L;
@@ -35,6 +43,6 @@ public abstract class SimulationEvent implements Serializable
         }
         return result;
     }
-    
+
     public abstract void visit(AbstractEventHandler eventProcessor);
 }

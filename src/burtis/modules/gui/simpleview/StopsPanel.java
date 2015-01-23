@@ -63,6 +63,7 @@ public class StopsPanel extends JPanel
      * Checks whether both new and last used list diverged.
      * 
      * @param freshList
+     *            - the new list of passengers.
      * @return true if they did, false if not.
      */
     private boolean stopListChanged(List<MockupBusStop> freshList)
