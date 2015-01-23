@@ -31,3 +31,7 @@ Celem projektu jest stworzenie systemu czasu rzeczywistego symulującego obsług
 ## Zadania do wykonania:
 
 Patrz [#14](https://github.com/vanqyard/SZCZR/issues/14).
+
+## Dokumentacja Javadoc
+
+[Github Pages Javadoc](http://vanqyard.github.io/SZCZR)
