@@ -1,4 +1,4 @@
-﻿package burtis.modules.passengers;
+package burtis.modules.passengers;
 
 import java.io.IOException;
 import java.util.ArrayList;

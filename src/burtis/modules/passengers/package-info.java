@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Simulates random passenger behaviours, such as their initial appearance and
  * destination.
  * 

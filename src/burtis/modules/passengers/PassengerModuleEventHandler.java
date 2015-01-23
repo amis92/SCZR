@@ -1,4 +1,4 @@
-﻿package burtis.modules.passengers;
+package burtis.modules.passengers;
 
 import java.util.List;
 import java.util.logging.Level;

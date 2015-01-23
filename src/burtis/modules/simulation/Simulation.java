@@ -1,4 +1,4 @@
-﻿package burtis.modules.simulation;
+package burtis.modules.simulation;
 
 import java.io.IOException;
 import java.util.logging.FileHandler;

@@ -1,4 +1,4 @@
-﻿package burtis.modules.gui.controller;
+package burtis.modules.gui.controller;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,4 +1,4 @@
-﻿package burtis.modules.network;
+package burtis.modules.network;
 
 /**
  * Listens for incoming traffic. Functional method is {@link #listen()}.

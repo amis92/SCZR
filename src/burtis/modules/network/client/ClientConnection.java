@@ -1,4 +1,4 @@
-﻿package burtis.modules.network.client;
+package burtis.modules.network.client;
 
 import java.io.IOException;
 import java.nio.channels.ClosedByInterruptException;

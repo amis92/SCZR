@@ -1,4 +1,4 @@
-﻿package burtis.modules.simulation.models;
+package burtis.modules.simulation.models;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;

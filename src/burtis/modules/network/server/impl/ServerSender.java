@@ -1,4 +1,4 @@
-﻿package burtis.modules.network.server.impl;
+package burtis.modules.network.server.impl;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;

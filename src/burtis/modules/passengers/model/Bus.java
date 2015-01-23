@@ -1,4 +1,4 @@
-﻿package burtis.modules.passengers.model;
+package burtis.modules.passengers.model;
 
 import java.util.ArrayList;
 import java.util.List;

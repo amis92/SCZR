@@ -1,4 +1,4 @@
-﻿package burtis.modules.sync;
+package burtis.modules.sync;
 
 import java.util.List;
 import java.util.concurrent.Executors;

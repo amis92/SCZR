@@ -1,4 +1,4 @@
-﻿package burtis.modules.busscheduler;
+package burtis.modules.busscheduler;
 
 import java.util.List;
 import java.util.function.Consumer;
