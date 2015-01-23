@@ -13,13 +13,17 @@ import burtis.common.events.flow.TickEvent;
 
 /**
  * Controls thread responsible for sending ticks.
+ * 
+ * 
+ * @author Amadeusz Sadowski
+ * @author Mikołaj Sowiński
  */
 class TickService
 {
-    private ScheduledExecutorService executor = Executors
-            .newSingleThreadScheduledExecutor();
     private static final Logger logger = Logger.getLogger(TickService.class
             .getName());
+    private ScheduledExecutorService executor = Executors
+            .newSingleThreadScheduledExecutor();
     private final LongSupplier iterationSupplier;
     private final Consumer<SimulationEvent> sender;
     private final String senderName;
@@ -49,15 +53,6 @@ class TickService
     }
 
     /**
-     * Stops scheduled execution and ticks once.
-     */
-    public void tickOnce()
-    {
-        stop();
-        tick();
-    }
-
-    /**
      * Immediately halts ticking thread.
      */
     public void stop()
@@ -65,6 +60,15 @@ class TickService
         executor.shutdownNow();
         executor = Executors.newSingleThreadScheduledExecutor();
         logger.info("Ticking stopped.");
+    }
+
+    /**
+     * Stops scheduled execution and ticks once.
+     */
+    public void tickOnce()
+    {
+        stop();
+        tick();
     }
 
     private void tick()

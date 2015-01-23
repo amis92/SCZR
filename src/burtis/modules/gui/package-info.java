@@ -2,7 +2,8 @@
  * 
  */
 /**
- * @author vanqyard
+ * @author Rafał Braun
+ * @author Amadeusz Sadowski
  *
  */
 package burtis.modules.gui;

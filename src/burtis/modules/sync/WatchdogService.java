@@ -31,11 +31,7 @@ class WatchdogService
     /**
      * Defines how often are modules checked.
      */
-    
-    // CHANGED!!
     private static final long PERIOD = 500000;
-    
-    
     private ScheduledExecutorService executor = Executors
             .newSingleThreadScheduledExecutor();
     private final AtomicBoolean isWatchTime = new AtomicBoolean(false);

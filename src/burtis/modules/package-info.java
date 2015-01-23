@@ -18,12 +18,12 @@
  *  without it simulation doesn't work;</li>
  * <li><b>sync</b> - synchronizes modules to work in the same time frames;</li>
  * 
- * @author 
- * Rafał Braun,
- * Kamil Drożdżał, 
- * Amadeusz Sadowski, 
- * Mikołaj Sowiński, 
- * Piotr Suchorab
+
+ * @author Rafał Braun
+ * @author Kamil Drożdżał
+ * @author Amadeusz Sadowski
+ * @author Mikołaj Sowiński
+ * @author Piotr Suchorab
  *
  */
 package burtis.modules;

@@ -12,24 +12,32 @@ import burtis.common.mockups.Mockup;
 import burtis.modules.network.NetworkConfig;
 import burtis.modules.network.client.ClientModule;
 
+/**
+ * Groups outgoing communication management.
+ * 
+ * @author Mikołaj Sowiński
+ *
+ */
 public class ActionExecutor extends EventSender
 {
-    
     public ActionExecutor(ClientModule clientModule, NetworkConfig netConfig)
     {
         super(clientModule, netConfig);
     }
-    
-    public void sendWaitingPassengersRequestResponse(Map<String, Boolean> response) {
-        clientModule.send(new WaitingPassengersEvent(sender, response));
-    }
-    
-    public void sendDeparturesList(List<BusDepartureInfo> departureInfoList) {
+
+    public void sendDeparturesList(List<BusDepartureInfo> departureInfoList)
+    {
         clientModule.send(new BusDeparturesEvent(sender, departureInfoList));
     }
-    
-    public void sendMockups(Mockup mockup) {
+
+    public void sendMockups(Mockup mockup)
+    {
         clientModule.send(new MainMockupEvent(sender, mockup));
     }
 
+    public void sendWaitingPassengersRequestResponse(
+            Map<String, Boolean> response)
+    {
+        clientModule.send(new WaitingPassengersEvent(sender, response));
+    }
 }

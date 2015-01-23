@@ -38,8 +38,11 @@
  * 
  * SCZR 2014Z course project
  * 
- * @author Rafał Braun, Kamil Drożdżał, Amadeusz Sadowski, Mikołaj Sowiński,
- *         Piotr Suchorab
+ * @author Rafał Braun
+ * @author Kamil Drożdżał
+ * @author Amadeusz Sadowski
+ * @author Mikołaj Sowiński
+ * @author Piotr Suchorab
  *
  */
 package burtis;

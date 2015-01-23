@@ -17,7 +17,7 @@ import burtis.modules.network.server.impl.ServerSender;
 /**
  * Performs traffic forwarding according to configuration provided. All traffic
  * from given module is forwarded to all recipients of that module, except of
- * {@link ServerOrder}s which are executed and not forwarded.
+ * {@link ServerOrder}s which are executed and not forwarded. </br></br>
  * 
  * Each connection listens on separate thread for incoming traffic. All outgoing
  * traffic is sent through another thread with blocking queue.
@@ -29,9 +29,9 @@ public class Server extends AbstractEventHandler
 {
     protected final static Logger logger = Logger.getLogger(Server.class
             .getName());
-    private final ServerSender sender = new ServerSender();
     private final Collection<ModuleConnection> moduleConnections;
     private final Map<String, ModuleConnection> moduleMap = new HashMap<>();
+    private final ServerSender sender = new ServerSender();
     protected boolean isRunning = false;
 
     public Server(final NetworkConfig netConfig)
@@ -41,6 +41,45 @@ public class Server extends AbstractEventHandler
         final ModuleConnectionFactory factory = new ModuleConnectionFactory(
                 moduleConnections, moduleMap, this::receive);
         factory.readConfig(netConfig);
+    }
+
+    @Override
+    public void defaultHandle(SimulationEvent event)
+    {
+        if (!event.getRecipients().isEmpty())
+        {
+            for (String recipientName : event.getRecipients())
+            {
+                forward(event, recipientName);
+            }
+        }
+        else
+        {
+            String senderName = event.sender();
+            for (ModuleConnection moduleConnection : moduleConnections)
+            {
+                if (moduleConnection.getModuleName().equalsIgnoreCase(
+                        senderName))
+                {
+                    continue;
+                }
+                forward(event, moduleConnection.getModuleName());
+            }
+        }
+    }
+
+    @Override
+    public void process(TerminateSimulationEvent event)
+    {
+        String senderName = event.sender();
+        for (ModuleConnection moduleConnection : moduleConnections)
+        {
+            if (moduleConnection.getModuleName().equalsIgnoreCase(senderName))
+            {
+                continue;
+            }
+            sender.send(event, moduleConnection);
+        }
     }
 
     public void run()
@@ -71,35 +110,6 @@ public class Server extends AbstractEventHandler
         logger.log(Level.INFO, "Server stopped");
     }
 
-    private void receive(Object receivedObject)
-    {
-        if (receivedObject instanceof SimulationEvent)
-        {
-            SimulationEvent event = (SimulationEvent) receivedObject;
-            logger.finer("Forwarding object " + event.getClass().getName());
-            event.visit(this);
-        }
-        else
-        {
-            logger.warning("Received unexpected object: "
-                    + receivedObject.getClass().getName());
-        }
-    }
-
-    @Override
-    public void process(TerminateSimulationEvent event)
-    {
-        String senderName = event.sender();
-        for (ModuleConnection moduleConnection : moduleConnections)
-        {
-            if (moduleConnection.getModuleName().equalsIgnoreCase(senderName))
-            {
-                continue;
-            }
-            sender.send(event, moduleConnection);
-        }
-    }
-
     private void forward(SimulationEvent event, String recipientName)
     {
         if (moduleMap.containsKey(recipientName))
@@ -113,28 +123,18 @@ public class Server extends AbstractEventHandler
         }
     }
 
-    @Override
-    public void defaultHandle(SimulationEvent event)
+    private void receive(Object receivedObject)
     {
-        if (!event.getRecipients().isEmpty())
+        if (receivedObject instanceof SimulationEvent)
         {
-            for (String recipientName : event.getRecipients())
-            {
-                forward(event, recipientName);
-            }
+            SimulationEvent event = (SimulationEvent) receivedObject;
+            logger.finer("Forwarding object " + event.getClass().getName());
+            event.visit(this);
         }
         else
         {
-            String senderName = event.sender();
-            for (ModuleConnection moduleConnection : moduleConnections)
-            {
-                if (moduleConnection.getModuleName().equalsIgnoreCase(
-                        senderName))
-                {
-                    continue;
-                }
-                forward(event, moduleConnection.getModuleName());
-            }
+            logger.warning("Received unexpected object: "
+                    + receivedObject.getClass().getName());
         }
     }
 }

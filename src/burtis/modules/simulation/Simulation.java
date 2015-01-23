@@ -17,7 +17,7 @@ import burtis.modules.simulation.models.BusStopManager;
 import burtis.modules.simulation.models.Depot;
 
 /**
- * Simulation module.
+ * Simulation module. </br></br>
  * 
  * Contains depot, terminus, buses and bus stops. No passengers here.
  * Communicates with passenger module to obtain information on passengers
@@ -28,101 +28,79 @@ import burtis.modules.simulation.models.Depot;
  */
 public class Simulation extends AbstractNetworkModule
 {
-    
     /**
-     * Simulation logger.
-     */
-    private final Logger logger = Logger.getLogger(Simulation.class
-            .getName());
-    
-    /**
-     * Current iteration.
+     * Main method for application.
      * 
-     * This value is initially -1 because it <b>must</b> always be one less then
-     * iteration number received in {@link TickEvent} and in first iteration this
-     * number is equal to 0.
+     * @param args
+     *            No parameters are expected.
+     * @throws Exception
      */
-    private long currentIteration;
-    
+    public static void main(String[] args) throws Exception
+    {
+        Simulation app = new Simulation(NetworkConfig.defaultConfig());
+        app.main();
+    }
+
     /**
      * Action executor responsible for sending events to other modules.
      */
     private final ActionExecutor actionExecutor;
-    
-    /**
-     * Bus stop manager.
-     */
-    private final BusStopManager busStopManager;
-    
-    /**
-     * Depot.
-     */
-    private final Depot depot;
-    
     /**
      * Bus manager.
      */
     private final BusManager busManager;
+    /**
+     * Bus stop manager.
+     */
+    private final BusStopManager busStopManager;
+    /**
+     * Current iteration.
+     * 
+     * This value is initially -1 because it <b>must</b> always be one less then
+     * iteration number received in {@link TickEvent} and in first iteration
+     * this number is equal to 0.
+     */
+    private long currentIteration;
+    /**
+     * Depot.
+     */
+    private final Depot depot;
+    /**
+     * Simulation logger.
+     */
+    private final Logger logger = Logger.getLogger(Simulation.class.getName());
 
     /**
      * Creates a new simulation.
      * 
-     * @param netConfig network configuration
+     * @param netConfig
+     *            network configuration
+     * @throws Exception
      */
-    private Simulation(NetworkConfig netConfig)
+    private Simulation(NetworkConfig netConfig) throws Exception
     {
         super(netConfig.getModuleConfigs().get(NetworkConfig.SIM_MODULE));
-        
-        this.actionExecutor = new ActionExecutor(
-                this.client, 
-                netConfig);
-        
+        this.actionExecutor = new ActionExecutor(this.client, netConfig);
         this.depot = new Depot();
-        
         this.busStopManager = new BusStopManager(
-                SimulationModuleConsts.getDefaultBusStops(),
-                depot,
-                logger);
-        
-        this.busManager = new BusManager(
-                busStopManager,
-                SimulationModuleConsts.NUMBER_OF_BUSES,
-                depot,
-                logger);
-        
-        this.eventHandler = new SimulationEventHandler(
-                this, 
-                actionExecutor, 
-                busManager,
-                busStopManager,
-                depot,
-                logger);
-        
+                SimulationModuleConsts.getDefaultBusStops(), depot, logger);
+        this.busManager = new BusManager(busStopManager,
+                SimulationModuleConsts.NUMBER_OF_BUSES, depot, logger);
+        this.eventHandler = new SimulationEventHandler(this, actionExecutor,
+                busManager, busStopManager, depot, logger);
         this.currentIteration = 0;
-        
-        Handler handler;
-        try
-        {
-            handler = new FileHandler(this.getClass().getName());
-            handler.setFormatter(new LogFormatter());
-            logger.addHandler(handler);
-        }
-        catch (SecurityException | IOException e)
-        {
-            logger.severe(e.getMessage());
-            terminate();            
-        }
-        
-    }
-
-    public Logger getLogger()
-    {
-        return logger;
+        // only for debugging
+        // addFileLoggerHandler();
     }
 
     public long getCurrentCycle()
     {
         return currentIteration;
+    }
+
+    public Logger getLogger()
+    {
+        return logger;
     }
 
     public void setCurrentCycle(long currentCycle)
@@ -131,7 +109,8 @@ public class Simulation extends AbstractNetworkModule
     }
 
     /**
-     * Sends termination event and shuts down module loop, closing all operations.
+     * Sends termination event and shuts down module loop, closing all
+     * operations.
      */
     @Override
     public void shutdown()
@@ -139,28 +118,40 @@ public class Simulation extends AbstractNetworkModule
         send(new TerminateSimulationEvent(this.moduleConfig.getModuleName()));
         super.shutdown();
     }
-    
-    @Override
-    protected void terminate()
-    {
-        logger.log(Level.INFO, "Terminating module...");
-    }
 
     /**
-     * Main method for application.
+     * Adds dumping logs to file.
      * 
-     * @param args
-     *            No parameters are expected.
+     * @throws Exception
+     *             when the filehanler couldn't be initialized or added to
+     *             logger.
      */
-    public static void main(String[] args)
+    @SuppressWarnings("unused")
+    private void addFileLoggerHandler() throws Exception
     {
-        Simulation app = new Simulation(NetworkConfig.defaultConfig());
-        app.main();
+        Handler handler;
+        try
+        {
+            handler = new FileHandler(this.getClass().getName() + ".log");
+            handler.setFormatter(new LogFormatter());
+            logger.addHandler(handler);
+        }
+        catch (SecurityException | IOException e)
+        {
+            logger.severe(e.getMessage());
+            throw e;
+        }
     }
 
     @Override
     protected void init()
     {
         actionExecutor.sendModuleReadyEvent(currentIteration);
+    }
+
+    @Override
+    protected void terminate()
+    {
+        logger.log(Level.INFO, "Terminating module...");
     }
 }

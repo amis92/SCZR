@@ -1,16 +1,8 @@
 ﻿/**
+ * Simulates random passenger behaviours, such as their initial appearance and
+ * destination.
  * 
- */
-/**
- * Simulates random passenger behaviours,
- * such as their initial appearance and destination.
- * 
- * @author 
- * Rafał Braun,
- * Kamil Drożdżał, 
- * Amadeusz Sadowski, 
- * Mikołaj Sowiński, 
- * Piotr Suchorab
+ * @author Mikołaj Sowiński
  *
  */
 package burtis.modules.passengers;

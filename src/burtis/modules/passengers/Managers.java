@@ -7,112 +7,68 @@ import burtis.modules.passengers.model.BusStopManager;
 import burtis.modules.passengers.model.PassengerManager;
 import burtis.modules.passengers.model.TransactionManager;
 
+/**
+ * Groups all managers for convenient access across classes. Service locator of
+ * sorts. Simple getters and setters.
+ * 
+ * @author Mikołaj Sowiński
+ *
+ */
 public class Managers
 {
-
-    /**
-     * Reference to BusStopManager.
-     */
-    private BusStopManager busStopManager;
-    
-    /**
-     * Reference to the transaction manager.
-     */
-    private TransactionManager transactionManager;
-    
-    /**
-     * Reference to the bus manager.
-     */
     private BusManager busManager;
-    
-    /**
-     * Reference to the passenger manager.
-     */
-    private PassengerManager passengerManager;
-    
-    /**
-     * Reference to the logger.
-     */
+    private BusStopManager busStopManager;
     private Logger logger;
-  
-        /**
-     * @return the logger
-     */
-    public Logger getLogger()
-    {
-        return logger;
-    }
+    private PassengerManager passengerManager;
+    private TransactionManager transactionManager;
 
-    /**
-     * @param logger the logger to set
-     */
-    public void setLogger(Logger logger)
-    {
-        this.logger = logger;
-    }
-
-    /**
-     * @return the busStopManager
-     */
-    public BusStopManager getBusStopManager()
-    {
-        return busStopManager;
-    }
-
-    /**
-     * @return the transactionManager
-     */
-    public TransactionManager getTransactionManager()
-    {
-        return transactionManager;
-    }
-
-    /**
-     * @return the busManager
-     */
     public BusManager getBusManager()
     {
         return busManager;
     }
 
-    /**
-     * @return the passengerManager
-     */
+    public BusStopManager getBusStopManager()
+    {
+        return busStopManager;
+    }
+
+    public Logger getLogger()
+    {
+        return logger;
+    }
+
     public PassengerManager getPassengerManager()
     {
         return passengerManager;
     }
 
-    /**
-     * @param busStopManager the busStopManager to set
-     */
-    public void setBusStopManager(BusStopManager busStopManager)
+    public TransactionManager getTransactionManager()
     {
-        this.busStopManager = busStopManager;
+        return transactionManager;
     }
 
-    /**
-     * @param transactionManager the transactionManager to set
-     */
-    public void setTransactionManager(TransactionManager transactionManager)
-    {
-        this.transactionManager = transactionManager;
-    }
-
-    /**
-     * @param busManager the busManager to set
-     */
     public void setBusManager(BusManager busManager)
     {
         this.busManager = busManager;
     }
 
-    /**
-     * @param passengerManager the passengerManager to set
-     */
+    public void setBusStopManager(BusStopManager busStopManager)
+    {
+        this.busStopManager = busStopManager;
+    }
+
+    public void setLogger(Logger logger)
+    {
+        this.logger = logger;
+    }
+
     public void setPassengerManager(PassengerManager passengerManager)
     {
         this.passengerManager = passengerManager;
-    }   
-    
+    }
+
+    public void setTransactionManager(TransactionManager transactionManager)
+    {
+        this.transactionManager = transactionManager;
+    }
 }

@@ -22,10 +22,10 @@ public class ServerSender implements Sender
 {
     private final static Logger logger = Logger.getLogger(Server.class
             .getName());
+    private volatile boolean isStopped = true;
     private ExecutorService sendingExecutor = Executors
             .newSingleThreadExecutor();
     private final BlockingQueue<Package> toSendQueue = new LinkedBlockingQueue<Package>();
-    private volatile boolean isStopped = true;
 
     /**
      * Creates non-running service. To run, call {@link #startSending()}.

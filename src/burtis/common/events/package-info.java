@@ -1,15 +1,10 @@
 /**
- * 
- */
-/**
  * Common events used across modules.
  * 
- * @author 
- * Rafał Braun,
- * Kamil Drożdżał, 
- * Amadeusz Sadowski, 
- * Mikołaj Sowiński, 
- * Piotr Suchorab
+
+ * @author Rafał Braun
+ * @author Amadeusz Sadowski
+ * @author Mikołaj Sowiński
  *
  */
 package burtis.common.events;

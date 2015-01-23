@@ -1,15 +1,9 @@
 /**
- * 
- */
-/**
  * Mockups used to communicate between modules.
  * 
- * @author 
- * Rafał Braun,
- * Kamil Drożdżał, 
- * Amadeusz Sadowski, 
- * Mikołaj Sowiński, 
- * Piotr Suchorab
+ * 
+ * @author Rafał Braun
+ * @author Mikołaj Sowiński
  *
  */
 package burtis.common.mockups;

@@ -12,7 +12,7 @@ import burtis.modules.network.NetworkConfig;
 import burtis.modules.network.client.ClientModule;
 
 /**
- * Simulation action executor.
+ * Outgoing network communication management for Simulation.
  * 
  * @author Amadeusz Sadowski
  *

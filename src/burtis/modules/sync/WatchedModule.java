@@ -7,7 +7,8 @@ import burtis.common.events.flow.CycleCompletedEvent;
 import burtis.modules.network.ModuleConfig;
 
 /**
- * Class representing module.
+ * Class representing watched module. Contains information how well synchronized
+ * the module is, and if it already reported readiness in current iteration.
  * 
  * @author Mikołaj Sowiński
  */

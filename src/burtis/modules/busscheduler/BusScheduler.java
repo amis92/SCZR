@@ -38,9 +38,9 @@ public class BusScheduler extends AbstractEventHandler
      */
     private int busStopCount;
     private final String moduleName;
+    private final Action onExit;
     private final String[] receiverNames;
     private final Consumer<SimulationEvent> sender;
-    private final Action onExit;
 
     public BusScheduler(ModuleConfig config, Consumer<SimulationEvent> sender,
             Action onExit)
@@ -56,15 +56,23 @@ public class BusScheduler extends AbstractEventHandler
     }
 
     @Override
-    public void process(ModuleReadyEvent event)
+    public void defaultHandle(SimulationEvent event)
     {
-        // ignoring
+        logger.log(Level.WARNING, "Unhandled event received: " + event);
+    }
+
+    /**
+     * Retrieves list of bus stops to get their count.
+     */
+    public void init()
+    {
+        busStopCount = SimulationModuleConsts.getDefaultBusStops().size();
     }
 
     @Override
-    public void process(TickEvent event)
+    public void process(MainMockupEvent event)
     {
-        // ignoring
+        optimize(event.getMainMockup());
     }
 
     @Override
@@ -74,35 +82,14 @@ public class BusScheduler extends AbstractEventHandler
     }
 
     @Override
-    public void defaultHandle(SimulationEvent event)
+    public void process(TickEvent event)
     {
-        logger.log(Level.WARNING, "Unhandled event received: " + event);
+        // ignoring
     }
 
-    @Override
-    public void process(MainMockupEvent event)
+    public void terminate()
     {
-        optimize(event.getMainMockup());
-    }
-
-    // @Override
-    // public void process(BusStopsListEvent event)
-    // {
-    // busStopCount = event.getBusStops().size();
-    // }
-    private int countPassengersSitting(List<MockupBus> busList)
-    {
-        int passengersSittingTotal = 0;
-        for (MockupBus bus : busList)
-        {
-            int passengerCount = bus.getPassengerList().size();
-            if (bus.getBusState() == Bus.State.BUSSTOP
-                    || bus.getBusState() == Bus.State.RUNNING)
-            {
-                passengersSittingTotal += passengerCount;
-            }
-        }
-        return passengersSittingTotal;
+        logger.info("Terminating " + BusScheduler.class);
     }
 
     private int calculateNewFrequency(Integer passengersSittingTotal,
@@ -130,6 +117,21 @@ public class BusScheduler extends AbstractEventHandler
          * proporcjojnalnie dużo w stosunku do czasu objazdu trasy, to trzeba
          * sprawdzić efekty :-)
          */
+    }
+
+    private int countPassengersSitting(List<MockupBus> busList)
+    {
+        int passengersSittingTotal = 0;
+        for (MockupBus bus : busList)
+        {
+            int passengerCount = bus.getPassengerList().size();
+            if (bus.getBusState() == Bus.State.BUSSTOP
+                    || bus.getBusState() == Bus.State.RUNNING)
+            {
+                passengersSittingTotal += passengerCount;
+            }
+        }
+        return passengersSittingTotal;
     }
 
     private void optimize(Mockup mockup)
@@ -164,18 +166,5 @@ public class BusScheduler extends AbstractEventHandler
                 newFrequency);
         sender.accept(event);
         sender.accept(new ModuleReadyEvent(moduleName, currentTime));
-    }
-
-    /**
-     * Retrieves list of bus stops to get their count.
-     */
-    public void init()
-    {
-        busStopCount = SimulationModuleConsts.getDefaultBusStops().size();
-    }
-
-    public void terminate()
-    {
-        logger.info("Terminating " + BusScheduler.class);
     }
 }

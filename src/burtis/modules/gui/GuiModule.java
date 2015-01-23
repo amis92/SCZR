@@ -33,16 +33,52 @@ import burtis.modules.network.NetworkConfig;
  */
 public class GuiModule extends AbstractNetworkModule
 {
-    private static final Logger logger = Logger.getLogger(GuiModule.class.getName());
+    private static final Logger logger = Logger.getLogger(GuiModule.class
+            .getName());
+
+    public static void main(String[] args)
+    {
+        try
+        {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        }
+        catch (Exception e)
+        {
+            // we can live without system L&F
+            logger.info("Failed to set System L&F");
+        }
+        NetworkConfig config = NetworkConfig.defaultConfig();
+        GuiModule guiModule = new GuiModule(config);
+        SwingUtilities.invokeLater(guiModule::init);
+    }
+
+    private final ActionExecutor actionExecutor;
+    private Controller controller;
     private final LinkedBlockingQueue<ProgramEvent> queue = new LinkedBlockingQueue<ProgramEvent>();
     private View view;
-    private Controller controller;
-    private final ActionExecutor actionExecutor;
 
     public GuiModule(NetworkConfig config)
     {
         super(config.getModuleConfigs().get(NetworkConfig.GUI_MODULE));
         actionExecutor = new ActionExecutor(this.client, config);
+    }
+
+    /**
+     * Creates view which handles gui termination.
+     * 
+     * @param queue
+     */
+    private void createView()
+    {
+        WindowAdapter onExit = new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e)
+            {
+                terminate();
+                System.exit(0);
+            }
+        };
+        view = new SimpleView(queue, onExit, this.client::isConnected);
     }
 
     /**
@@ -67,45 +103,11 @@ public class GuiModule extends AbstractNetworkModule
         }
     }
 
-    /**
-     * Creates view which handles gui termination.
-     * 
-     * @param queue
-     */
-    private void createView()
-    {
-        WindowAdapter onExit = new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e)
-            {
-                terminate();
-                System.exit(0);
-            }
-        };
-        view = new SimpleView(queue, onExit, this.client::isConnected);
-    }
-
     @Override
     protected void terminate()
     {
         controller.stop();
         closeModule();
-    }
-
-    public static void main(String[] args)
-    {
-        try
-        {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        }
-        catch (Exception e)
-        {
-            // we can live without system L&F
-            logger.info("Failed to set System L&F");
-        }
-        NetworkConfig config = NetworkConfig.defaultConfig();
-        GuiModule guiModule = new GuiModule(config);
-        SwingUtilities.invokeLater(guiModule::init);
     }
 
     /**
@@ -117,9 +119,9 @@ public class GuiModule extends AbstractNetworkModule
     private class EventHandler extends AbstractEventHandler
     {
         @Override
-        public void process(TickEvent event)
+        public void defaultHandle(SimulationEvent event)
         {
-            // ignoring silently, waiting for mockup
+            logger.warning("Unhandled event: " + event);
         }
 
         @Override
@@ -138,9 +140,9 @@ public class GuiModule extends AbstractNetworkModule
         }
 
         @Override
-        public void defaultHandle(SimulationEvent event)
+        public void process(TickEvent event)
         {
-            logger.warning("Unhandled event: " + event);
+            // ignoring silently, waiting for mockup
         }
     }
 }

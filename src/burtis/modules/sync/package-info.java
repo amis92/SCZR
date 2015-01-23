@@ -4,6 +4,7 @@
  * don't lag behind - if that's the case, simulation is terminated immediately.
  * 
  * @author Mikołaj Sowiński
+ * @author Amadeusz Sadowski
  *
  */
 package burtis.modules.sync;

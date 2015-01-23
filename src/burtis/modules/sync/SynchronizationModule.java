@@ -27,10 +27,6 @@ public class SynchronizationModule extends AbstractNetworkModule
      */
     public static final long INITIAL_PERIOD = 1000L;
     /**
-     * Current period between ticks in ms.
-     */
-    private long tickPeriod = INITIAL_PERIOD;
-    /**
      * Synchronization module logger.
      */
     private final static Logger logger = Logger
@@ -111,6 +107,10 @@ public class SynchronizationModule extends AbstractNetworkModule
      */
     private final AtomicLong iteration = new AtomicLong(0);
     /**
+     * Current period between ticks in ms.
+     */
+    private long tickPeriod = INITIAL_PERIOD;
+    /**
      * Ticking service.
      */
     private final TickService tickService;
@@ -172,6 +172,12 @@ public class SynchronizationModule extends AbstractNetworkModule
         }
     }
 
+    public void setTickPeriod(long tickPeriod)
+    {
+        logger.info(String.format("New Cycle Length: %dms", tickPeriod));
+        this.tickPeriod = tickPeriod;
+    }
+
     /**
      * Starts simulation.
      */
@@ -225,11 +231,5 @@ public class SynchronizationModule extends AbstractNetworkModule
         watchdogService.stopWatching();
         logger.info("Sending termination signal to modules.");
         send(new TerminateSimulationEvent(moduleConfig.getModuleName()));
-    }
-
-    public void setTickPeriod(long tickPeriod)
-    {
-        logger.info(String.format("New Cycle Length: %dms", tickPeriod));
-        this.tickPeriod = tickPeriod;
     }
 }

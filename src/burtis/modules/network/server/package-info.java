@@ -1,5 +1,5 @@
 ﻿/**
- * Classes performing Server-side operations.
+ * Classes performing Server-side network operations.
  * 
  * @author Amadeusz Sadowski
  *

@@ -33,66 +33,100 @@ import burtis.modules.passengers.model.TransactionManager;
 public class PassengerModule extends AbstractNetworkModule
 {
     /**
-     * Logger.
+     * Main method for application.
+     * 
+     * @param args
+     *            No parameters are expected.
+     * @throws Exception
      */
-    private Logger logger = Logger
-            .getLogger(PassengerModule.class.getName());
-        
-    /**
-     * Managers.
-     */
-    private final Managers managers = new Managers();
-       
+    public static void main(String[] args) throws Exception
+    {
+        PassengerModule app = new PassengerModule(NetworkConfig.defaultConfig());
+        app.main();
+    }
+
     /**
      * Action executor.
      */
     private final ActionExecutor actionExecutor;
-
     /**
      * Current cycle of simulation.
      * 
-     * Updated by {@link PassengerModuleEventHandler#process(burtis.common.events.flow.TickEvent)}.
+     * Updated by
+     * {@link PassengerModuleEventHandler#process(burtis.common.events.flow.TickEvent)}
+     * .
      */
     private long currentCycle = 0;
-        
-    public PassengerModule(NetworkConfig networkConfig)
+    /**
+     * Logger.
+     */
+    private Logger logger = Logger.getLogger(PassengerModule.class.getName());
+    /**
+     * Managers.
+     */
+    private final Managers managers = new Managers();
+
+    public PassengerModule(NetworkConfig networkConfig) throws Exception
     {
         super(networkConfig.getModuleConfigs().get(NetworkConfig.PSNGR_MODULE));
-        
         managers.setBusStopManager(new BusStopManager(managers));
         managers.setBusManager(new BusManager(managers));
         managers.setPassengerManager(new PassengerManager(managers));
         managers.setTransactionManager(new TransactionManager(managers));
         managers.setLogger(logger);
-        
-        this.actionExecutor = new ActionExecutor(
-                this.client, 
-                networkConfig);
-                
-        this.eventHandler = new PassengerModuleEventHandler(
-                this, 
-                actionExecutor, 
-                managers);
-        
-        Handler handler;
-        try
-        {
-            handler = new FileHandler(this.getClass().getName());
-            handler.setFormatter(new LogFormatter());
-            logger.addHandler(handler);
-        }
-        catch (SecurityException | IOException e)
-        {
-            logger.severe(e.getMessage());
-            terminate();            
-        }
-        
+        this.actionExecutor = new ActionExecutor(this.client, networkConfig);
+        this.eventHandler = new PassengerModuleEventHandler(this,
+                actionExecutor, managers);
+        // debug use
+        //addFileLoggerHandler();
     }
-    
-/* ##############################################
- * GETTERS AND SETTERS
- * ########################################### */
-    
+
+    /**
+     * Returns mockup of the current simulation state.
+     * 
+     * @return mockup
+     */
+    public Mockup buildMockup(List<MockupBus> busMockups)
+    {
+        // Add passengers to buses
+        for (MockupBus busMockup : busMockups)
+        {
+            ArrayList<MockupPassenger> passengerList = new ArrayList<>();
+            Bus bus;
+            try
+            {
+                bus = managers.getBusManager().getBusById(busMockup.getId());
+                for (Passenger passenger : bus.getPassengers())
+                {
+                    passengerList.add(new MockupPassenger(passenger));
+                }
+                busMockup.setPassengerList(passengerList);
+            }
+            catch (NoSuchBusException ex)
+            {
+                logger.severe("No such bus " + ex.getBusId() + "!");
+            }
+        }
+        // Create MockupBusStop list
+        ArrayList<MockupBusStop> mockupBusStopArray = new ArrayList<>();
+        for (BusStop busStop : managers.getBusStopManager().getBusStops())
+        {
+            ArrayList<MockupPassenger> passengerList = new ArrayList<>();
+            Queue<Passenger> passengersOnBusStop = busStop.getPassengerQueue();
+            if (passengersOnBusStop.size() > 0)
+            {
+                for (Passenger passenger : passengersOnBusStop)
+                {
+                    passengerList.add(new MockupPassenger(passenger));
+                }
+            }
+            mockupBusStopArray.add(new MockupBusStop(passengerList, busStop
+                    .getName()));
+        }
+        return new Mockup((ArrayList<MockupBus>) busMockups,
+                mockupBusStopArray, currentCycle);
+    }
+
     public long getCurrentCycle()
     {
         return currentCycle;
@@ -103,9 +137,29 @@ public class PassengerModule extends AbstractNetworkModule
         this.currentCycle = currentCycle;
     }
 
-/* ##############################################
- * END OF GETTERS AND SETTERS
- * ########################################### */
+    /**
+     * Adds dumping logs to file.
+     * 
+     * @throws Exception
+     *             when the filehanler couldn't be initialized or added to
+     *             logger.
+     */
+    @SuppressWarnings("unused")
+    private void addFileLoggerHandler() throws Exception
+    {
+        Handler handler;
+        try
+        {
+            handler = new FileHandler(this.getClass().getName() + ".log");
+            handler.setFormatter(new LogFormatter());
+            logger.addHandler(handler);
+        }
+        catch (SecurityException | IOException e)
+        {
+            logger.severe(e.getMessage());
+            throw e;
+        }
+    }
 
     @Override
     protected void init()
@@ -117,69 +171,5 @@ public class PassengerModule extends AbstractNetworkModule
     protected void terminate()
     {
         logger.log(Level.INFO, "Terminating module...");
-    }
-
-    /**
-     * Returns mockup of the current simulation state.
-     * 
-     * @return mockup
-     */
-    public Mockup buildMockup(List<MockupBus> busMockups)
-    {       
-        // Add passengers to buses
-        for (MockupBus busMockup : busMockups)
-        {
-            ArrayList<MockupPassenger> passengerList = new ArrayList<>();
-            Bus bus;
-            
-            try {
-                bus = managers.getBusManager().getBusById(busMockup.getId());
-                for (Passenger passenger : bus.getPassengers())
-                {
-                    passengerList.add(new MockupPassenger(passenger));
-                }
-                busMockup.setPassengerList(passengerList);
-            }
-            catch (NoSuchBusException ex) {
-                // This is not a problem at all!
-                //logger.severe("No such bus " + ex.getBusId() + "!");
-            }
-            
-        }
-        
-        // Create MockupBusStop list
-        ArrayList<MockupBusStop> mockupBusStopArray = new ArrayList<>();
-        
-        for (BusStop busStop : managers.getBusStopManager().getBusStops())
-        {
-            ArrayList<MockupPassenger> passengerList = new ArrayList<>();
-            Queue<Passenger> passengersOnBusStop = busStop.getPassengerQueue();
-            
-            if (passengersOnBusStop.size() > 0)
-            {
-                for (Passenger passenger : passengersOnBusStop)
-                {
-                    passengerList.add(new MockupPassenger(passenger));
-                }
-            }
-            
-            mockupBusStopArray.add(new MockupBusStop(passengerList, busStop
-                    .getName()));
-        }
-        
-        return new Mockup((ArrayList<MockupBus>) busMockups,
-                mockupBusStopArray, currentCycle);
-    }
-    
-    /**
-     * Main method for application.
-     * 
-     * @param args
-     *            No parameters are expected.
-     */
-    public static void main(String[] args)
-    {
-        PassengerModule app = new PassengerModule(NetworkConfig.defaultConfig());
-        app.main();
     }
 }

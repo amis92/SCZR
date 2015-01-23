@@ -56,24 +56,6 @@ class SyncEventHandler extends AbstractEventHandler
     }
 
     @Override
-    public void process(TerminateSimulationEvent event)
-    {
-        syncModule.shutdown();
-    }
-
-    @Override
-    public void process(StartSimulationEvent event)
-    {
-        syncModule.startSimulation();
-    }
-
-    @Override
-    public void process(PauseSimulationEvent event)
-    {
-        syncModule.pauseSimulation();
-    }
-
-    @Override
     public void process(DoStepEvent event)
     {
         syncModule.doStep();
@@ -85,10 +67,28 @@ class SyncEventHandler extends AbstractEventHandler
         watchdogService.handleModuleResponded(event.sender(),
                 event.getIteration() == syncModule.getIteration());
     }
-    
+
+    @Override
+    public void process(PauseSimulationEvent event)
+    {
+        syncModule.pauseSimulation();
+    }
+
     @Override
     public void process(SetCycleLengthEvent event)
     {
         syncModule.setTickPeriod(event.getCycleLength());
+    }
+
+    @Override
+    public void process(StartSimulationEvent event)
+    {
+        syncModule.startSimulation();
+    }
+
+    @Override
+    public void process(TerminateSimulationEvent event)
+    {
+        syncModule.shutdown();
     }
 }
