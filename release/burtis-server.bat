@@ -1,0 +1,1 @@
+START "Server" java -cp burtis.jar -Dfile.encoding=UTF-8 burtis.modules.network.server.DemoServerModule
